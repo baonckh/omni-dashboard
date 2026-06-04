@@ -1,0 +1,9 @@
+.git
+.gitignore
+.gitnexus
+.env
+.env.local
+node_modules/
+.next/
+memory-bank/
+*.log

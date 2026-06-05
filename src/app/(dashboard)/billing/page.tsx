@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { CreditCard, TrendingUp, BarChart3, PieChart, Calendar, ArrowUpRight, DollarSign, Zap } from "lucide-react";
-import { Card, SectionHeader, SHOP_ID } from "../playground/components/shared";
+import { Card, SectionHeader, SHOP_ID } from "@/app/(dashboard)/bots/[botId]/components/shared";
 import { getUsageStats } from "@/lib/api";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";

@@ -15,7 +15,7 @@ import {
   ExternalLink,
   CheckCheck
 } from "lucide-react";
-import { fetchThreads, fetchMessages, sendReply } from "@/lib/api";
+import { fetchThreads, fetchMessages, sendReply, updateThreadStatus } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export default function InboxPage() {
@@ -33,8 +33,16 @@ export default function InboxPage() {
   }, []);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
     if (activeThread) {
       loadMessages(activeThread.id);
+      // Polling every 5 seconds for new messages
+      interval = setInterval(() => {
+         loadMessages(activeThread.id, true);
+      }, 5000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
     }
   }, [activeThread]);
 
@@ -58,10 +66,16 @@ export default function InboxPage() {
     }
   };
 
-  const loadMessages = async (threadId: string) => {
+  const loadMessages = async (threadId: string, background = false) => {
     try {
       const data = await fetchMessages(threadId);
       setMessages(data || []);
+      // If run in background (polling), also occasionally refresh threads so we get latest timestamps & last message
+      if (background) {
+         fetchThreads(shopId).then(data => {
+            if (Array.isArray(data)) setThreads(data);
+         }).catch(console.error);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -74,17 +88,29 @@ export default function InboxPage() {
     setSending(true);
     try {
       await sendReply(activeThread.id, reply);
-      setMessages([...messages, {
+      setMessages((prev) => [...prev, {
         role: "assistant",
         senderType: "HUMAN_OWNER",
         content: reply,
         createdAt: new Date().toISOString()
       }]);
+      setActiveThread((prev: any) => ({ ...prev, status: "HUMAN_TAKEOVER" }));
       setReply("");
     } catch (err) {
       console.error(err);
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleToggleStatus = async () => {
+    if (!activeThread) return;
+    const newStatus = activeThread.status === "BOT_ACTIVE" ? "HUMAN_TAKEOVER" : "BOT_ACTIVE";
+    try {
+      await updateThreadStatus(activeThread.id, newStatus);
+      setActiveThread((prev: any) => ({ ...prev, status: newStatus }));
+    } catch (err) {
+      console.error("Failed to toggle status:", err);
     }
   };
 
@@ -128,7 +154,7 @@ export default function InboxPage() {
                          {t.customerAvatar ? <img src={t.customerAvatar} alt="" /> : <User className="h-5 w-5 text-neutral-500" />}
                       </div>
                       <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-black flex items-center justify-center text-[8px] bg-blue-500 text-white font-bold">
-                         {t.platform === "MESSENGER" ? "M" : t.platform === "TIKTOK" ? "T" : "W"}
+                         {t.platform === "facebook" ? "F" : t.platform === "tiktok" ? "T" : t.platform === "shopee" ? "S" : "W"}
                       </div>
                    </div>
                    <div className="flex-1 min-w-0">
@@ -173,7 +199,29 @@ export default function InboxPage() {
                        </div>
                     </div>
                  </div>
-                 <div className="flex items-center gap-2">
+                 <div className="flex items-center gap-4">
+                    {/* Bot/Human Switch Toggle */}
+                    <div className="flex bg-black/40 rounded-xl p-1 border border-white/5">
+                        <button
+                           onClick={() => activeThread.status !== "BOT_ACTIVE" && handleToggleStatus()}
+                           className={cn(
+                             "px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all",
+                             activeThread.status === "BOT_ACTIVE" ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" : "text-neutral-500 hover:text-white"
+                           )}
+                        >
+                           <Bot className="h-3 w-3" /> Auto (Bot)
+                        </button>
+                        <button
+                           onClick={() => activeThread.status !== "HUMAN_TAKEOVER" && handleToggleStatus()}
+                           className={cn(
+                             "px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all",
+                             activeThread.status === "HUMAN_TAKEOVER" ? "bg-green-600 text-white shadow-lg shadow-green-500/20" : "text-neutral-500 hover:text-white"
+                           )}
+                        >
+                           <User className="h-3 w-3" /> Manual
+                        </button>
+                    </div>
+
                     <button className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-medium transition-colors flex items-center gap-2">
                        <Tag className="h-3 w-3 text-blue-400" />
                        Add Tag

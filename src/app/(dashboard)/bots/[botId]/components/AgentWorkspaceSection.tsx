@@ -246,7 +246,7 @@ export function AgentWorkspaceSection() {
                     </>
                   ) : (
                     <>
-                      <option value="gemini-flash-lite-latest" className="bg-neutral-900">gemini-flash-lite (Cheapest)</option>
+                      <option value="gemini-flash-lite-latest" className="bg-neutral-900">gemini-flash-lite (Nhanh, Tiết kiệm)</option>
                       <option value="gemini-3.1-flash-lite-preview" className="bg-neutral-900">gemini-3.1-flash-lite</option>
                       <option value="gemini-3.1-pro-preview" className="bg-neutral-900">gemini-3.1-pro (SOTA Reasoning)</option>
                       <option value="gemini-3.1-flash-image-preview" className="bg-neutral-900">gemini-3.1-flash-image</option>

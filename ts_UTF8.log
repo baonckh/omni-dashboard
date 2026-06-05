@@ -1,0 +1,11 @@
+﻿.next/types/validator.ts(78,39): error TS2307: Cannot find module '../../src/app/(dashboard)/page.js' or its corresponding type declarations.
+.next/types/validator.ts(87,39): error TS2307: Cannot find module '../../src/app/(dashboard)/playground/page.js' or its corresponding type declarations.
+src/app/(dashboard)/billing/page.tsx(4,46): error TS2307: Cannot find module '../playground/components/shared' or its corresponding type declarations.
+src/app/(dashboard)/bots/page.tsx(8,25): error TS2307: Cannot find module '../playground/components/shared' or its corresponding type declarations.
+src/app/(dashboard)/settings/page.tsx(30,3): error TS2305: Module '"@/lib/api"' has no exported member 'searchKnowledge'.
+src/app/(dashboard)/settings/page.tsx(32,3): error TS2305: Module '"@/lib/api"' has no exported member 'fetchPersona'.
+src/app/(dashboard)/settings/page.tsx(33,3): error TS2305: Module '"@/lib/api"' has no exported member 'savePersona'.
+src/app/(dashboard)/settings/page.tsx(80,7): error TS2304: Cannot find name 'setSyncing'.
+src/app/(dashboard)/settings/page.tsx(83,9): error TS2304: Cannot find name 'updateKeyStatus'.
+src/app/(dashboard)/settings/page.tsx(86,9): error TS2304: Cannot find name 'updateKeyStatus'.
+src/app/(dashboard)/settings/page.tsx(92,7): error TS2304: Cannot find name 'setSyncing'.

@@ -1,6 +1,6 @@
 # Project Brief: OmniAI Dashboard
 
-Giao diện quản trị tập trung (Admin Hub) cho hệ thống OmniAI, giúp sếp quản lý bot, khách hàng và doanh thu dễ dàng.
+Giao diện quản trị tập trung (Admin Hub) cho hệ thống OmniAI, giúp chủ shop quản lý bot, khách hàng và doanh thu dễ dàng.
 
 ## Core Requirements
 - **Dynamic Configuration**: Setup tính cách Bot, kịch bản bán hàng và API Keys.
@@ -13,3 +13,16 @@ Giao diện quản trị tập trung (Admin Hub) cho hệ thống OmniAI, giúp 
 - **Wowed UI**: Thiết kế cao cấp, hiện đại (Magic UI, Bento Grid) mang lại cảm giác Premium.
 - **Zero-Code**: Chủ shop không cần biết code vẫn cấu hình được AI phức tạp.
 - **Actionable Data**: Chuyển đổi hội thoại thành số liệu kinh doanh thực tế.
+
+## Application Structure
+```
+src/app/(dashboard)/
+├── overview/        # Dashboard tổng quan
+├── bots/           # Quản lý bots
+├── inbox/          # Hộp thư tập trung
+├── leads/          # Quản lý leads
+├── insights/       # Báo cáo và phân tích
+├── channels/       # Kênh tích hợp
+├── settings/       # Cài đặt hệ thống
+└── billing/        # Quản lý thanh toán
+```

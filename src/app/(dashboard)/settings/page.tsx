@@ -25,14 +25,13 @@ import {
   testAlert, 
   fetchBotSettings, 
   updateBotSettings,
-  deleteKnowledgeDoc, 
-  updateKnowledgeDoc, 
-  searchKnowledge,
-  testKey,
+
+
   APIKey, 
   BotSetting 
 } from "@/lib/api";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+
 import { cn } from "@/lib/utils";
 import { Cpu } from "lucide-react";
 
@@ -40,9 +39,10 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("notifications");
   const [config, setConfig] = useState<any>(null);
   const [botSettings, setBotSettings] = useState<any>(null);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [testStatus, setTestStatus] = useState<string | null>(null);
+
   const shopId = "test_shop";
   const EMBED_CODE = `<script 
   src="https://cdn.omni-ai.com/widget.js" 
@@ -62,6 +62,7 @@ export default function SettingsPage() {
       ]);
       setConfig(alertData);
       setBotSettings(settingsData);
+
     } catch (err) {
       console.error(err);
     } finally {
@@ -69,23 +70,7 @@ export default function SettingsPage() {
     }
   };
 
-  const handlePing = async (key: APIKey) => {
-    try {
-      setSyncing(key.id);
-      const result = await testKey(shopId, key.provider, key.key);
-      if (result.status === "active") {
-        updateKeyStatus(key.id, "active");
-        alert(result.message);
-      } else {
-        updateKeyStatus(key.id, "error");
-        alert(`Lỗi: ${result.error}`);
-      }
-    } catch (err) {
-      alert("Không thể kết nối tới server để kiểm tra key ❌");
-    } finally {
-      setSyncing(null);
-    }
-  };
+
 
   const handleSave = async () => {
     setSaving(true);
@@ -163,6 +148,7 @@ export default function SettingsPage() {
            >
              AI Providers
            </button>
+
         </div>
       </div>
 

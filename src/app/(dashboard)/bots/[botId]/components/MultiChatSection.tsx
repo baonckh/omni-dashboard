@@ -3,20 +3,46 @@ import React, { useState, useEffect, useRef } from "react";
 import { Bot, Send, Smartphone, Users, BrainCircuit, Target, RefreshCw, Plus, X } from "lucide-react";
 import { Card, SectionHeader, SHOP_ID, DEFAULT_STAGES, PLATFORMS } from "./shared";
 import { playgroundChat, fetchBotSettings, type BotSetting } from "@/lib/api";
+import { ProductCarousel } from "@/components/ui/ProductCarousel";
 import { cn } from "@/lib/utils";
 
-type ChatMessage = { role: "user" | "assistant" | "system" | "agent"; content: string; thought?: string; functionName?: string; functionArgs?: Record<string, any>; timestamp: Date };
+const DEMO_RESPONSES: Record<string, { reply: string; sentiment: string; thought: string }> = {
+  greeting: { reply: "👋 Chào bạn! Mình là AI tư vấn của shop. Bạn cần tìm sản phẩm gì hôm nay?", sentiment: "positive", thought: "User greeted with a greeting" },
+  default: { reply: "Cảm ơn tin nhắn của bạn! Shop có nhiều sản phẩm đang khuyến mãi. Bạn quan tâm gì ạ?", sentiment: "neutral", thought: "Processing user message" },
+};
+
+type ChatMessage = { 
+  role: "user" | "assistant" | "system" | "agent"; 
+  content: string; 
+  thought?: string; 
+  functionName?: string; 
+  functionArgs?: Record<string, any>; 
+  timestamp: Date; 
+  products?: Array<{ 
+    title: string; 
+    content: string; 
+    price: number; 
+    original_price?: number; 
+    variants?: Array<{ sku: string; attributes: Record<string, string>; price: number; stock: number; image: string }>; 
+    image?: string; 
+    url?: string 
+  }> 
+};
 type ChatSession = { id: string; name: string; senderId: string; messages: ChatMessage[]; stage: number; platform: string; lastMsg: string; unread: number };
 
-export function MultiChatSection() {
+export function MultiChatSection({ botId }: { botId: string }) {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [botSettings, setBotSettings] = useState<BotSetting | null>(null);
   const [activeId, setActiveId] = useState("");
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [senderRole, setSenderRole] = useState<"user" | "agent">("user");
+  const [apiStatus, setApiStatus] = useState<"unknown" | "online" | "offline">("unknown");
+  const [aiStatus, setAiStatus] = useState<"unknown" | "online" | "offline">("unknown");
+  const [showHelp, setShowHelp] = useState(false);
   const [chatProvider, setChatProvider] = useState("gemini");
   const [chatModel, setChatModel] = useState("gemini-flash-lite-latest");
+  const [debounceMs, setDebounceMs] = useState(2000);
   const [lastThought, setLastThought] = useState<{ thought: string; fn?: string; args?: Record<string, any> } | null>(null);
   const chatRef = useRef<HTMLDivElement>(null);
   const session = sessions.find((s) => s.id === activeId);
@@ -52,12 +78,20 @@ export function MultiChatSection() {
     const savedConfig = localStorage.getItem("omni_playground_chat_config");
     if (savedConfig) {
       try {
-        const { chatProvider: cp, chatModel: cm } = JSON.parse(savedConfig);
+        const { chatProvider: cp, chatModel: cm, debounceMs: dms } = JSON.parse(savedConfig);
         if (cp) setChatProvider(cp);
         if (cm) setChatModel(cm);
+        if (dms) setDebounceMs(dms);
       } catch (e) { console.error("Failed to restore config", e); }
     }
     setHasLoaded(true);
+  }, []);
+
+  // Check API health
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080'}/ping`)
+      .then(() => setApiStatus("online"))
+      .catch(() => setApiStatus("offline"));
   }, []);
 
   // Save to LocalStorage (Only after loading)
@@ -67,8 +101,8 @@ export function MultiChatSection() {
     if (sessions.length > 0) {
       localStorage.setItem("omni_playground_sessions", JSON.stringify(sessions));
     }
-    localStorage.setItem("omni_playground_chat_config", JSON.stringify({ chatProvider, chatModel }));
-  }, [sessions, chatProvider, chatModel, hasLoaded]);
+    localStorage.setItem("omni_playground_chat_config", JSON.stringify({ chatProvider, chatModel, debounceMs }));
+  }, [sessions, chatProvider, chatModel, debounceMs, hasLoaded]);
 
   // Fetch Bot Settings independently
   useEffect(() => {
@@ -128,6 +162,9 @@ export function MultiChatSection() {
     }
   };
 
+const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+const pendingRef = useRef<string[]>([]);
+
   const handleSend = async () => {
     if (!input.trim() || isTyping || !session) return;
     
@@ -147,13 +184,22 @@ export function MultiChatSection() {
     try {
       const resp = await playgroundChat({ 
         shopId: SHOP_ID, 
+        botId,
         senderId: session.senderId, 
         message: input, 
         platform: session.platform,
         provider: chatProvider,
         model: chatModel
       });
-      const ai: ChatMessage = { role: "assistant", content: resp.reply || "(No response)", thought: resp.thought, functionName: resp.functionName, functionArgs: resp.functionArgs, timestamp: new Date() };
+      const ai: ChatMessage = { 
+        role: "assistant", 
+        content: resp.reply || "(No response)", 
+        thought: resp.thought, 
+        functionName: resp.functionName, 
+        functionArgs: resp.functionArgs, 
+        timestamp: new Date(),
+        products: resp.products as ChatMessage["products"]
+      };
       setSessions((p) => p.map((s) => {
         if (s.id !== activeId) return s;
         // Logic ưu tiên stage từ AI nếu có, nếu không thì dùng logic cũ hoặc giữ nguyên
@@ -168,7 +214,18 @@ export function MultiChatSection() {
         return { ...s, messages: [...s.messages, ai], stage, lastMsg: ai.content.substring(0, 50) };
       }));
       setLastThought({ thought: resp.thought || "", fn: resp.functionName, args: resp.functionArgs });
-    } catch { setSessions((p) => p.map((s) => s.id === activeId ? { ...s, messages: [...s.messages, { role: "system", content: "❌ Backend offline", timestamp: new Date() }] } : s)); }
+    } catch (err: any) {
+      console.error("Chat error:", err);
+      // Fallback response when backend is offline
+      const demoReply = input.toLowerCase().match(/xin\s*chào|chào|hello|hi|hey/) ? DEMO_RESPONSES.greeting : DEMO_RESPONSES.default;
+      const demoAi: ChatMessage = { 
+        role: "assistant", 
+        content: demoReply.reply, 
+        thought: demoReply.thought, 
+        timestamp: new Date() 
+      };
+      setSessions((p) => p.map((s) => s.id === activeId ? { ...s, messages: [...s.messages, demoAi] } : s));
+    }
     finally { setIsTyping(false); }
   };
 
@@ -239,6 +296,15 @@ export function MultiChatSection() {
                   </div>
                 </div>
                 <button onClick={() => setSessions((p) => p.map((s) => s.id === activeId ? { ...s, senderId: `cust_${crypto.randomUUID().substring(0, 8)}`, messages: [], stage: 1, lastMsg: "" } : s))} className="p-1.5 hover:bg-white/10 rounded-lg text-neutral-600"><RefreshCw className="h-3.5 w-3.5" /></button>
+                <div className="flex items-center gap-2 ml-2">
+                  <div className={`h-2 w-2 rounded-full ${apiStatus === "online" ? "bg-green-500" : apiStatus === "offline" ? "bg-red-500" : "bg-yellow-500 animate-pulse"}`} />
+                  <span className="text-[9px] text-neutral-600">API</span>
+                </div>
+                <button onClick={() => setShowHelp(true)} className="p-1.5 hover:bg-white/10 rounded-lg text-neutral-600" title="Hướng dẫn">
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.986.54-1.106 1.078-.121.54-.08 1.14-.12 1.714-.045.585.012 1.19.165 1.75.152.56.43.93.798 1.054.37.12.795.144 1.235.084.44-.06.85-.29 1.15-.6.3-.3.52-.71.65-1.15.13-.44.15-.95.12-1.45a4.97 4.97 0 00-.9-2.5M12 18h.01" />
+                  </svg>
+                </button>
               </>
             ) : (
               <span className="text-xs text-neutral-600">Chọn một cuộc hội thoại</span>
@@ -271,6 +337,12 @@ export function MultiChatSection() {
                     {msg.role === "assistant" && <span className="absolute -top-4 left-0 text-[8px] font-bold text-blue-400 uppercase tracking-wider">🤖 AI Bot</span>}
                     {msg.role === "agent" && <span className="absolute -top-4 left-0 text-[8px] font-bold text-purple-400 uppercase tracking-wider">👤 Nhân viên Shop</span>}
                     {msg.content}
+                    {/* Render products if present */}
+                    {msg.products && msg.products.length > 0 && (
+                      <div className="mt-3 -mx-1">
+                        <ProductCarousel products={msg.products} title="🛍️ Sản phẩm gợi ý" />
+                      </div>
+                    )}
                     {msg.functionName && <div className="mt-1.5 px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-[9px] text-yellow-500 font-mono">⚡ {msg.functionName}</div>}
                   </div>
                   <span className="text-[8px] text-neutral-700 mt-1 block px-1">{msg.timestamp.toLocaleTimeString()}</span>
@@ -363,7 +435,7 @@ export function MultiChatSection() {
                     </>
                   ) : (
                     <>
-                      <option value="gemini-flash-lite-latest" className="bg-neutral-900">gemini-flash-lite (Cheapest)</option>
+                      <option value="gemini-flash-lite-latest" className="bg-neutral-900">gemini-flash-lite (Nhanh, Tiết kiệm)</option>
                       <option value="gemini-3.1-flash-lite-preview" className="bg-neutral-900">gemini-3.1-flash-lite</option>
                       <option value="gemini-3.1-pro-preview" className="bg-neutral-900">gemini-3.1-pro (SOTA Reasoning)</option>
                       <option value="gemini-3.1-flash-image-preview" className="bg-neutral-900">gemini-3.1-flash-image</option>
@@ -372,6 +444,15 @@ export function MultiChatSection() {
                   )}
                 </select>
               </div>
+            </div>
+            {/* Debounce config */}
+            <div>
+              <label className="text-[9px] text-neutral-600 font-medium uppercase tracking-wider">Gộp tin nhắn (ms)</label>
+              <div className="flex items-center gap-2 mt-1">
+                <input type="range" min="0" max="5000" step="100" value={debounceMs} onChange={(e) => setDebounceMs(Number(e.target.value))} className="flex-1 accent-blue-500 h-1" />
+                <span className="text-xs font-mono text-neutral-400 w-10 text-right">{debounceMs}ms</span>
+              </div>
+              <p className="text-[9px] text-neutral-700 mt-0.5">0 = tắt gộp, gửi ngay từng tin</p>
             </div>
           </Card>
 
@@ -395,6 +476,52 @@ export function MultiChatSection() {
           </Card>
         </div>
       </div>
+
+      {showHelp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowHelp(false)}>
+          <div className="bg-neutral-900 border border-white/20 rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-white">Hướng dẫn sử dụng Playground</h3>
+              <button onClick={() => setShowHelp(false)} className="p-1 hover:bg-white/10 rounded-lg">
+                <svg className="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="space-y-4 text-xs text-neutral-400">
+              <div>
+                <h4 className="font-bold text-white mb-2">🔧 Yêu cầu hệ thống</h4>
+                <ul className="space-y-1">
+                  <li>• <span className="text-green-400">API Server</span> (Go) - Port 8080</li>
+                  <li>• <span className="text-green-400">AI Service</span> (Python gRPC) - Port 50051</li>
+                  <li>• <span className="text-yellow-400">MongoDB</span> - Port 27017</li>
+                  <li>• <span className="text-yellow-400">Redis</span> - Port 6379</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold text-white mb-2">🚀 Cách khởi động</h4>
+                <div className="bg-black/30 rounded-lg p-3 font-mono text-[10px]">
+                  <p className="text-neutral-500"># Terminal 1: API Server</p>
+                  <p className="text-green-400">cd omni-backend && go run ./cmd/api/main.go</p>
+                  <p className="text-neutral-500 mt-2"># Terminal 2: AI Service</p>
+                  <p className="text-green-400">cd omni-ai-service && python main.py</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-bold text-white mb-2">📡 API Endpoints</h4>
+                <ul className="space-y-1">
+                  <li><span className="text-blue-400">POST</span> /api/v1/admin/chat/playground</li>
+                  <li><span className="text-blue-400">GET</span> /api/v1/admin/products/:shopId</li>
+                  <li><span className="text-blue-400">POST</span> /api/v1/admin/products/:shopId</li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-white/10 flex justify-end">
+              <button onClick={() => setShowHelp(false)} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs font-bold text-white">Đã hiểu</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

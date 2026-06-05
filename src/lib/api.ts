@@ -1,4 +1,34 @@
+import { getSession } from "next-auth/react";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+
+/** Gets auth headers with backend JWT token */
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+
+  try {
+    const session = await getSession();
+    if (session?.user?.backendToken) {
+      headers["Authorization"] = `Bearer ${session.user.backendToken}`;
+    }
+  } catch {
+    // Not authenticated - proceed without token
+  }
+
+  return headers;
+}
+
+/** Handles API response, redirects to login on 401 */
+async function handleResponse(res: Response) {
+  if (res.status === 401) {
+    // Token expired or invalid - redirect to login
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    throw new Error("Unauthorized");
+  }
+  return res.json();
+}
 
 // === GENERIC API METHODS ===
 
@@ -12,8 +42,9 @@ export const api = {
         }
       });
     }
-    const res = await fetch(url.toString());
-    return res.json();
+    const headers = await getAuthHeaders();
+    const res = await fetch(url.toString(), { headers });
+    return handleResponse(res);
   },
 
   async post(endpoint: string, body: any, params?: Record<string, any>) {
@@ -25,12 +56,13 @@ export const api = {
         }
       });
     }
+    const headers = await getAuthHeaders();
     const res = await fetch(url.toString(), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(body),
     });
-    return res.json();
+    return handleResponse(res);
   },
 
   async put(endpoint: string, body: any, params?: Record<string, any>) {
@@ -42,20 +74,24 @@ export const api = {
         }
       });
     }
+    const headers = await getAuthHeaders();
     const res = await fetch(url.toString(), {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(body),
     });
-    return res.json();
+    return handleResponse(res);
   },
 
   async post_form(endpoint: string, formData: FormData) {
+    const headers = await getAuthHeaders();
+    delete headers["Content-Type"]; // Let browser set multipart boundary
     const res = await fetch(`${API_BASE}${endpoint}`, {
       method: "POST",
+      headers,
       body: formData,
     });
-    return res.json();
+    return handleResponse(res);
   },
 
   async delete(endpoint: string, params?: Record<string, any>) {
@@ -67,269 +103,176 @@ export const api = {
         }
       });
     }
-    const res = await fetch(url.toString(), { method: "DELETE" });
-    return res.json();
+    const headers = await getAuthHeaders();
+    const res = await fetch(url.toString(), { method: "DELETE", headers });
+    return handleResponse(res);
   },
 };
 
-// === SPECIFIC API METHODS ===
+// === SPECIFIC API METHODS (updated to use `api.*`) ===
 
 export async function fetchLeads(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/leads/${shopId}`);
-  return res.json();
+  return api.get(`/admin/leads/${shopId}`);
 }
 
 export async function updateLeadStatus(leadId: string, status: string) {
-  const res = await fetch(`${API_BASE}/admin/leads/status`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: leadId, status }),
-  });
-  return res.json();
+  return api.post(`/admin/leads/status`, { id: leadId, status });
 }
 
 export async function fetchInsights(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/insights/${shopId}`);
-  return res.json();
+  return api.get(`/admin/insights/${shopId}`);
 }
 
 export async function fetchChannels(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/channels/${shopId}`);
-  return res.json();
+  return api.get(`/admin/channels/${shopId}`);
 }
 
 export async function getConnectUrl(platform: string, shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/channels/connect?platform=${platform}&shopId=${shopId}`);
-  return res.json();
+  return api.get(`/admin/channels/connect?platform=${platform}&shopId=${shopId}`);
 }
 
-// === ALERT & NOTIFICATIONS ===
+// === ALERTS ===
 
 export async function fetchAlertConfig(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/alerts/${shopId}/config`);
-  return res.json();
+  return api.get(`/admin/alerts/${shopId}/config`);
 }
 
 export async function saveAlertConfig(shopId: string, config: any) {
-  const res = await fetch(`${API_BASE}/admin/alerts/${shopId}/config`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(config),
-  });
-  return res.json();
+  return api.post(`/admin/alerts/${shopId}/config`, config);
 }
 
 export async function fetchNotifications(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/alerts/${shopId}/notifications`);
-  return res.json();
+  return api.get(`/admin/alerts/${shopId}/notifications`);
 }
 
 export async function testAlert(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/alerts/${shopId}/test?shopId=${shopId}`, {
-    method: "POST",
-  });
-  return res.json();
+  return api.post(`/admin/alerts/${shopId}/test`, {});
 }
 
-// === UNIFIED INBOX ===
+// === INBOX ===
 
 export async function fetchThreads(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/inbox/${shopId}/threads`);
-  return res.json();
+  return api.get(`/admin/inbox/${shopId}/threads`);
 }
 
 export async function fetchMessages(threadId: string) {
-  const res = await fetch(`${API_BASE}/admin/inbox/threads/${threadId}/messages`);
-  return res.json();
+  return api.get(`/admin/inbox/threads/${threadId}/messages`);
 }
 
 export async function sendReply(threadId: string, content: string) {
-  const res = await fetch(`${API_BASE}/admin/inbox/threads/${threadId}/reply`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content }),
-  });
-  return res.json();
+  return api.post(`/admin/inbox/threads/${threadId}/reply`, { content });
 }
 
 export async function updateThreadStatus(threadId: string, status: string) {
-  const res = await fetch(`${API_BASE}/admin/inbox/threads/${threadId}/status`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
-  });
-  return res.json();
+  return api.put(`/admin/inbox/threads/${threadId}/status`, { status });
 }
 
 // === ANALYTICS ===
 
 export async function fetchAnalytics(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/analytics/${shopId}`);
-  return res.json();
+  return api.get(`/admin/analytics/${shopId}`);
 }
 
 // === PERSONA ===
 
 export async function fetchBots(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/persona/${shopId}/list`);
-  if (!res.ok) return [];
-  return res.json();
+  return api.get(`/admin/persona/${shopId}/list`);
 }
 
 export async function fetchBot(shopId: string, botId: string) {
-  const res = await fetch(`${API_BASE}/admin/persona/${shopId}/${botId}`);
-  if (!res.ok) return null;
-  return res.json();
+  return api.get(`/admin/persona/${shopId}/${botId}`);
 }
 
-export async function saveBot(shopId: string, botId: string, persona: any) {
-  const url = botId ? `${API_BASE}/admin/persona/${shopId}/${botId}` : `${API_BASE}/admin/persona/${shopId}`;
-  const method = botId ? "PUT" : "POST";
-  const res = await fetch(url, {
-    method,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(persona),
-  });
-  return res.json();
+export async function saveBot(shopId: string, botId: string | null, persona: any) {
+  if (botId) {
+    return api.put(`/admin/persona/${shopId}/${botId}`, persona);
+  }
+  return api.post(`/admin/persona/${shopId}`, persona);
 }
 
 export async function deleteBot(shopId: string, botId: string) {
-  const res = await fetch(`${API_BASE}/admin/persona/${shopId}/${botId}`, { method: "DELETE" });
-  return res.json();
+  return api.delete(`/admin/persona/${shopId}/${botId}`);
 }
 
 // === PLAYGROUND CHAT ===
 
-export async function playgroundChat(data: { shopId: string; botId?: string; senderId: string; message: string; platform?: string; provider?: string; model?: string }) {
-  const res = await fetch(`${API_BASE}/admin/chat/playground`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+export async function playgroundChat(data: {
+  shopId: string;
+  botId?: string;
+  senderId: string;
+  message: string;
+  platform?: string;
+  provider?: string;
+  model?: string;
+}) {
+  return api.post(`/admin/chat/playground`, data);
 }
 
 // === KNOWLEDGE BASE ===
 
 export async function ingestKnowledge(shopId: string, data: { title: string; content: string; source: string; config?: any }) {
-  const res = await fetch(`${API_BASE}/admin/knowledge/${shopId}/ingest`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+  return api.post(`/admin/knowledge/${shopId}/ingest`, data);
 }
 
 export async function ingestWebKnowledge(shopId: string, data: { url: string; recursive: boolean; config?: any }) {
-  const res = await fetch(`${API_BASE}/admin/knowledge/${shopId}/ingest-web`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+  return api.post(`/admin/knowledge/${shopId}/ingest-web`, data);
 }
 
 export async function listKnowledgeDocs(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/knowledge/${shopId}/documents`);
-  if (!res.ok) return [];
-  return res.json();
+  return api.get(`/admin/knowledge/${shopId}/documents`);
 }
 
 export async function deleteKnowledgeDoc(shopId: string, docId: string) {
-  const res = await fetch(`${API_BASE}/admin/knowledge/${shopId}/documents/${docId}`, { method: "DELETE" });
-  return res.json();
+  return api.delete(`/admin/knowledge/${shopId}/documents/${docId}`);
 }
 
-export async function updateKnowledgeDoc(shopId: string, docId: string, data: { title: string; content: string; source: string; config?: any }) {
-  const res = await fetch(`${API_BASE}/admin/knowledge/${shopId}/documents/${docId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+export async function updateKnowledgeDoc(shopId: string, docId: string, data: any) {
+  return api.put(`/admin/knowledge/${shopId}/documents/${docId}`, data);
 }
 
 // === PRODUCTS ===
 
 export async function listProducts(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/products/${shopId}?shop_id=${shopId}`);
-  if (!res.ok) return { products: [], count: 0 };
-  return res.json();
+  const data = await api.get(`/admin/products/${shopId}?shop_id=${shopId}`);
+  if (!data) return { products: [], count: 0 };
+  return data;
 }
 
 export async function getProduct(shopId: string, productId: string) {
-  const res = await fetch(`${API_BASE}/admin/products/${shopId}/${productId}?shop_id=${shopId}`);
-  if (!res.ok) return null;
-  return res.json();
+  return api.get(`/admin/products/${shopId}/${productId}?shop_id=${shopId}`);
 }
 
-export async function createProduct(shopId: string, data: {
-  name: string;
-  product_code?: string;
-  price: number;
-  category?: string;
-  description?: string;
-  stock?: number;
-  images?: string[];
-}) {
-  const res = await fetch(`${API_BASE}/admin/products/${shopId}?shop_id=${shopId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+export async function createProduct(shopId: string, data: any) {
+  return api.post(`/admin/products/${shopId}?shop_id=${shopId}`, data);
 }
 
-export async function updateProduct(shopId: string, productId: string, data: Partial<{
-  name: string;
-  price: number;
-  category: string;
-  description: string;
-  stock: number;
-}>) {
-  const res = await fetch(`${API_BASE}/admin/products/${shopId}/${productId}?shop_id=${shopId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+export async function updateProduct(shopId: string, productId: string, data: any) {
+  return api.put(`/admin/products/${shopId}/${productId}?shop_id=${shopId}`, data);
 }
 
 export async function deleteProduct(shopId: string, productId: string) {
-  const res = await fetch(`${API_BASE}/admin/products/${shopId}/${productId}?shop_id=${shopId}`, {
-    method: "DELETE",
-  });
-  return res.ok || res.status === 204;
+  await api.delete(`/admin/products/${shopId}/${productId}?shop_id=${shopId}`);
+  return true;
 }
 
 // === POLICIES ===
 
 export async function listPolicies(shopId: string) {
-  const res = await fetch(`${API_BASE}/admin/policies?shop_id=${shopId}`);
-  if (!res.ok) return [];
-  return res.json();
+  return api.get(`/admin/policies?shop_id=${shopId}`);
 }
 
-
 export async function testKey(shopId: string, provider: string, key: string) {
-  const res = await fetch(`${API_BASE}/admin/knowledge/${shopId}/test-key`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ provider, key }),
-  });
-  return res.json();
+  return api.post(`/admin/knowledge/${shopId}/test-key`, { provider, key });
 }
 
 export async function getUsageStats(shopId: string, from?: string, to?: string) {
-  const params = new URLSearchParams();
-  if (from) params.append("from", from);
-  if (to) params.append("to", to);
-  
-  const res = await fetch(`${API_BASE}/admin/billing/${shopId}/usage?${params.toString()}`);
-  return res.json();
+  const params: Record<string, string> = {};
+  if (from) params.from = from;
+  if (to) params.to = to;
+  return api.get(`/admin/billing/${shopId}/usage`, params);
 }
 
-// === BOT SETTINGS (AI KEYS & UI) ===
+// === BOT SETTINGS ===
 
 export interface APIKey {
   id: string;
@@ -363,32 +306,20 @@ export async function fetchBotSettings(shopId: string): Promise<BotSetting> {
     welcomeMessage: "Xin chào! Tôi có thể giúp gì cho bạn?",
     position: "right",
     customCss: "",
-    aiConfig: { keys: [] }
+    aiConfig: { keys: [] },
   };
 
   try {
-    const res = await fetch(`${API_BASE}/admin/settings/${shopId}/bot`);
-    if (!res.ok) {
-        console.warn(`Settings not found for shop ${shopId}, using defaults.`);
-        return DEFAULT_SETTINGS;
-    }
-    return await res.json();
-  } catch (error) {
-    console.error("Failed to fetch bot settings:", error);
+    const data = await api.get(`/admin/settings/${shopId}/bot`);
+    return data || DEFAULT_SETTINGS;
+  } catch {
     return DEFAULT_SETTINGS;
   }
 }
 
 export async function updateBotSettings(shopId: string, settings: BotSetting) {
-  try {
-    const res = await fetch(`${API_BASE}/admin/settings/${settings.shopId}/bot`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(settings),
-    });
-    return res.json();
-  } catch (error) {
-    console.error("Failed to update bot settings:", error);
-    throw error;
-  }
+  return api.post(`/admin/settings/${shopId}/bot`, {
+    shopId,
+    ...settings,
+  });
 }

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Users,
@@ -16,6 +17,7 @@ import {
   CreditCard,
   Bot,
   Package,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -95,6 +97,25 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Logout */}
+      <div className="px-4 mb-1">
+        <button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-neutral-500 hover:text-red-400 hover:bg-red-500/5 transition-all duration-200"
+        >
+          <LogOut className="h-5 w-5" />
+          {!isCollapsed && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="font-medium"
+            >
+              Đăng xuất
+            </motion.span>
+          )}
+        </button>
+      </div>
 
       {/* Collapse Toggle */}
       <button

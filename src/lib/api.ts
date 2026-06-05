@@ -318,8 +318,5 @@ export async function fetchBotSettings(shopId: string): Promise<BotSetting> {
 }
 
 export async function updateBotSettings(shopId: string, settings: BotSetting) {
-  return api.post(`/admin/settings/${shopId}/bot`, {
-    shopId,
-    ...settings,
-  });
+  return api.post(`/admin/settings/${shopId}/bot`, settings);
 }

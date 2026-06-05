@@ -51,9 +51,6 @@ const vi: Dict = {
   "footer.legal": "Pháp lý",
   "footer.privacy": "Chính sách bảo mật",
   "footer.terms": "Điều khoản dịch vụ",
-  "onboard.title": "Thiết lập Shop",
-  "login.title": "Đăng nhập",
-  "register.title": "Tạo tài khoản",
 };
 
 const en: Dict = {
@@ -101,18 +98,17 @@ const en: Dict = {
   "footer.legal": "Legal",
   "footer.privacy": "Privacy Policy",
   "footer.terms": "Terms of Service",
-  "onboard.title": "Setup Shop",
-  "login.title": "Login",
-  "register.title": "Create Account",
 };
 
 const translations: Record<Lang, Dict> = { vi, en };
 
-const LangContext = createContext<{
+interface LangCtx {
   lang: Lang;
   t: (key: string) => string;
   setLang: (l: Lang) => void;
-}>({
+}
+
+const LangContext = createContext<LangCtx>({
   lang: "vi",
   t: (k: string) => vi[k] || k,
   setLang: () => {},
@@ -125,10 +121,10 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
     return translations[lang]?.[key] || translations["vi"]?.[key] || key;
   };
 
-  return (
-    <LangContext.Provider value={{ lang, t, setLang }}>
-      {children}
-    </LangContext.Provider>
+  return React.createElement(
+    LangContext.Provider,
+    { value: { lang, t, setLang } },
+    children
   );
 }
 

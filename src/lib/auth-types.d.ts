@@ -2,14 +2,15 @@ import "next-auth";
 
 declare module "next-auth" {
   interface User {
-    token?: string;
-    role?: string;
+    backendToken?: string;
+    shopId?: string;
   }
 
   interface Session {
     user: {
       backendToken?: string;
-      role?: string;
+      shopId?: string;
+      id?: string;
       name?: string | null;
       email?: string | null;
       image?: string | null;
@@ -20,6 +21,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     backendToken?: string;
-    role?: string;
+    shopId?: string;
+    id?: string;
   }
 }

@@ -8,38 +8,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
       name: "credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
+        if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
         try {
-          // Call Go backend to authenticate
           const res = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              username: credentials.username,
+              email: credentials.email,
               password: credentials.password,
             }),
           });
 
           if (!res.ok) {
-            console.error("[AUTH] Backend login failed:", res.status);
             return null;
           }
 
           const data = await res.json();
 
-          // Return user object with token from backend
           return {
-            id: "admin",
-            name: credentials.username as string,
-            role: "admin",
-            token: data.token,
+            id: data.user_id,
+            name: data.name,
+            email: credentials.email as string,
+            shopId: data.shop_id,
+            backendToken: data.token,
           };
         } catch (error) {
           console.error("[AUTH] Login error:", error);
@@ -51,17 +49,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     async jwt({ token, user }) {
-      // On sign-in, store the backend JWT + user info
       if (user) {
-        token.backendToken = user.token;
-        token.role = user.role;
+        token.backendToken = user.backendToken;
+        token.shopId = user.shopId;
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      // Expose backend token + role to the client session
       session.user.backendToken = token.backendToken as string;
-      session.user.role = token.role as string;
+      session.user.shopId = token.shopId as string;
+      session.user.id = token.id as string;
       return session;
     },
   },
@@ -72,7 +70,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 24 * 60 * 60,
   },
 
   trustHost: true,

@@ -81,20 +81,35 @@ export default function OnboardingPage() {
     return true; // All steps skippable
   };
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+
   const handleNext = async () => {
-    if (step === 0 && data.shopName) {
-      // Save shop name to localStorage for now (future: call API)
-      localStorage.setItem("onboarding_shop", JSON.stringify({ name: data.shopName, desc: data.shopDesc, category: data.shopCategory }));
-    }
-    if (step === 1 && data.products.length > 0) {
-      localStorage.setItem("onboarding_products", JSON.stringify(data.products));
-    }
-    if (step === 2 && data.botTone) {
-      localStorage.setItem("onboarding_persona", JSON.stringify({ tone: data.botTone, name: data.botName }));
-    }
     if (step === 5) {
-      // Mark onboarding complete
-      localStorage.setItem("onboarding_complete", "true");
+      // Save ALL onboarding data to backend API
+      setSaving(true);
+      try {
+        const session = await import("next-auth/react").then(m => m.getSession());
+        const token = session?.user?.backendToken;
+        const res = await fetch(`${API_BASE}/onboarding/save`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            shop_name: data.shopName,
+            shop_desc: data.shopDesc,
+            shop_category: data.shopCategory,
+            bot_name: data.botName,
+            bot_tone: data.botTone,
+            products: data.products.map(p => ({ name: p.name, price: parseFloat(p.price) || 0 })),
+          }),
+        });
+        if (!res.ok) console.error("Save onboarding failed");
+      } catch (err) {
+        console.error("Save onboarding error:", err);
+      }
+      setSaving(false);
       router.push("/overview");
       return;
     }
@@ -103,7 +118,6 @@ export default function OnboardingPage() {
 
   const handleSkip = () => {
     if (step === 5) {
-      localStorage.setItem("onboarding_complete", "true");
       router.push("/overview");
       return;
     }
@@ -507,11 +521,13 @@ export default function OnboardingPage() {
             >
               <SkipForward className="h-3.5 w-3.5" /> Bỏ qua
             </button>
-            <button onClick={handleNext}
-              className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold transition-all active:scale-95"
+            <button onClick={handleNext} disabled={saving}
+              className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed rounded-xl text-sm font-bold transition-all active:scale-95"
             >
-              {step === 5 ? "Vào Dashboard" : "Tiếp tục"}
-              {step < 5 && <ChevronRight className="h-4 w-4" />}
+              {saving ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Đang lưu...</>
+              ) : step === 5 ? "Vào Dashboard" : "Tiếp tục"}
+              {step < 5 && !saving && <ChevronRight className="h-4 w-4" />}
             </button>
           </div>
         </div>

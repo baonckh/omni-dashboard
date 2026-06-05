@@ -208,26 +208,31 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ HOW IT WORKS ══════ */}
-      <section className="max-w-5xl mx-auto px-6 mb-28">
+      {/* ══════ WHY AI ══════ */}
+      <section className="max-w-6xl mx-auto px-6 mb-28">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          className="text-2xl md:text-3xl font-extrabold text-center mb-12"
+          className="text-2xl md:text-3xl font-extrabold text-center mb-4"
         >
           {t("usecase.title")}
         </motion.h2>
-        <div className="grid md:grid-cols-4 gap-4">
-          {useCases.map((uc, i) => (
-            <motion.div key={uc.key} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-              className={cn("relative p-6 rounded-2xl border text-center", uc.color)}
+        <p className="text-center text-sm text-neutral-500 mb-10 max-w-lg mx-auto">Chạy 24/7, trả lời đúng chất shop, giá chỉ bằng 1 tháng lương nhân viên.</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          {[
+            { icon: MessageCircle, key: "1", accent: "border-l-blue-600 bg-gradient-to-r from-blue-600/5 to-transparent" },
+            { icon: Search, key: "2", accent: "border-l-purple-600 bg-gradient-to-r from-purple-600/5 to-transparent" },
+            { icon: HeartHandshake, key: "3", accent: "border-l-pink-600 bg-gradient-to-r from-pink-600/5 to-transparent" },
+            { icon: Star, key: "4", accent: "border-l-green-600 bg-gradient-to-r from-green-600/5 to-transparent" },
+          ].map((item, i) => (
+            <motion.div key={item.key} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
+              className={cn("flex items-start gap-5 p-6 rounded-2xl border border-white/5 border-l-4", item.accent)}
             >
-              <div className="absolute -top-3 -left-3 h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold shadow-lg">
-                {uc.key}
+              <div className="p-3 rounded-xl bg-white/5 border border-white/10 shrink-0">
+                <item.icon className="h-6 w-6 text-white" />
               </div>
-              <div className="inline-flex p-3 rounded-xl border mb-4 bg-white/5">
-                <uc.icon className="h-6 w-6 text-white" />
+              <div>
+                <h3 className="text-base font-bold mb-1.5">{t(`usecase.${item.key}.title`)}</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed">{t(`usecase.${item.key}.desc`)}</p>
               </div>
-              <h3 className="text-sm font-bold mb-2">{t(`usecase.${uc.key}.title`)}</h3>
-              <p className="text-xs text-neutral-500 leading-relaxed">{t(`usecase.${uc.key}.desc`)}</p>
             </motion.div>
           ))}
         </div>

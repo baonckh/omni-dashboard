@@ -1,184 +1,315 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Zap, 
-  ArrowRight, 
-  Facebook, 
-  MessageCircle, 
-  ShoppingBag, 
-  Sparkles, 
-  Bot, 
-  ChevronRight,
+import { motion } from "framer-motion";
+import {
+  Bot,
+  Zap,
+  ShoppingBag,
+  MessageSquareCode,
+  Package,
+  BarChart3,
+  ArrowRight,
+  LogIn,
+  Sparkles,
+  Facebook,
   ShieldCheck,
-  Rocket
+  Rocket,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const STEPS = [
-  { 
-    id: "welcome", 
-    title: "Welcome to OmniAI", 
-    description: "Nền tảng quản trị khách hàng đa sàn tự động bằng AI thế hệ mới.",
-    icon: Sparkles,
-    color: "text-purple-500"
+const features = [
+  {
+    icon: Package,
+    title: "Import Sản phẩm",
+    desc: "Tải lên CSV hoặc nhập text — AI tự động học catalog của bạn trong 5 giây.",
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/20",
   },
-  { 
-    id: "channels", 
-    title: "Connect Platforms", 
-    description: "Kết nối tài khoản Facebook, TikTok hoặc Shopee chỉ với 1 click.",
-    icon: ShoppingBag,
-    color: "text-blue-500"
-  },
-  { 
-    id: "persona", 
-    title: "Setup AI Soul", 
-    description: "Thiết lập tính cách và kiến thức cho trợ lý ảo của riêng sếp.",
+  {
     icon: Bot,
-    color: "text-pink-500"
+    title: "AI Bot tự động",
+    desc: "Hiểu sản phẩm, chính sách, tồn kho — trả lời khách hàng như một nhân viên thực thụ.",
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+    border: "border-purple-500/20",
   },
-  { 
-    id: "ready", 
-    title: "Ready for Launch", 
-    description: "Hệ thống đã sẵn sàng. AI sẽ bắt đầu trực chiến 24/7 ngay bậy giờ.",
-    icon: Rocket,
-    color: "text-orange-500"
-  }
+  {
+    icon: MessageSquareCode,
+    title: "Kết nối đa sàn",
+    desc: "Facebook Messenger, TikTok Shop, Shopee, Zalo OA — một dashboard quản trị tất cả.",
+    color: "text-pink-500",
+    bg: "bg-pink-500/10",
+    border: "border-pink-500/20",
+  },
+  {
+    icon: BarChart3,
+    title: "Phân tích real-time",
+    desc: "Theo dõi lead, doanh thu, hiệu suất bot và insight khách hàng tức thì.",
+    color: "text-green-500",
+    bg: "bg-green-500/10",
+    border: "border-green-500/20",
+  },
 ];
 
-export default function OnboardingPage() {
-  const [currentStep, setCurrentStep] = useState(0);
+const stats = [
+  { value: "24/7", label: "Tự động trả lời" },
+  { value: "< 1s", label: "Thời gian phản hồi" },
+  { value: "5+", label: "Nền tảng kết nối" },
+  { value: "Zero", label: "Phí setup ban đầu" },
+];
 
-  const nextStep = () => {
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const step = STEPS[currentStep];
-
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Orbs */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-blue-600/20 to-transparent blur-[120px] pointer-events-none" />
-      <div className="absolute -bottom-40 left-0 w-80 h-80 bg-purple-600/10 blur-[100px] pointer-events-none" />
-      
-      {/* Progress Header */}
-      <div className="absolute top-12 flex items-center gap-2">
-        {STEPS.map((_, i) => (
-          <div 
-            key={i} 
-            className={cn(
-              "h-1 rounded-full transition-all duration-500",
-              i <= currentStep ? "w-8 bg-blue-500" : "w-4 bg-white/10"
-            )} 
-          />
-        ))}
-      </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentStep}
-          initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="w-full max-w-xl text-center z-10"
-        >
-          {/* Icon Orb */}
-          <div className="inline-flex p-4 rounded-3xl bg-white/5 border border-white/10 mb-8 relative group">
-            <step.icon className={cn("h-10 w-10", step.color)} />
-            <div className={cn("absolute inset-0 opacity-40 blur-xl group-hover:opacity-60 transition-opacity", step.color.replace('text', 'bg'))} />
-          </div>
-
-          <h4 className="text-blue-500 font-bold uppercase tracking-widest text-xs mb-3">Phase {currentStep + 1}</h4>
-          <h1 className="text-5xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 leading-tight">
-            {step.title}
-          </h1>
-          <p className="text-lg text-neutral-400 mb-12 max-w-md mx-auto leading-relaxed">
-            {step.description}
-          </p>
-
-          {/* Interactive Step Content */}
-          <div className="mb-12">
-            {currentStep === 0 && (
-              <div className="grid grid-cols-2 gap-4 text-left">
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                   <ShieldCheck className="h-5 w-5 text-green-500 mb-2" />
-                   <h4 className="text-sm font-bold">Bảo mật tuyệt đối</h4>
-                   <p className="text-xs text-neutral-500">Dữ liệu mã hóa 2 lớp.</p>
-                </div>
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                   <Zap className="h-5 w-5 text-yellow-500 mb-2" />
-                   <h4 className="text-sm font-bold">Tốc độ tức thì</h4>
-                   <p className="text-xs text-neutral-500">Response AI dưới 1s.</p>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 1 && (
-               <div className="flex justify-center gap-6">
-                 <div className="h-16 w-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center animate-bounce [animation-duration:3s]">
-                    <Facebook className="h-8 w-8 text-blue-500" />
-                 </div>
-                 <div className="h-16 w-16 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center animate-bounce [animation-delay:0.2s] [animation-duration:3s]">
-                    <MessageCircle className="h-8 w-8 text-pink-500" />
-                 </div>
-                 <div className="h-16 w-16 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center animate-bounce [animation-delay:0.4s] [animation-duration:3s]">
-                    <ShoppingBag className="h-8 w-8 text-orange-500" />
-                 </div>
-               </div>
-            )}
-
-            {currentStep === 2 && (
-               <div className="flex flex-col gap-3">
-                 {["🚀 Chuyên nghiệp & Lịch sự", "🔥 Hài hước & Gần gũi", "🏠 Chân thành & Ấm áp"].map((t) => (
-                    <div key={t} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer text-sm font-medium">
-                       {t}
-                    </div>
-                 ))}
-               </div>
-            )}
-
-            {currentStep === 3 && (
-               <div className="relative group cursor-pointer inline-block">
-                 <div className="absolute inset-0 bg-blue-600 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity" />
-                 <Link href="/overview" className="relative z-10 px-10 py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold flex items-center gap-3 shadow-2xl shadow-blue-600/40 transition-all active:scale-95 text-lg">
-                    Truy cập Dashboard Ngay
-                    <Rocket className="h-6 w-6" />
-                 </Link>
-               </div>
-            )}
-          </div>
-
-          {/* Controls */}
-          {currentStep < 3 && (
-            <div className="flex items-center justify-center gap-4">
-               {currentStep > 0 && (
-                 <button onClick={prevStep} className="px-8 py-3 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-colors">
-                    Quay lại
-                 </button>
-               )}
-               <button onClick={nextStep} className="px-10 py-4 bg-white text-black rounded-xl font-bold flex items-center gap-2 hover:bg-neutral-200 transition-all active:scale-95 shadow-xl shadow-white/5">
-                  Tiếp tục
-                  <ChevronRight className="h-5 w-5" />
-               </button>
+    <div className="min-h-screen bg-[#050505] text-white overflow-hidden">
+      {/* ── Navigation ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-white/5 bg-[#050505]/70">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="bg-white rounded-lg p-1.5">
+              <Zap className="h-5 w-5 text-black fill-black" />
             </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+            <span className="font-bold text-lg">
+              Omni<span className="text-neutral-500">AI</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/login"
+              className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-400 hover:text-white transition-colors font-medium"
+            >
+              <LogIn className="h-4 w-4" />
+              Đăng nhập
+            </Link>
+            <Link
+              href="/register"
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-blue-600/25"
+            >
+              Bắt đầu miễn phí
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-      {/* Footer Branding */}
-      <footer className="absolute bottom-12 text-neutral-600 text-[10px] uppercase tracking-[0.3em] font-bold">
-        Designed by Antigravity AI • 1-Click Omnichannel Connect
+      {/* ── Hero ── */}
+      <section className="relative pt-32 pb-24 px-6">
+        {/* Orbs */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[700px] bg-gradient-to-b from-blue-600/20 via-purple-600/10 to-transparent blur-[120px] pointer-events-none" />
+        <div className="absolute top-40 -left-40 w-96 h-96 bg-blue-500/5 blur-[100px] pointer-events-none" />
+        <div className="absolute top-60 -right-40 w-80 h-80 bg-purple-500/5 blur-[100px] pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-neutral-400 mb-8"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-blue-500" />
+            MVP Beta — Hoàn toàn miễn phí
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6"
+          >
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
+              AI Omnichannel
+            </span>
+            <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+              không cần code
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+          >
+            Kết nối Facebook, TikTok, Shopee, Zalo — AI tự động trả lời khách hàng 24/7
+            dựa trên catalog và chính sách shop của bạn.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex items-center justify-center gap-4"
+          >
+            <Link
+              href="/register"
+              className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-base flex items-center gap-2 transition-all active:scale-[0.97] shadow-2xl shadow-blue-600/30"
+            >
+              Bắt đầu miễn phí
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/login"
+              className="px-8 py-4 border border-white/10 hover:bg-white/5 rounded-2xl font-bold text-base flex items-center gap-2 transition-all"
+            >
+              <LogIn className="h-5 w-5" />
+              Đăng nhập
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Stats ── */}
+      <section className="max-w-5xl mx-auto px-6 mb-24">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {stats.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + i * 0.1 }}
+              className="text-center p-6 rounded-2xl bg-white/[0.02] border border-white/5"
+            >
+              <div className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 mb-1">
+                {s.value}
+              </div>
+              <div className="text-xs text-neutral-500 font-medium">{s.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section className="max-w-6xl mx-auto px-6 mb-32">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+            Mọi thứ bạn cần để{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+              vận hành omnichannel
+            </span>
+          </h2>
+          <p className="text-neutral-500 max-w-lg mx-auto">
+            Từ import sản phẩm đến AI trả lời khách hàng — tất cả trong một nền tảng.
+          </p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={cn(
+                "p-6 rounded-2xl border backdrop-blur-sm transition-all hover:scale-[1.02] duration-300",
+                f.border,
+                f.bg,
+              )}
+            >
+              <div className={cn("inline-flex p-3 rounded-xl border mb-4", f.border, f.bg)}>
+                <f.icon className={cn("h-6 w-6", f.color)} />
+              </div>
+              <h3 className="text-lg font-bold mb-2">{f.title}</h3>
+              <p className="text-sm text-neutral-400 leading-relaxed">{f.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Facebook Integration Highlight ── */}
+      <section className="max-w-5xl mx-auto px-6 mb-32">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="relative p-10 md:p-16 rounded-3xl bg-gradient-to-br from-blue-600/10 via-transparent to-purple-600/10 border border-blue-500/10 overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[80px] pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium mb-4">
+                <Facebook className="h-3.5 w-3.5" />
+                Facebook Messenger
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-4">
+                Kết nối Facebook Messenger{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+                  trong 1 click
+                </span>
+              </h2>
+              <p className="text-neutral-400 leading-relaxed mb-6">
+                AI tự động trả lời tin nhắn Facebook, tư vấn sản phẩm, chốt đơn —
+                hoạt động 24/7 không cần nhân viên túc trực.
+              </p>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold transition-all active:scale-95"
+              >
+                Dùng thử ngay
+                <Rocket className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="flex-shrink-0">
+              <div className="w-32 h-32 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                <Facebook className="h-16 w-16 text-blue-500" />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── CTA Final ── */}
+      <section className="max-w-3xl mx-auto px-6 mb-32 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+        >
+          <div className="inline-flex p-4 rounded-3xl bg-white/5 border border-white/10 mb-6">
+            <Bot className="h-8 w-8 text-blue-500" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+            Sẵn sàng để AI{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+              làm việc cho bạn?
+            </span>
+          </h2>
+          <p className="text-neutral-500 max-w-md mx-auto mb-8">
+            Tạo tài khoản miễn phí — không cần thẻ tín dụng. 5 phút để bắt đầu.
+          </p>
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold text-base transition-all active:scale-[0.97] shadow-2xl shadow-blue-600/30"
+          >
+            <Star className="h-5 w-5" />
+            Tạo tài khoản miễn phí
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-white/5 py-8 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="bg-white rounded p-1">
+              <Zap className="h-4 w-4 text-black fill-black" />
+            </div>
+            <span className="text-sm font-bold">
+              Omni<span className="text-neutral-500">AI</span>
+            </span>
+          </div>
+          <p className="text-xs text-neutral-700 font-medium">
+            © 2026 OmniAI. Bản quyền thuộc về Omni Customer Service.
+          </p>
+        </div>
       </footer>
     </div>
   );

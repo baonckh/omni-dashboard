@@ -36,8 +36,8 @@ export default function RegisterPage() {
         return;
       }
 
-      // Redirect to login page
-      router.push("/login?registered=true");
+      // Redirect to onboarding
+      router.push("/onboarding");
     } catch {
       setError("Không thể kết nối đến server");
       setLoading(false);

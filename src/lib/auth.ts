@@ -1,12 +1,9 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET || "dev-secret-do-not-use-in-production",
-
   providers: [
     Credentials({
       name: "credentials",
@@ -36,11 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
     }),
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? [Google({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET })]
-      : []),
   ],
-
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -51,21 +44,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      session.user.backendToken = token.backendToken as string;
-      session.user.shopId = token.shopId as string;
-      session.user.id = token.id as string;
+      if (token.backendToken) session.user.backendToken = token.backendToken as string;
+      if (token.shopId) session.user.shopId = token.shopId as string;
+      if (token.id) session.user.id = token.id as string;
       return session;
     },
   },
-
-  pages: {
-    signIn: "/login",
-  },
-
-  session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60,
-  },
-
+  pages: { signIn: "/login" },
+  session: { strategy: "jwt", maxAge: 24 * 60 * 60 },
   trustHost: true,
 });

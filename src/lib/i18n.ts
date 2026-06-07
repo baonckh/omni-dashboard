@@ -188,8 +188,8 @@ const LangContext = createContext<LangCtx>({
   setLang: () => {},
 });
 
-export function LangProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Lang>("vi");
+export function LangProvider({ children, initialLang }: { children: React.ReactNode; initialLang?: Lang }) {
+  const [lang, setLang] = useState<Lang>(initialLang || "vi");
   const t = (key: string): string => translations[lang]?.[key] || translations["vi"]?.[key] || key;
 
   useEffect(() => {

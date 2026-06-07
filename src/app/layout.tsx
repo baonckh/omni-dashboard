@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "OmniAI — AI Omnichannel Platform",
     description:
       "Tự động hóa chăm sóc khách hàng đa sàn với AI. Kết nối Facebook, Zalo, TikTok Shop, Shopee, Instagram — AI tự động trả lời 24/7.",
-    url: "https://omni-ai.com",
+    url: "https://omni-dashboard-tau.vercel.app",
     siteName: "OmniAI",
     locale: "vi_VN",
     type: "website",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     description: "Tự động hóa chăm sóc khách hàng đa sàn với AI.",
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: "https://omni-ai.com" },
+  alternates: { canonical: "https://omni-dashboard-tau.vercel.app" },
 };
 
 const jsonLd = {
@@ -42,7 +42,7 @@ const jsonLd = {
     {
       "@type": "Organization",
       "name": "OmniAI",
-      "url": "https://omni-ai.com",
+      "url": "https://omni-dashboard-tau.vercel.app",
       "description": "AI Omnichannel customer service platform for Vietnamese SMEs",
       "contactPoint": { "@type": "ContactPoint", "email": "hello@omni-ai.com", "contactType": "customer support" },
     },
@@ -56,6 +56,8 @@ const jsonLd = {
     },
   ],
 };
+
+
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Priority: 1. lang cookie (đã set từ proxy/ user toggle) → 2. Geo IP header → 3. Default "vi"

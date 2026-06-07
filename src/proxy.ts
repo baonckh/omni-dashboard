@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip static files, API routes
@@ -14,11 +14,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Detect country from Vercel header
+  // Detect country from Vercel header (added automatically on Vercel edge)
   const country = request.headers.get("x-vercel-ip-country") || "";
   const defaultLang = country === "VN" ? "vi" : "en";
 
-  // Set lang cookie
+  console.log(`[PROXY] IP country=${country}, lang=${defaultLang}`);
+
+  // Set lang cookie (30 days)
   const response = NextResponse.next();
   response.cookies.set("lang", defaultLang, {
     path: "/",

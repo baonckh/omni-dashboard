@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
@@ -10,8 +11,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        backendToken: { label: "Token", type: "hidden" },
+        shopId: { label: "Shop", type: "hidden" },
+        userId: { label: "User", type: "hidden" },
+        name: { label: "Name", type: "hidden" },
       },
       async authorize(credentials) {
+        // ── Google flow: backendToken has been pre-obtained ──
+        if (credentials?.password === "__GOOGLE__" && credentials?.backendToken) {
+          return {
+            id: credentials.userId as string,
+            name: (credentials.name as string) || "",
+            email: credentials.email as string,
+            shopId: credentials.shopId as string,
+            backendToken: credentials.backendToken as string,
+          };
+        }
+
+        // ── Email/Password flow: call backend ──
         if (!credentials?.email || !credentials?.password) return null;
         try {
           const res = await fetch(`${API_BASE}/auth/login`, {
@@ -28,11 +45,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             shopId: data.shop_id,
             backendToken: data.token,
           };
-        } catch {
-          return null;
-        }
+        } catch { return null; }
       },
     }),
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [Google({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET })]
+      : []),
   ],
   callbacks: {
     async jwt({ token, user }) {

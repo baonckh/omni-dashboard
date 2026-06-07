@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 export type Lang = "vi" | "en";
 
@@ -58,6 +58,7 @@ const vi: Dict = {
 
   // ── Use Case Section ──
   "usecase.title": "Nhân viên CSKH AI — làm việc 24/7, không ca kíp, không lương tháng 13",
+  "usecase.sub": "Chạy 24/7, giữ đúng chất shop, giá chỉ bằng lương 1 nhân viên — không tăng ca, không nghỉ Tết, không đòi tăng lương.",
   "usecase.1.title": "Trả lời bất cứ lúc nào, kể cả 3 giờ sáng",
   "usecase.1.desc": "Khách nhắn lúc nửa đêm, ngày lễ, Tết — bot trả lời ngay trong 3 giây. Không bỏ lỡ bất kỳ đơn hàng nào.",
   "usecase.2.title": "Thuộc sản phẩm ngay lần đầu, không cần đào tạo lại",
@@ -141,6 +142,7 @@ const en: Dict = {
 
   // ── Use Case Section ──
   "usecase.title": "An AI CS staff — works 24/7, no shifts, no 13th-month salary",
+  "usecase.sub": "Runs 24/7, matches your brand voice, costs less than 1 staff salary — no overtime, no holidays, no raise demands.",
   "usecase.1.title": "Replies anytime — even 3 AM",
   "usecase.1.desc": "Customer messages at midnight, holidays, Tet? AI replies within 3 seconds. Zero missed opportunities.",
   "usecase.2.title": "Knows products from day one, no retraining",
@@ -189,6 +191,11 @@ const LangContext = createContext<LangCtx>({
 export function LangProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<Lang>("vi");
   const t = (key: string): string => translations[lang]?.[key] || translations["vi"]?.[key] || key;
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   return React.createElement(LangContext.Provider, { value: { lang, t, setLang } }, children);
 }
 

@@ -242,7 +242,7 @@ export default function LandingPage() {
         >
           {t("usecase.title")}
         </motion.h2>
-        <p className="text-center text-sm mb-10" style={{ color: "#A1A1AA" }}>Chạy 24/7, trả lời đúng chất shop, giá chỉ bằng 1 tháng lương nhân viên.</p>
+        <p className="text-center text-sm mb-10" style={{ color: "#A1A1AA" }}>{t("usecase.sub")}</p>
         <div className="grid md:grid-cols-2 gap-3">
           {useCases.map((item, i) => (
             <motion.div key={item.key} initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}

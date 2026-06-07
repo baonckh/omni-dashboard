@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "@fontsource/be-vietnam-pro/400.css";
 import "@fontsource/be-vietnam-pro/500.css";
 import "@fontsource/be-vietnam-pro/600.css";
@@ -35,17 +36,32 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://omni-ai.com" },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "OmniAI",
+      "url": "https://omni-ai.com",
+      "description": "AI Omnichannel customer service platform for SMEs",
+      "contactPoint": { "@type": "ContactPoint", "email": "hello@omni-ai.com", "contactType": "customer support" },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "OmniAI",
+      "operatingSystem": "Web",
+      "applicationCategory": "BusinessApplication",
+      "description": "AI Omnichannel customer service platform for Vietnamese SMEs. Connect Facebook, Zalo, TikTok Shop, Shopee, Instagram.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    },
+  ],
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className="dark" suppressHydrationWarning>
-      <body
-        className="font-sans antialiased selection:bg-white/20"
-        suppressHydrationWarning
-      >
+      <body className="font-sans antialiased selection:bg-white/20" suppressHydrationWarning>
+        <Script id="schema-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-blue-600 focus:text-white focus:text-sm focus:font-bold">
           Skip to content
         </a>

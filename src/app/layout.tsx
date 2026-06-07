@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import Script from "next/script";
 import "@fontsource/be-vietnam-pro/400.css";
 import "@fontsource/be-vietnam-pro/500.css";
@@ -58,9 +58,20 @@ const jsonLd = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Priority: 1. lang cookie (đã set từ proxy/ user toggle) → 2. Geo IP header → 3. Default "vi"
   const cookieStore = await cookies();
+  const headersList = await headers();
+
   const langCookie = cookieStore.get("lang")?.value;
-  const initialLang: Lang = langCookie === "en" ? "en" : "vi";
+  const geoCountry = headersList.get("x-vercel-ip-country") || "";
+
+  let initialLang: Lang = "vi";
+
+  if (langCookie === "vi" || langCookie === "en") {
+    initialLang = langCookie;
+  } else {
+    initialLang = geoCountry === "VN" ? "vi" : "en";
+  }
 
   return (
     <html lang={initialLang} className="dark" suppressHydrationWarning>

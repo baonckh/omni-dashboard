@@ -271,7 +271,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-center w-14 h-14 rounded-2xl mx-auto mb-5" style={{ backgroundColor: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.15)" }}>
             <Bot className="h-7 w-7" style={{ color: "#60A5FA" }} />
           </div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">50+ chủ shop đã dùng OmniAI</h2>
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("cta.title")}</h2>
           <p className="text-sm mb-8 max-w-sm mx-auto" style={{ color: "#A1A1AA" }}>
             Dùng thử miễn phí — không cần thẻ tín dụng. 5 phút bắt đầu.
           </p>
@@ -346,3 +346,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

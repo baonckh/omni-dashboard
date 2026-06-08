@@ -29,21 +29,21 @@ export default function BotPipeline() {
   useEffect(() => {
     const sequence: Stage[] = ["ingest", "vector", "retrieve", "filter", "persona", "respond"];
     let i = 0;
+    let timer: ReturnType<typeof setTimeout>;
 
     const run = () => {
       if (i >= sequence.length) {
-        // Reset after pause
-        setTimeout(() => { setStage("idle"); setProgress(0); setTimeout(run, 800); }, 3000);
+        timer = setTimeout(() => { setStage("idle"); setProgress(0); timer = setTimeout(run, 1000); }, 4000);
         return;
       }
       setStage(sequence[i]);
       setProgress((i + 1) / sequence.length);
       i++;
-      setTimeout(run, 1400);
+      timer = setTimeout(run, 2300);
     };
 
-    const t = setTimeout(run, 600);
-    return () => clearTimeout(t);
+    timer = setTimeout(run, 700);
+    return () => clearTimeout(timer);
   }, []);
 
   const currentIdx = STAGES.findIndex((s) => s.key === stage);
@@ -100,7 +100,7 @@ export default function BotPipeline() {
         </div>
 
         {/* Main Visualization Area */}
-        <div className="min-h-[200px] rounded-xl border border-white/5 bg-black/40 p-4 relative overflow-hidden">
+        <div className="min-h-[260px] rounded-xl border border-white/5 bg-black/40 p-4 relative overflow-hidden">
           <AnimatePresence mode="wait">
             {stage === "ingest" && (
               <motion.div key="ingest" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">

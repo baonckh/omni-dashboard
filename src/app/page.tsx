@@ -9,7 +9,7 @@ import {
   Mail, Users, HeartHandshake,
   Clock, MessageCircle, Smartphone, ShoppingCart,
   Instagram, BellRing, Search, ShoppingBag, Quote,
-  CheckCircle2, ChevronRight, Package, Heart,
+  CheckCircle2, ChevronRight, Package,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/lib/i18n";
@@ -139,28 +139,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ PAIN POINTS ══════ */}
-      <section className="max-w-5xl mx-auto px-5 mb-24">
-        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-xl md:text-2xl font-extrabold text-center mb-10 text-white">{t("pain.title")}</motion.h2>
-        <div className="grid md:grid-cols-2 gap-3">
-          {painPoints.map((item, i) => (
-            <motion.div key={item.key} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-              className="group flex items-start gap-4 p-5 rounded-2xl cursor-default transition-all duration-300 hover:-translate-y-0.5"
-              style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
-            >
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.15)" }}>
-                <item.icon className="h-5 w-5 text-red-500" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-white mb-0.5">{t(`pain.${item.key}.title`)}</h3>
-                <p className="text-xs leading-relaxed text-zinc-500">{t(`pain.${item.key}.desc`)}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       {/* ══════ STATS ══════ */}
       <section className="max-w-4xl mx-auto px-5 mb-24">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px rounded-2xl overflow-hidden border border-white/[0.06]">
@@ -173,6 +151,77 @@ export default function LandingPage() {
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* ══════ CHAT DEMO ══════ */}
+      <section className="max-w-5xl mx-auto px-5 mb-24">
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">Xem AI trả lời khách hàng như thế nào</h2>
+          <p className="text-sm text-zinc-500 max-w-lg mx-auto">Bot hiểu sản phẩm, chính sách, tồn kho — trả lời tự nhiên như nhân viên thật.</p>
+        </motion.div>
+
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2">
+            <ChatDemo />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 space-y-3">
+            {[
+              { title: "Hiểu sản phẩm & tồn kho", desc: "AI biết chính xác giá, màu sắc, size có sẵn — không trả lời chung chung." },
+              { title: "Tư vấn & chốt đơn", desc: "Tự động gửi link sản phẩm, mã giảm giá, hỗ trợ đặt hàng — không cần nhân viên." },
+              { title: "Giữ đúng chất riêng", desc: "AI nói chuyện theo phong cách, giọng văn, cách xưng hô của shop bạn." },
+              { title: "Phản hồi trong 1-3 giây", desc: "Khách không phải chờ đợi. Không bỏ lỡ cơ hội bán hàng." },
+            ].map((item, i) => (
+              <motion.div key={item.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                className="flex items-start gap-3 p-4 rounded-xl transition-all" style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+              >
+                <div className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center" style={{ backgroundColor: "rgba(37,99,235,0.1)" }}>
+                  <CheckCircle2 className="h-4 w-4 text-blue-400" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white mb-0.5">{item.title}</h4>
+                  <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════ BOT INTELLIGENCE PIPELINE ══════ */}
+      <section className="max-w-5xl mx-auto px-5 mb-24">
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
+            AI hiểu <span className="text-blue-500">sản phẩm</span>, <span className="text-purple-500">tồn kho</span>, <span className="text-pink-500">chính sách</span> —<br className="hidden md:block" />không chỉ là chat template
+          </h2>
+          <p className="text-sm text-zinc-500 max-w-xl mx-auto">
+            Bot khác dùng kịch bản có sẵn. OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật, truy xuất <span className="text-purple-400 font-medium">đúng variant</span>, giữ <span className="text-pink-400 font-medium">nguyên context</span>.
+          </p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
+          <BotPipeline />
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="grid md:grid-cols-2 gap-4"
+        >
+          <div className="p-5 rounded-2xl border border-red-500/10 bg-red-500/5">
+            <p className="text-xs font-bold text-red-400 mb-3 uppercase tracking-wider">Bot thông thường</p>
+            <ul className="space-y-2">
+              {["Trả lời theo kịch bản cố định", "Không hiểu sản phẩm thật", "Mất context sau 2-3 tin nhắn", "Trả lời chung chung", "Training thủ công từng kịch bản"].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-xs text-zinc-400"><span className="text-red-500 mt-0.5">✕</span> {item}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-5 rounded-2xl border border-green-500/10 bg-green-500/5">
+            <p className="text-xs font-bold text-green-400 mb-3 uppercase tracking-wider">OmniAI</p>
+            <ul className="space-y-2">
+              {["Hiểu catalog thật: giá, size, màu, tồn kho", "Truy xuất đúng variant", "Giữ context xuyên suốt", "Trả lời cá nhân hóa", "Tự động học, không cần training"].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-xs text-zinc-300"><span className="text-green-500 mt-0.5 font-bold">✓</span> {item}</li>
+              ))}
+            </ul>
+          </div>
+        </motion.div>
       </section>
 
       {/* ══════ FEATURES ══════ */}
@@ -215,105 +264,26 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ CHAT DEMO ══════ */}
+      {/* ══════ PAIN POINTS ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">Xem AI trả lời khách hàng như thế nào</h2>
-          <p className="text-sm text-zinc-500 max-w-lg mx-auto">Bot hiểu sản phẩm, chính sách, tồn kho — trả lời tự nhiên như nhân viên thật.</p>
-        </motion.div>
-
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-          {/* Animated Chat Demo */}
-          <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-            className="w-full md:w-1/2"
-          >
-            <ChatDemo />
-          </motion.div>
-
-          {/* Features Side */}
-          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-            className="w-full md:w-1/2 space-y-3"
-          >
-            {[
-              { title: "Hiểu sản phẩm & tồn kho", desc: "AI biết chính xác giá, màu sắc, size có sẵn — không trả lời chung chung." },
-              { title: "Tư vấn & chốt đơn", desc: "Tự động gửi link sản phẩm, mã giảm giá, hỗ trợ đặt hàng — không cần nhân viên." },
-              { title: "Giữ đúng chất riêng", desc: "AI nói chuyện theo phong cách, giọng văn, cách xưng hô của shop bạn." },
-              { title: "Phản hồi trong 1-3 giây", desc: "Khách không phải chờ đợi. Không bỏ lỡ cơ hội bán hàng." },
-            ].map((item, i) => (
-              <motion.div key={item.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                className="flex items-start gap-3 p-4 rounded-xl transition-all" style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
-              >
-                <div className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center" style={{ backgroundColor: "rgba(37,99,235,0.1)" }}>
-                  <CheckCircle2 className="h-4 w-4 text-blue-400" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-white mb-0.5">{item.title}</h4>
-                  <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="text-xl md:text-2xl font-extrabold text-center mb-10 text-white">{t("pain.title")}</motion.h2>
+        <div className="grid md:grid-cols-2 gap-3">
+          {painPoints.map((item, i) => (
+            <motion.div key={item.key} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+              className="group flex items-start gap-4 p-5 rounded-2xl cursor-default transition-all duration-300 hover:-translate-y-0.5"
+              style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+            >
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.15)" }}>
+                <item.icon className="h-5 w-5 text-red-500" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white mb-0.5">{t(`pain.${item.key}.title`)}</h3>
+                <p className="text-xs leading-relaxed text-zinc-500">{t(`pain.${item.key}.desc`)}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </section>
-
-      {/* ══════ BOT INTELLIGENCE PIPELINE ══════ */}
-      <section className="max-w-5xl mx-auto px-5 mb-24">
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
-            AI hiểu <span className="text-blue-500">sản phẩm</span>, 
-            <span className="text-purple-500"> tồn kho</span>, 
-            <span className="text-pink-500"> chính sách</span> — 
-            <br className="hidden md:block" />không chỉ là chat template
-          </h2>
-          <p className="text-sm text-zinc-500 max-w-xl mx-auto">
-            Bot khác dùng kịch bản có sẵn. OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật của bạn,
-            truy xuất <span className="text-purple-400 font-medium">đúng sản phẩm, đúng variant</span>,
-            giữ <span className="text-pink-400 font-medium">nguyên context</span> xuyên suốt cuộc hội thoại.
-          </p>
-        </motion.div>
-
-        {/* Animated Pipeline */}
-        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
-          <BotPipeline />
-        </motion.div>
-
-        {/* vs Other Bots */}
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="grid md:grid-cols-2 gap-4"
-        >
-          <div className="p-5 rounded-2xl border border-red-500/10 bg-red-500/5">
-            <p className="text-xs font-bold text-red-400 mb-3 uppercase tracking-wider">Bot thông thường</p>
-            <ul className="space-y-2">
-              {[
-                "Trả lời theo kịch bản cố định",
-                "Không hiểu sản phẩm thật của shop",
-                "Mất context sau 2-3 tin nhắn",
-                "Trả lời chung chung, mất khách",
-                "Phải training thủ công từng kịch bản",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2 text-xs text-zinc-400">
-                  <span className="text-red-500 mt-0.5">✕</span> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="p-5 rounded-2xl border border-green-500/10 bg-green-500/5">
-            <p className="text-xs font-bold text-green-400 mb-3 uppercase tracking-wider">OmniAI</p>
-            <ul className="space-y-2">
-              {[
-                "Hiểu catalog thật: giá, size, màu, tồn kho",
-                "Truy xuất đúng variant sản phẩm khách hỏi",
-                "Giữ context xuyên suốt cuộc hội thoại",
-                "Trả lời cá nhân hóa theo phong cách shop",
-                "Tự động học từ dữ liệu, không cần training",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2 text-xs text-zinc-300">
-                  <span className="text-green-500 mt-0.5 font-bold">✓</span> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </motion.div>
       </section>
 
       {/* ══════ TESTIMONIAL ══════ */}

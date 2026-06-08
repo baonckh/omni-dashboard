@@ -58,6 +58,8 @@ export default function LoginPage() {
           <span className="font-bold text-lg">Omni<span className="text-zinc-500">AI</span></span>
         </Link>
 
+        <h1 className="text-xl font-extrabold text-center text-white mb-6">{t("auth.login.title")}</h1>
+
         {error && <div className="mb-4 px-4 py-3 rounded-xl text-sm font-medium bg-red-500/10 border border-red-500/20 text-red-400">{error}</div>}
 
         <button onClick={handleGoogle} disabled={googleLoading}

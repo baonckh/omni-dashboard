@@ -207,8 +207,8 @@ export default function LandingPage() {
       {/* ══════ CHAT DEMO ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">Xem AI trả lời khách hàng như thế nào</h2>
-          <p className="text-sm text-zinc-500 max-w-lg mx-auto">Bot hiểu sản phẩm, chính sách, tồn kho — trả lời tự nhiên như nhân viên thật.</p>
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("chat.title")}</h2>
+          <p className="text-sm text-zinc-500 max-w-lg mx-auto">{t("chat.sub")}</p>
         </motion.div>
 
         <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -217,10 +217,10 @@ export default function LandingPage() {
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 space-y-3">
             {[
-              { title: "Hiểu sản phẩm & tồn kho", desc: "AI biết chính xác giá, màu sắc, size có sẵn — không trả lời chung chung." },
-              { title: "Tư vấn & chốt đơn", desc: "Tự động gửi link sản phẩm, mã giảm giá, hỗ trợ đặt hàng — không cần nhân viên." },
-              { title: "Giữ đúng chất riêng", desc: "AI nói chuyện theo phong cách, giọng văn, cách xưng hô của shop bạn." },
-              { title: "Phản hồi trong 1-3 giây", desc: "Khách không phải chờ đợi. Không bỏ lỡ cơ hội bán hàng." },
+              { title: t("chat.feat1"), desc: t("chat.feat1_desc") },
+              { title: t("chat.feat2"), desc: t("chat.feat2_desc") },
+              { title: t("chat.feat3"), desc: t("chat.feat3_desc") },
+              { title: t("chat.feat4"), desc: t("chat.feat4_desc") },
             ].map((item, i) => (
               <motion.div key={item.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
                 className="flex items-start gap-3 p-4 rounded-xl transition-all" style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}

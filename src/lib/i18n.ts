@@ -70,6 +70,18 @@ const vi: Dict = {
 
   // ── Social Proof ──
   "trusted.title": "Được tin dùng bởi các chủ shop SME",
+  // ── Chat Demo Section ──
+  "chat.title": "Xem AI trả lời khách hàng như thế nào",
+  "chat.sub": "Bot hiểu sản phẩm, chính sách, tồn kho — trả lời tự nhiên như nhân viên thật.",
+  "chat.feat1": "Hiểu sản phẩm & tồn kho",
+  "chat.feat1_desc": "AI biết chính xác giá, màu sắc, size có sẵn — không trả lời chung chung.",
+  "chat.feat2": "Tư vấn & chốt đơn",
+  "chat.feat2_desc": "Tự động gửi link sản phẩm, mã giảm giá, hỗ trợ đặt hàng — không cần nhân viên.",
+  "chat.feat3": "Giữ đúng chất riêng",
+  "chat.feat3_desc": "AI nói chuyện theo phong cách, giọng văn, cách xưng hô của shop bạn.",
+  "chat.feat4": "Phản hồi trong 1-3 giây",
+  "chat.feat4_desc": "Khách không phải chờ đợi. Không bỏ lỡ cơ hội bán hàng.",
+
   "testimonial.text": "\"Từ ngày dùng OmniAI, tôi không còn thức đêm trả lời tin nhắn nữa. Bot trả lời như nhân viên thật, khách còn khen tư vấn nhiệt tình.\"",
   "testimonial.name": "Minh Trang",
   "testimonial.role": "Chủ shop Thời trang ABC",
@@ -187,6 +199,18 @@ const en: Dict = {
 
   // ── Social Proof ──
   "trusted.title": "Trusted by SME shop owners",
+  // ── Chat Demo Section ──
+  "chat.title": "See how AI replies to customers",
+  "chat.sub": "Bot understands products, policies, inventory — replies naturally like a real salesperson.",
+  "chat.feat1": "Understands products & inventory",
+  "chat.feat1_desc": "AI knows exact prices, colors, sizes — no generic answers.",
+  "chat.feat2": "Consult & close sales",
+  "chat.feat2_desc": "Auto-send product links, discount codes, support ordering — no staff needed.",
+  "chat.feat3": "Keeps your shop's voice",
+  "chat.feat3_desc": "AI talks in your brand's style, tone, and personality.",
+  "chat.feat4": "Replies in 1-3 seconds",
+  "chat.feat4_desc": "Customers never wait. Never miss a sales opportunity.",
+
   "testimonial.text": "\"Since using OmniAI, I no longer stay up late replying to messages. The bot replies like a real staff — customers even compliment the helpful advice.\"",
   "testimonial.name": "Minh Trang",
   "testimonial.role": "Owner of ABC Fashion Shop",

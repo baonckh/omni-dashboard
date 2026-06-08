@@ -111,29 +111,23 @@ export default function LandingPage() {
             {t("badge.mvp")}
           </motion.div>
           <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
             className="text-[clamp(1.75rem,4.5vw,3.5rem)] font-extrabold tracking-tight leading-[1.15] mb-5"
           >
             <AuroraText>
-              <HeroTitleReveal text={t("hero.title")} />
+              <span className="flex flex-wrap items-center justify-center gap-x-3">
+                <span>Đừng để</span>
+                <Highlighter action="highlight" color="#2563EB" animationDuration={800}>
+                  <span className="text-blue-300">khách hỏi</span>
+                </Highlighter>
+                <span>mà không ai</span>
+                <Highlighter action="underline" color="#A855F7" animationDuration={800}>
+                  <span className="text-purple-300">trả lời</span>
+                </Highlighter>
+              </span>
             </AuroraText>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.4 }}
-              className="flex items-center justify-center gap-2 mt-3 text-sm font-medium flex-wrap"
-            >
-              <Highlighter action="highlight" color="#3B82F6" animationDuration={800}>
-                <span>AI trả lời 24/7</span>
-              </Highlighter>
-              <span className="text-zinc-700">·</span>
-              <Highlighter action="underline" color="#A855F7" animationDuration={600}>
-                <span>Không bỏ lỡ đơn hàng</span>
-              </Highlighter>
-              <span className="text-zinc-700">·</span>
-              <Highlighter action="highlight" color="#EC4899" animationDuration={700}>
-                <span>Giữ cá tính shop</span>
-              </Highlighter>
-            </motion.div>
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-zinc-400"

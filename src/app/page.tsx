@@ -160,12 +160,30 @@ export default function LandingPage() {
 
       {/* ══════ TRUSTED BY / LOGOS ══════ */}
       <section className="max-w-4xl mx-auto px-5 mb-20">
-        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-center text-xs font-medium text-zinc-600 mb-5 uppercase tracking-widest animate-shimmer"
+        <motion.p
+          initial={{ opacity: 0, y: -6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center text-xs font-medium mb-5 uppercase tracking-widest"
+          style={{
+            background: "linear-gradient(90deg, #52525B, #A1A1AA, #52525B)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "gradient 3s ease infinite",
+          }}
         >{t("trusted.title")}</motion.p>
-        <div className="flex flex-wrap justify-center gap-6 opacity-40">
+        <div className="flex flex-wrap justify-center gap-6">
           {["Shop Thời trang ABC", "Mỹ phẩm MJ", "TechStore VN", "Foody Saigon", "Fashion Hub"].map((name) => (
-            <span key={name} className="text-sm font-bold text-zinc-600">{name}</span>
+            <motion.span
+              key={name}
+              initial={{ opacity: 0.4 }}
+              whileInView={{ opacity: 0.4 }}
+              viewport={{ once: true }}
+              whileHover={{ opacity: 1, scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              className="text-sm font-bold text-zinc-600 hover:text-white cursor-default transition-colors duration-200"
+            >{name}</motion.span>
           ))}
         </div>
       </section>

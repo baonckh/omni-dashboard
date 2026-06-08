@@ -129,7 +129,7 @@ export default function LandingPage() {
       <section className="max-w-4xl mx-auto px-5 mb-20">
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="text-center text-xs font-medium text-zinc-600 mb-5 uppercase tracking-widest"
-        >Được tin dùng bởi các chủ shop SME</motion.p>
+        >{t("trusted.title")}</motion.p>
         <div className="flex flex-wrap justify-center gap-6 opacity-40">
           {["Shop Thời trang ABC", "Mỹ phẩm MJ", "TechStore VN", "Foody Saigon", "Fashion Hub"].map((name) => (
             <span key={name} className="text-sm font-bold text-zinc-600">{name}</span>
@@ -241,13 +241,13 @@ export default function LandingPage() {
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
           <Quote className="h-8 w-8 text-blue-500/30 mx-auto mb-4" />
           <blockquote className="text-lg md:text-xl font-medium leading-relaxed text-zinc-300 mb-6">
-            "Từ ngày dùng OmniAI, tôi không còn thức đêm trả lời tin nhắn nữa. Bot trả lời như nhân viên thật, khách còn khen tư vấn nhiệt tình."
+            {t("testimonial.text")}
           </blockquote>
           <div className="flex items-center justify-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">MT</div>
             <div className="text-left">
-              <p className="text-sm font-bold text-white">Minh Trang</p>
-              <p className="text-xs text-zinc-500">Chủ shop Thời trang ABC</p>
+              <p className="text-sm font-bold text-white">{t("testimonial.name")}</p>
+              <p className="text-xs text-zinc-500">{t("testimonial.role")}</p>
             </div>
           </div>
         </motion.div>

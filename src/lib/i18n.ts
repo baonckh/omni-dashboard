@@ -68,8 +68,14 @@ const vi: Dict = {
   "usecase.4.title": "Tiết kiệm 15-30 triệu/tháng tiền nhân sự",
   "usecase.4.desc": "Một nhân viên AI làm việc 24/7 — không ca kíp, không lương tháng 13, không ốm đau, không nghỉ Tết, không đòi tăng lương.",
 
+  // ── Social Proof ──
+  "trusted.title": "Được tin dùng bởi các chủ shop SME",
+  "testimonial.text": "\"Từ ngày dùng OmniAI, tôi không còn thức đêm trả lời tin nhắn nữa. Bot trả lời như nhân viên thật, khách còn khen tư vấn nhiệt tình.\"",
+  "testimonial.name": "Minh Trang",
+  "testimonial.role": "Chủ shop Thời trang ABC",
+
   // ── CTA ──
-  "cta.title": "Đã có 50+ chủ doanh nghiệp vừa và nhỏ tin dùng OmniAI",
+  "cta.title": "Hơn 50 shop đã dùng OmniAI để tự động hóa CSKH",
   "cta.sub": "Miễn phí, không cần thẻ tín dụng. 5 phút để bắt đầu.",
   "cta.btn": "Dùng thử miễn phí",
 
@@ -151,6 +157,12 @@ const en: Dict = {
   "usecase.3.desc": "Not generic call-center replies. AI perfectly matches your shop's tone, style, and personality.",
   "usecase.4.title": "Save $600-1500/month on CS staff",
   "usecase.4.desc": "One AI staff works 24/7 — no shifts, no overtime pay, no sick leave, no holiday bonuses, no salary negotiation.",
+
+  // ── Social Proof ──
+  "trusted.title": "Trusted by SME shop owners",
+  "testimonial.text": "\"Since using OmniAI, I no longer stay up late replying to messages. The bot replies like a real staff — customers even compliment the helpful advice.\"",
+  "testimonial.name": "Minh Trang",
+  "testimonial.role": "Owner of ABC Fashion Shop",
 
   // ── CTA ──
   "cta.title": "50+ SMEs are already using OmniAI",

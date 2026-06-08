@@ -15,7 +15,7 @@ export function GradientText({ children, className = "" }: { children: React.Rea
   );
 }
 
-// ── 2. Text Reveal (word by word) ──
+// ── 2. Text Reveal (word by word, slower and more visible) ──
 export function TextReveal({ text, className = "" }: { text: string; className?: string }) {
   const words = text.split(" ");
   return (
@@ -23,10 +23,10 @@ export function TextReveal({ text, className = "" }: { text: string; className?:
       {words.map((word, i) => (
         <motion.span
           key={i}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.04, duration: 0.25 }}
-          className="inline-block mr-[0.25em]"
+          initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ delay: i * 0.06, duration: 0.35, ease: "easeOut" }}
+          className="inline-block mr-[0.25em] will-change-transform"
         >
           {word}
         </motion.span>

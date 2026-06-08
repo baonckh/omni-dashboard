@@ -125,8 +125,19 @@ export default function LandingPage() {
             className="flex items-center justify-center gap-3 flex-wrap"
           >
             <Link href="/register"
-              className="group inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-600/40 active:scale-[0.97]"
-            >{t("hero.cta")}<ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" /></Link>
+              className="group relative inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-bold overflow-hidden transition-all active:scale-[0.97]"
+              style={{ boxShadow: "0 0 30px rgba(37,99,235,0.3)" }}
+            >
+              <motion.span
+                className="absolute inset-0 rounded-xl"
+                style={{ background: "linear-gradient(135deg, #2563EB, #7C3AED, #2563EB)", backgroundSize: "200% 200%" }}
+                animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              />
+              <span className="relative z-10 flex items-center gap-2 text-white">
+                {t("hero.cta")}<ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </Link>
             <Link href="/login"
               className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-bold border border-white/10 text-zinc-400 hover:text-white hover:border-white/20 transition-colors"
             ><LogIn className="h-4 w-4" />{t("hero.login")}</Link>
@@ -153,7 +164,13 @@ export default function LandingPage() {
             <motion.div key={s.key} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
               className="text-center py-7 px-4" style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
             >
-              <div className="text-2xl md:text-3xl font-extrabold text-white mb-0.5">{s.display}</div>
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 + 0.2, type: "spring", stiffness: 100 }}
+                className="text-2xl md:text-3xl font-extrabold text-white mb-0.5"
+              >{s.display}</motion.div>
               <div className="text-xs font-medium text-zinc-500">{t(s.key)}</div>
             </motion.div>
           ))}

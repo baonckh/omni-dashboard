@@ -17,7 +17,7 @@ const steps: Message[] = [
 ];
 
 const PER_STEP = 1800;
-const PAUSE = 5000;
+const PAUSE = 7000;
 
 export default function ChatDemo() {
   const [visible, setVisible] = useState(0);

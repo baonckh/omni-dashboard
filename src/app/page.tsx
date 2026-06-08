@@ -109,16 +109,18 @@ export default function LandingPage() {
             <Sparkles className="h-3 w-3" />
             {t("badge.mvp")}
           </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-[clamp(1.75rem,4.5vw,3.5rem)] font-extrabold tracking-tight leading-[1.1] mb-5"
+          <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="text-[clamp(1.75rem,4.5vw,3.5rem)] font-extrabold tracking-tight leading-[1.15] mb-5"
           >
             <AuroraText>
               <TextReveal text={t("hero.title")} />
             </AuroraText>
           </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
+          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-zinc-400"
-          >{t("hero.sub")}</motion.p>
+          >
+            <TextReveal text={t("hero.sub")} />
+          </motion.p>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="flex items-center justify-center gap-3 flex-wrap"
           >
@@ -135,7 +137,7 @@ export default function LandingPage() {
       {/* ══════ TRUSTED BY / LOGOS ══════ */}
       <section className="max-w-4xl mx-auto px-5 mb-20">
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-center text-xs font-medium text-zinc-600 mb-5 uppercase tracking-widest"
+          className="text-center text-xs font-medium text-zinc-600 mb-5 uppercase tracking-widest animate-shimmer"
         >{t("trusted.title")}</motion.p>
         <div className="flex flex-wrap justify-center gap-6 opacity-40">
           {["Shop Thời trang ABC", "Mỹ phẩm MJ", "TechStore VN", "Foody Saigon", "Fashion Hub"].map((name) => (
@@ -232,8 +234,10 @@ export default function LandingPage() {
       {/* ══════ FEATURES ══════ */}
       <section id="features" className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("features.title")}</h2>
-          <p className="text-sm max-w-xl mx-auto text-zinc-500">{t("features.sub")}</p>
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
+            <TextReveal text={t("features.title")} />
+          </h2>
+          <p className="text-sm max-w-xl mx-auto text-zinc-500"><TextReveal text={t("features.sub")} /></p>
         </motion.div>
         <div className="grid md:grid-cols-2 gap-3">
           {features.map((f, i) => (
@@ -272,7 +276,8 @@ export default function LandingPage() {
       {/* ══════ PAIN POINTS ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-xl md:text-2xl font-extrabold text-center mb-10 text-white">{t("pain.title")}</motion.h2>
+          className="text-xl md:text-2xl font-extrabold text-center mb-10 text-white"
+        ><TextReveal text={t("pain.title")} /></motion.h2>
         <div className="grid md:grid-cols-2 gap-3">
           {painPoints.map((item, i) => (
             <motion.div key={item.key} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
@@ -316,7 +321,9 @@ export default function LandingPage() {
           <div className="flex items-center justify-center w-14 h-14 rounded-2xl mx-auto mb-5" style={{ backgroundColor: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.15)" }}>
             <Bot className="h-7 w-7 text-blue-400" />
           </div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("cta.title")}</h2>
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
+            <AuroraText>{t("cta.title")}</AuroraText>
+          </h2>
           <p className="text-sm mb-8 max-w-sm mx-auto text-zinc-500">{t("badge.mvp")} {t("cta.sub")}</p>
           <Link href="/register"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-600/40 active:scale-[0.97]"

@@ -213,6 +213,83 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ══════ CHAT DEMO ══════ */}
+      <section className="max-w-5xl mx-auto px-5 mb-24">
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">Xem AI trả lời khách hàng như thế nào</h2>
+          <p className="text-sm text-zinc-500 max-w-lg mx-auto">Bot hiểu sản phẩm, chính sách, tồn kho — trả lời tự nhiên như nhân viên thật.</p>
+        </motion.div>
+
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          {/* Chat UI Mockup */}
+          <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            className="w-full md:w-1/2 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-600/5"
+            style={{ backgroundColor: "#0F0F15" }}
+          >
+            {/* Chat Header */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                <Bot className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-white">OmniAI Bot</p>
+                <p className="text-[10px] text-green-500 font-medium">● Online</p>
+              </div>
+            </div>
+            {/* Chat Messages */}
+            <div className="p-4 space-y-4 min-h-[320px] flex flex-col justify-end">
+              <div className="flex items-start gap-2 max-w-[85%]">
+                <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[8px] font-bold text-white shrink-0 mt-0.5">AI</div>
+                <div className="px-3.5 py-2.5 rounded-2xl rounded-bl-sm text-sm leading-relaxed" style={{ backgroundColor: "rgba(37,99,235,0.15)", color: "#E4E4E7" }}>
+                  Chào bạn! Shop mình hiện có áo thun nam giá 150.000đ, chất liệu cotton 100%. Bạn muốn đặt màu gì ạ?
+                </div>
+              </div>
+              <div className="flex items-start gap-2 max-w-[85%] self-end">
+                <div className="px-3.5 py-2.5 rounded-2xl rounded-br-sm text-sm leading-relaxed" style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "#E4E4E7" }}>
+                  Cho tôi hỏi có màu đen không?
+                </div>
+                <div className="w-6 h-6 rounded-full bg-zinc-600 flex items-center justify-center text-[8px] font-bold text-white shrink-0 mt-0.5">K</div>
+              </div>
+              <div className="flex items-start gap-2 max-w-[85%]">
+                <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[8px] font-bold text-white shrink-0 mt-0.5">AI</div>
+                <div className="px-3.5 py-2.5 rounded-2xl rounded-bl-sm text-sm leading-relaxed" style={{ backgroundColor: "rgba(37,99,235,0.15)", color: "#E4E4E7" }}>
+                  Có bạn nhé! Áo thun nam có đủ màu: đen, trắng, xám, xanh navy. size S đến XL. Bạn muốn đặt hàng ngay không? Mình tặng bạn mã giảm 10% cho đơn đầu tiên ạ!
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-zinc-600 mt-1">
+                <div className="h-px flex-1 bg-white/5" />
+                <span>AI trả lời trong 1.2s — 24/7</span>
+                <div className="h-px flex-1 bg-white/5" />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Features Side */}
+          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            className="w-full md:w-1/2 space-y-3"
+          >
+            {[
+              { title: "Hiểu sản phẩm & tồn kho", desc: "AI biết chính xác giá, màu sắc, size có sẵn — không trả lời chung chung." },
+              { title: "Tư vấn & chốt đơn", desc: "Tự động gửi link sản phẩm, mã giảm giá, hỗ trợ đặt hàng — không cần nhân viên." },
+              { title: "Giữ đúng chất riêng", desc: "AI nói chuyện theo phong cách, giọng văn, cách xưng hô của shop bạn." },
+              { title: "Phản hồi trong 1-3 giây", desc: "Khách không phải chờ đợi. Không bỏ lỡ cơ hội bán hàng." },
+            ].map((item, i) => (
+              <motion.div key={item.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                className="flex items-start gap-3 p-4 rounded-xl transition-all" style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+              >
+                <div className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center" style={{ backgroundColor: "rgba(37,99,235,0.1)" }}>
+                  <CheckCircle2 className="h-4 w-4 text-blue-400" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white mb-0.5">{item.title}</h4>
+                  <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       {/* ══════ WHY AI ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}

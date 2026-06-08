@@ -16,7 +16,7 @@ import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
-import { GradientText, TextReveal, AuroraText, WordRotate, TextHighlighter, UnderlineText, EmText } from "@/components/TextAnimations";
+import { GradientText, TextReveal, AuroraText, WordRotate, TextHighlighter, UnderlineText, EmText, HeroTitleReveal } from "@/components/TextAnimations";
 import Highlighter from "@/components/Highlighter";
 
 // ── Count-up hook ──
@@ -110,13 +110,18 @@ export default function LandingPage() {
             <Sparkles className="h-3 w-3" />
             {t("badge.mvp")}
           </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          <motion.h1
             className="text-[clamp(1.75rem,4.5vw,3.5rem)] font-extrabold tracking-tight leading-[1.15] mb-5"
           >
             <AuroraText>
-              <TextReveal text={t("hero.title")} />
+              <HeroTitleReveal text={t("hero.title")} />
             </AuroraText>
-            <div className="flex items-center justify-center gap-2 mt-3 text-sm font-medium">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.4 }}
+              className="flex items-center justify-center gap-2 mt-3 text-sm font-medium flex-wrap"
+            >
               <Highlighter action="highlight" color="#3B82F6" animationDuration={800}>
                 <span>AI trả lời 24/7</span>
               </Highlighter>
@@ -128,7 +133,7 @@ export default function LandingPage() {
               <Highlighter action="highlight" color="#EC4899" animationDuration={700}>
                 <span>Giữ cá tính shop</span>
               </Highlighter>
-            </div>
+            </motion.div>
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-zinc-400"

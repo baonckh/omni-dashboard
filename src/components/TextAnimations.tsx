@@ -15,7 +15,7 @@ export function GradientText({ children, className = "" }: { children: React.Rea
   );
 }
 
-// ── 2. Text Reveal (word by word, slower and more visible) ──
+// ── 2. Text Reveal (word by word, chậm và rõ) ──
 export function TextReveal({ text, className = "" }: { text: string; className?: string }) {
   const words = text.split(" ");
   return (
@@ -23,12 +23,34 @@ export function TextReveal({ text, className = "" }: { text: string; className?:
       {words.map((word, i) => (
         <motion.span
           key={i}
-          initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ delay: i * 0.06, duration: 0.35, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 24, scale: 0.9, filter: "blur(6px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          transition={{ delay: i * 0.08, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="inline-block mr-[0.25em] will-change-transform"
         >
           {word}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
+// ── 2b. Hero Title Reveal (extra dramatic entrance) ──
+export function HeroTitleReveal({ text, className = "" }: { text: string; className?: string }) {
+  const words = text.split(" ");
+  return (
+    <span className={className}>
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 30, scale: 0.85, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          transition={{ delay: 0.3 + i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="inline-block mr-[0.25em] will-change-transform"
+        >
+          <span className="inline-block bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+            {word}
+          </span>
         </motion.span>
       ))}
     </span>

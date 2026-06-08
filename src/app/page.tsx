@@ -69,7 +69,7 @@ const stats = [
 ];
 
 export default function LandingPage() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -106,10 +106,12 @@ export default function LandingPage() {
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-8 bg-blue-600/10 border border-blue-500/20 text-blue-300"
+            className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-medium mb-8 overflow-hidden"
+            style={{ backgroundColor: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.2)", color: "#93C5FD" }}
           >
-            <Sparkles className="h-3 w-3" />
-            {t("badge.mvp")}
+            <BorderBeam size={40} duration={6} colorFrom="#60A5FA" colorTo="#A855F7" borderWidth={1} />
+            <Sparkles className="h-3 w-3 relative z-10" />
+            <span className="relative z-10">{t("badge.mvp")}</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0 }}
@@ -133,7 +135,11 @@ export default function LandingPage() {
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-zinc-400"
           >
-            <TextReveal text={t("hero.sub")} />
+            {lang === "en" ? (
+              <>Unify <WordRotate words={["Facebook", "Zalo", "TikTok Shop", "Shopee", "Instagram"]} className="text-blue-400 font-bold" /> into one inbox. AI replies 24/7 — like your best salesperson, but never sleeps.</>
+            ) : (
+              <>Tập trung tin nhắn từ <WordRotate words={["Facebook", "Zalo", "TikTok Shop", "Shopee", "Instagram"]} className="text-blue-400 font-bold" /> về một nơi. AI tự động tư vấn, chốt đơn 24/7 — giống hệt nhân viên của bạn, nhưng không bao giờ ngủ.</>
+            )}
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="flex items-center justify-center gap-3 flex-wrap"
@@ -142,7 +148,11 @@ export default function LandingPage() {
               className="group relative inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold overflow-hidden transition-all active:scale-[0.97]"
               style={{ backgroundColor: "#2563EB", boxShadow: "0 0 30px rgba(37,99,235,0.3)" }}
             >
-              <BorderBeam size={80} duration={3} colorFrom="#60A5FA" colorTo="#A855F7" borderWidth={2} />
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+                animate={{ x: ["-100%", "100%"] }}
+                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+              />
               <span className="relative z-10 flex items-center gap-2 text-white">
                 {t("hero.cta")}<ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -245,7 +255,7 @@ export default function LandingPage() {
             AI hiểu <TextHighlighter color="rgba(59,130,246,0.2)">sản phẩm</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">tồn kho</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">chính sách</TextHighlighter> —<br className="hidden md:block" />không chỉ là <UnderlineText>kịch bản cố định</UnderlineText>
           </h2>
           <p className="text-sm text-zinc-500 max-w-xl mx-auto">
-            OmniAI <EmText>học danh mục</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng phiên bản", "đúng giá"]} />, giữ nguyên <TextHighlighter>mạch hội thoại</TextHighlighter> xuyên suốt.
+            OmniAI <EmText>học danh mục</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng phiên bản", "đúng giá"]} className="text-lg font-bold" />, giữ nguyên <TextHighlighter>ngữ cảnh cuộc trò chuyện</TextHighlighter> xuyên suốt.
           </p>
         </motion.div>
 
@@ -379,10 +389,14 @@ export default function LandingPage() {
           </h2>
           <p className="text-sm mb-8 max-w-sm mx-auto text-zinc-500">{t("badge.mvp")} {t("cta.sub")}</p>
           <Link href="/register"
-            className="relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold overflow-hidden transition-all active:scale-[0.97]"
+            className="group relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold overflow-hidden transition-all active:scale-[0.97]"
             style={{ backgroundColor: "#2563EB", boxShadow: "0 0 30px rgba(37,99,235,0.3)" }}
           >
-            <BorderBeam size={70} duration={4} colorFrom="#60A5FA" colorTo="#A855F7" borderWidth={2} delay={1} />
+            <motion.span
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+            />
             <span className="relative z-10 flex items-center gap-2 text-white">
               <Star className="h-4 w-4" />{t("cta.btn")}<ArrowRight className="h-4 w-4" />
             </span>

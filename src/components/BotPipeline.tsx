@@ -45,7 +45,7 @@ export default function BotPipeline() {
       timer = setTimeout(() => run(idx + 1), 2300);
     };
 
-    timer = setTimeout(() => run(0), 700);
+    timer = setTimeout(() => run(0), 500);
     return () => clearTimeout(timer);
   }, []);
 

@@ -16,7 +16,7 @@ import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
-import { GradientText, TextReveal, AuroraText } from "@/components/TextAnimations";
+import { GradientText, TextReveal, AuroraText, WordRotate } from "@/components/TextAnimations";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -199,7 +199,7 @@ export default function LandingPage() {
             AI hiểu <GradientText>sản phẩm</GradientText>, <GradientText>tồn kho</GradientText>, <GradientText>chính sách</GradientText> —<br className="hidden md:block" />không chỉ là chat template
           </h2>
           <p className="text-sm text-zinc-500 max-w-xl mx-auto">
-            Bot khác dùng kịch bản có sẵn. OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật, truy xuất <span className="text-purple-400 font-medium">đúng variant</span>, giữ <span className="text-pink-400 font-medium">nguyên context</span>.
+            OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng variant", "đúng giá"]} />, giữ nguyên <GradientText>context</GradientText> xuyên suốt.
           </p>
         </motion.div>
 

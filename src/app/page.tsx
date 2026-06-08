@@ -17,6 +17,7 @@ import LangToggle from "@/components/LangToggle";
 import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
 import { GradientText, TextReveal, AuroraText, WordRotate, TextHighlighter, UnderlineText, EmText } from "@/components/TextAnimations";
+import Highlighter from "@/components/Highlighter";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -115,8 +116,21 @@ export default function LandingPage() {
             <AuroraText>
               <TextReveal text={t("hero.title")} />
             </AuroraText>
+            <div className="flex items-center justify-center gap-2 mt-3 text-sm font-medium">
+              <Highlighter action="highlight" color="#3B82F6" animationDuration={800}>
+                <span>AI trả lời 24/7</span>
+              </Highlighter>
+              <span className="text-zinc-700">·</span>
+              <Highlighter action="underline" color="#A855F7" animationDuration={600}>
+                <span>Không bỏ lỡ đơn hàng</span>
+              </Highlighter>
+              <span className="text-zinc-700">·</span>
+              <Highlighter action="highlight" color="#EC4899" animationDuration={700}>
+                <span>Giữ cá tính shop</span>
+              </Highlighter>
+            </div>
           </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-zinc-400"
           >
             <TextReveal text={t("hero.sub")} />

@@ -18,6 +18,7 @@ import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
 import { GradientText, TextReveal, AuroraText, WordRotate, TextHighlighter, UnderlineText, EmText, HeroTitleReveal } from "@/components/TextAnimations";
 import Highlighter from "@/components/Highlighter";
+import BorderBeam from "@/components/BorderBeam";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -138,15 +139,10 @@ export default function LandingPage() {
             className="flex items-center justify-center gap-3 flex-wrap"
           >
             <Link href="/register"
-              className="group relative inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-bold overflow-hidden transition-all active:scale-[0.97]"
-              style={{ boxShadow: "0 0 30px rgba(37,99,235,0.3)" }}
+              className="group relative inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold overflow-hidden transition-all active:scale-[0.97]"
+              style={{ backgroundColor: "#2563EB", boxShadow: "0 0 30px rgba(37,99,235,0.3)" }}
             >
-              <motion.span
-                className="absolute inset-0 rounded-xl"
-                style={{ background: "linear-gradient(135deg, #2563EB, #7C3AED, #2563EB)", backgroundSize: "200% 200%" }}
-                animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              />
+              <BorderBeam size={80} duration={3} colorFrom="#60A5FA" colorTo="#A855F7" borderWidth={2} />
               <span className="relative z-10 flex items-center gap-2 text-white">
                 {t("hero.cta")}<ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
               </span>
@@ -383,8 +379,14 @@ export default function LandingPage() {
           </h2>
           <p className="text-sm mb-8 max-w-sm mx-auto text-zinc-500">{t("badge.mvp")} {t("cta.sub")}</p>
           <Link href="/register"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/30 hover:shadow-blue-600/40 active:scale-[0.97]"
-          ><Star className="h-4 w-4" />{t("cta.btn")}<ArrowRight className="h-4 w-4" /></Link>
+            className="relative inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold overflow-hidden transition-all active:scale-[0.97]"
+            style={{ backgroundColor: "#2563EB", boxShadow: "0 0 30px rgba(37,99,235,0.3)" }}
+          >
+            <BorderBeam size={70} duration={4} colorFrom="#60A5FA" colorTo="#A855F7" borderWidth={2} delay={1} />
+            <span className="relative z-10 flex items-center gap-2 text-white">
+              <Star className="h-4 w-4" />{t("cta.btn")}<ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
         </motion.div>
       </section>
 

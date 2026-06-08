@@ -9,7 +9,7 @@ import {
   Mail, Users, HeartHandshake,
   Clock, MessageCircle, Smartphone, ShoppingCart,
   Instagram, BellRing, Search, ShoppingBag, Quote,
-  CheckCircle2, ChevronRight,
+  CheckCircle2, ChevronRight, Package, Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/lib/i18n";
@@ -255,14 +255,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ BOT INTELLIGENCE FLOW ══════ */}
+      {/* ══════ BOT INTELLIGENCE PIPELINE ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
             AI hiểu <span className="text-blue-500">sản phẩm</span>, 
             <span className="text-purple-500"> tồn kho</span>, 
             <span className="text-pink-500"> chính sách</span> — 
-            <br />không chỉ là chat template
+            <br className="hidden md:block" />không chỉ là chat template
           </h2>
           <p className="text-sm text-zinc-500 max-w-xl mx-auto">
             Bot khác dùng kịch bản có sẵn. OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật của bạn,
@@ -271,27 +271,71 @@ export default function LandingPage() {
           </p>
         </motion.div>
 
-        {/* Intelligence Flow Diagram */}
-        <div className="grid md:grid-cols-4 gap-3 mb-12">
-          {[
-            { step: "01", title: "Nhập dữ liệu", desc: "Catalog, chính sách, tồn kho → DB + Vector", icon: "📦", color: "from-blue-600/20 to-blue-600/5" },
-            { step: "02", title: "Phân tích intent", desc: "Hiểu ý định khách: hỏi giá, size, màu, chính sách", icon: "🧠", color: "from-purple-600/20 to-purple-600/5" },
-            { step: "03", title: "Truy xuất đúng", desc: "Lấy đúng sản phẩm, variant, tồn kho real-time", icon: "🎯", color: "from-pink-600/20 to-pink-600/5" },
-            { step: "04", title: "Trả lời cá nhân hóa", desc: "Giữ chất riêng, tone giọng, phong cách shop", icon: "✨", color: "from-green-600/20 to-green-600/5" },
-          ].map((item, i) => (
-            <motion.div key={item.step} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className="relative p-5 rounded-2xl border border-white/5 overflow-hidden group hover:-translate-y-1 transition-all duration-300"
-              style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)` }}
-            >
-              <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br", item.color)} />
-              <div className="relative z-10">
-                <span className="text-[10px] font-bold text-zinc-600 mb-2 block">{item.step}</span>
-                <span className="text-2xl mb-3 block">{item.icon}</span>
+        {/* Pipeline Flow */}
+        <div className="relative mb-16">
+          {/* Pipeline Connector Bar */}
+          <div className="hidden md:block absolute top-1/2 left-[8%] right-[8%] h-0.5 bg-gradient-to-r from-blue-600/40 via-purple-600/40 to-pink-600/40 -translate-y-1/2" />
+          
+          <div className="grid md:grid-cols-4 gap-3 relative">
+            {[
+              { step: "01", title: "Nhập dữ liệu", desc: "Catalog, chính sách, tồn kho → DB + Vector", icon: Package, color: "text-blue-500", border: "border-blue-500/30", bg: "bg-blue-600/10" },
+              { step: "02", title: "Phân tích intent", desc: "Hiểu ý định khách: hỏi giá, size, màu, chính sách", icon: Search, color: "text-purple-500", border: "border-purple-500/30", bg: "bg-purple-600/10" },
+              { step: "03", title: "Truy xuất đúng", desc: "Lấy đúng sản phẩm, variant, tồn kho real-time", icon: Heart, color: "text-pink-500", border: "border-pink-500/30", bg: "bg-pink-600/10" },
+              { step: "04", title: "Trả lời cá nhân hóa", desc: "Giữ chất riêng, tone giọng, phong cách shop", icon: MessageSquareCode, color: "text-green-500", border: "border-green-500/30", bg: "bg-green-600/10" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                className="relative flex flex-col items-center text-center group"
+              >
+                {/* Arrow connector */}
+                {i < 3 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15 + 0.3 }}
+                    className="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 z-10"
+                  >
+                    <motion.div
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5, delay: i * 0.3 }}
+                      className="text-zinc-600"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* Step Number */}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className={cn(
+                    "relative z-10 flex items-center justify-center w-16 h-16 rounded-2xl border mb-4 shadow-lg transition-all duration-300 group-hover:shadow-xl",
+                    item.border, item.bg
+                  )}
+                >
+                  <item.icon className={cn("h-7 w-7", item.color)} />
+                </motion.div>
+
+                <span className="text-[10px] font-bold text-zinc-600 mb-1 block">{item.step}</span>
                 <h3 className="text-sm font-bold text-white mb-1.5">{item.title}</h3>
-                <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+                <p className="text-xs text-zinc-500 leading-relaxed max-w-[180px]">{item.desc}</p>
+
+                {/* Status dot */}
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 2, delay: i * 0.4 }}
+                  className={cn("w-1.5 h-1.5 rounded-full mt-3", item.color.replace("text", "bg"))}
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* vs Other Bots */}

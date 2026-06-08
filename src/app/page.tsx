@@ -242,10 +242,10 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3 leading-relaxed">
-            AI hiểu <TextHighlighter color="rgba(59,130,246,0.2)">sản phẩm</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">tồn kho</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">chính sách</TextHighlighter> —<br className="hidden md:block" />không chỉ là <UnderlineText>chat template</UnderlineText>
+            AI hiểu <TextHighlighter color="rgba(59,130,246,0.2)">sản phẩm</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">tồn kho</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">chính sách</TextHighlighter> —<br className="hidden md:block" />không chỉ là <UnderlineText>kịch bản cố định</UnderlineText>
           </h2>
           <p className="text-sm text-zinc-500 max-w-xl mx-auto">
-            OmniAI <EmText>học catalog</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng variant", "đúng giá"]} />, giữ nguyên <TextHighlighter>context</TextHighlighter> xuyên suốt.
+            OmniAI <EmText>học danh mục</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng phiên bản", "đúng giá"]} />, giữ nguyên <TextHighlighter>mạch hội thoại</TextHighlighter> xuyên suốt.
           </p>
         </motion.div>
 
@@ -259,7 +259,7 @@ export default function LandingPage() {
           <div className="p-5 rounded-2xl border border-red-500/10 bg-red-500/5">
             <p className="text-xs font-bold text-red-400 mb-3 uppercase tracking-wider">Bot thông thường</p>
             <ul className="space-y-2">
-              {["Trả lời theo kịch bản cố định", "Không hiểu sản phẩm thật", "Mất context sau 2-3 tin nhắn", "Trả lời chung chung", "Training thủ công từng kịch bản"].map((item) => (
+              {["Trả lời theo kịch bản cố định", "Không hiểu sản phẩm thật", "Mất mạch sau 2-3 tin nhắn", "Trả lời chung chung", "Phải tự huấn luyện thủ công"].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-xs text-zinc-400"><span className="text-red-500 mt-0.5">✕</span> {item}</li>
               ))}
             </ul>
@@ -267,7 +267,7 @@ export default function LandingPage() {
           <div className="p-5 rounded-2xl border border-green-500/10 bg-green-500/5">
             <p className="text-xs font-bold text-green-400 mb-3 uppercase tracking-wider">OmniAI</p>
             <ul className="space-y-2">
-              {["Hiểu catalog thật: giá, size, màu, tồn kho", "Truy xuất đúng variant", "Giữ context xuyên suốt", "Trả lời cá nhân hóa", "Tự động học, không cần training"].map((item) => (
+              {["Hiểu danh mục thật: giá, size, màu, tồn kho", "Truy xuất đúng phiên bản", "Giữ mạch hội thoại", "Trả lời cá nhân hóa", "Tự động học, không cần huấn luyện"].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-xs text-zinc-300"><span className="text-green-500 mt-0.5 font-bold">✓</span> {item}</li>
               ))}
             </ul>

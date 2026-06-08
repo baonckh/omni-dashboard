@@ -208,7 +208,7 @@ export default function BotPipeline() {
             {stage === "filter" && (
               <motion.div key="filter" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
                 <p className="text-xs text-pink-400 font-medium flex items-center gap-2">
-                  <Heart className="h-3.5 w-3.5" /> Chọn lọc variant & tồn kho...
+                  <Heart className="h-3.5 w-3.5" /> Chọn lọc màu sắc & tồn kho...
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   {[

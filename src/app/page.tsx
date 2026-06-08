@@ -290,27 +290,82 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ WHY AI ══════ */}
+      {/* ══════ BOT INTELLIGENCE FLOW ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
-        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-xl md:text-2xl font-extrabold text-center text-white mb-2">{t("usecase.title")}</motion.h2>
-        <p className="text-center text-sm mb-10 text-zinc-500">{t("usecase.sub")}</p>
-        <div className="grid md:grid-cols-2 gap-3">
-          {useCases.map((item, i) => (
-            <motion.div key={item.key} initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-              className="flex items-start gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 cursor-default"
-              style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderLeft: "3px solid #2563EB" }}
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
+            AI hiểu <span className="text-blue-500">sản phẩm</span>, 
+            <span className="text-purple-500"> tồn kho</span>, 
+            <span className="text-pink-500"> chính sách</span> — 
+            <br />không chỉ là chat template
+          </h2>
+          <p className="text-sm text-zinc-500 max-w-xl mx-auto">
+            Bot khác dùng kịch bản có sẵn. OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật của bạn,
+            truy xuất <span className="text-purple-400 font-medium">đúng sản phẩm, đúng variant</span>,
+            giữ <span className="text-pink-400 font-medium">nguyên context</span> xuyên suốt cuộc hội thoại.
+          </p>
+        </motion.div>
+
+        {/* Intelligence Flow Diagram */}
+        <div className="grid md:grid-cols-4 gap-3 mb-12">
+          {[
+            { step: "01", title: "Nhập dữ liệu", desc: "Catalog, chính sách, tồn kho → DB + Vector", icon: "📦", color: "from-blue-600/20 to-blue-600/5" },
+            { step: "02", title: "Phân tích intent", desc: "Hiểu ý định khách: hỏi giá, size, màu, chính sách", icon: "🧠", color: "from-purple-600/20 to-purple-600/5" },
+            { step: "03", title: "Truy xuất đúng", desc: "Lấy đúng sản phẩm, variant, tồn kho real-time", icon: "🎯", color: "from-pink-600/20 to-pink-600/5" },
+            { step: "04", title: "Trả lời cá nhân hóa", desc: "Giữ chất riêng, tone giọng, phong cách shop", icon: "✨", color: "from-green-600/20 to-green-600/5" },
+          ].map((item, i) => (
+            <motion.div key={item.step} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              className="relative p-5 rounded-2xl border border-white/5 overflow-hidden group hover:-translate-y-1 transition-all duration-300"
+              style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)` }}
             >
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0" style={{ backgroundColor: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.15)" }}>
-                <item.icon className="h-5 w-5 text-blue-400" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-white mb-1">{t(`usecase.${item.key}.title`)}</h3>
-                <p className="text-sm leading-relaxed text-zinc-500">{t(`usecase.${item.key}.desc`)}</p>
+              <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br", item.color)} />
+              <div className="relative z-10">
+                <span className="text-[10px] font-bold text-zinc-600 mb-2 block">{item.step}</span>
+                <span className="text-2xl mb-3 block">{item.icon}</span>
+                <h3 className="text-sm font-bold text-white mb-1.5">{item.title}</h3>
+                <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
               </div>
             </motion.div>
           ))}
         </div>
+
+        {/* vs Other Bots */}
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="grid md:grid-cols-2 gap-4"
+        >
+          <div className="p-5 rounded-2xl border border-red-500/10 bg-red-500/5">
+            <p className="text-xs font-bold text-red-400 mb-3 uppercase tracking-wider">Bot thông thường</p>
+            <ul className="space-y-2">
+              {[
+                "Trả lời theo kịch bản cố định",
+                "Không hiểu sản phẩm thật của shop",
+                "Mất context sau 2-3 tin nhắn",
+                "Trả lời chung chung, mất khách",
+                "Phải training thủ công từng kịch bản",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-xs text-zinc-400">
+                  <span className="text-red-500 mt-0.5">✕</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-5 rounded-2xl border border-green-500/10 bg-green-500/5">
+            <p className="text-xs font-bold text-green-400 mb-3 uppercase tracking-wider">OmniAI</p>
+            <ul className="space-y-2">
+              {[
+                "Hiểu catalog thật: giá, size, màu, tồn kho",
+                "Truy xuất đúng variant sản phẩm khách hỏi",
+                "Giữ context xuyên suốt cuộc hội thoại",
+                "Trả lời cá nhân hóa theo phong cách shop",
+                "Tự động học từ dữ liệu, không cần training",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-xs text-zinc-300">
+                  <span className="text-green-500 mt-0.5 font-bold">✓</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </motion.div>
       </section>
 
       {/* ══════ TESTIMONIAL ══════ */}

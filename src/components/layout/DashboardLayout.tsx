@@ -1,15 +1,66 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { NotificationBell } from "./NotificationBell";
+import { Store, ChevronDown, Check, Plus } from "lucide-react";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const router = useRouter();
   const user = session?.user;
-  const shopId = user?.shopId || "N/A";
-  const userName = user?.name || user?.email || "User";
-  const userEmail = user?.email || "";
+  const [shopOpen, setShopOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const shopRef = useRef<HTMLDivElement>(null);
+  const shops = user?.shops || [];
+  const currentShopId = user?.shopId || "";
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (shopRef.current && !shopRef.current.contains(e.target as Node)) setShopOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const switchShop = async (shopId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/shops/switch`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${user?.backendToken}` },
+        body: JSON.stringify({ shop_id: shopId }),
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      await update({ ...session, user: { ...user, backendToken: data.token, shopId: data.shop_id, shops: data.shops } });
+      router.refresh();
+    } catch (e) { console.error(e); }
+    setShopOpen(false);
+  };
+
+  const createShop = async () => {
+    setCreating(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/shops/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${user?.backendToken}` },
+        body: JSON.stringify({ name: "Shop mới" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.contact || data.error);
+        setCreating(false);
+        return;
+      }
+      await update({ ...session, user: { ...user, shops: data.shops } });
+    } catch (e) { console.error(e); }
+    setCreating(false);
+    setShopOpen(false);
+  };
 
   return (
     <div className="flex bg-[#050505] text-white min-h-screen overflow-hidden">
@@ -21,35 +72,62 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <span className="text-neutral-600">/</span>
             <span>Dashboard</span>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <NotificationBell />
-            
-            {/* Shop Badge */}
-            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10 text-xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
-              <span className="text-neutral-400">{shopId}</span>
+
+            {/* Shop Switcher */}
+            <div className="relative" ref={shopRef}>
+              <button onClick={() => setShopOpen(!shopOpen)}
+                className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/10 text-xs hover:bg-white/10 transition-colors"
+              >
+                <Store className="h-3.5 w-3.5 text-blue-400" />
+                <span className="text-white font-medium max-w-[100px] truncate">
+                  {shops.find((s: any) => s.id === currentShopId)?.name || currentShopId}
+                </span>
+                <ChevronDown className="h-3 w-3 text-neutral-500" />
+              </button>
+
+              {shopOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-white/10 bg-[#111] shadow-2xl shadow-black/50 py-2 z-50">
+                  <p className="px-4 py-1.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Shops</p>
+                  {shops.map((s: any) => (
+                    <button key={s.id} onClick={() => switchShop(s.id)}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-white/5 transition-colors text-left"
+                    >
+                      <div className="w-6 h-6 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
+                        <Store className="h-3 w-3 text-blue-400" />
+                      </div>
+                      <span className="flex-1 text-white">{s.name}</span>
+                      {s.id === currentShopId && <Check className="h-3.5 w-3.5 text-blue-500" />}
+                    </button>
+                  ))}
+                  <div className="border-t border-white/5 mt-1 pt-1">
+                    <button onClick={createShop} disabled={creating}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      {creating ? "Đang tạo..." : "Tạo shop mới"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* User Info */}
             <div className="flex items-center gap-2.5 pl-3 border-l border-white/10">
               <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
-                {userName.charAt(0).toUpperCase()}
+                {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
               </div>
               <div className="hidden md:block text-left leading-tight">
-                <p className="text-xs font-medium text-white">{userName}</p>
-                {userEmail && <p className="text-[10px] text-neutral-500">{userEmail}</p>}
+                <p className="text-xs font-medium text-white">{user?.name || user?.email || "User"}</p>
+                <p className="text-[10px] text-neutral-500">{user?.email || ""}</p>
               </div>
             </div>
           </div>
         </header>
-        
-        <div className="p-8">
-          {children}
-        </div>
+
+        <div className="p-8">{children}</div>
       </main>
     </div>
   );

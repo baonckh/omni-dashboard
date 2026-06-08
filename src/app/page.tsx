@@ -16,7 +16,7 @@ import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
-import { GradientText, TextReveal, WordRotate, ShinyText, AuroraText } from "@/components/TextAnimations";
+import { GradientText, TextReveal, AuroraText } from "@/components/TextAnimations";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -118,7 +118,7 @@ export default function LandingPage() {
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
             className="text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-zinc-400"
-          >{t("hero.sub")} <ShinyText><WordRotate /></ShinyText></motion.p>
+          >{t("hero.sub")}</motion.p>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="flex items-center justify-center gap-3 flex-wrap"
           >

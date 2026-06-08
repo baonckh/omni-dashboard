@@ -73,23 +73,23 @@ export function SparklesText({ children, className = "" }: { children: React.Rea
   );
 }
 
-// ── 5. Aurora Heading (animated gradient background) ──
+// ── 5. Aurora Text (glowing gradient background) ──
 export function AuroraText({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <h1 className={`relative ${className}`}>
+    <span className={`relative inline ${className}`}>
       <motion.span
-        className="absolute inset-0 blur-3xl opacity-30"
+        className="absolute inset-0 blur-2xl opacity-25 pointer-events-none"
         animate={{
           background: [
-            "radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.3) 0%, transparent 50%)",
-            "radial-gradient(ellipse at 80% 50%, rgba(168,85,247,0.3) 0%, transparent 50%)",
-            "radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.3) 0%, transparent 50%)",
+            "radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.4) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 70% 50%, rgba(168,85,247,0.4) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.4) 0%, transparent 60%)",
           ],
         }}
-        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
       />
-      <span className="relative">{children}</span>
-    </h1>
+      <span className="relative z-10">{children}</span>
+    </span>
   );
 }
 

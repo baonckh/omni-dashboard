@@ -28,21 +28,24 @@ export default function BotPipeline() {
 
   useEffect(() => {
     const sequence: Stage[] = ["ingest", "vector", "retrieve", "filter", "persona", "respond"];
-    let i = 0;
     let timer: ReturnType<typeof setTimeout>;
 
-    const run = () => {
-      if (i >= sequence.length) {
-        timer = setTimeout(() => { setStage("idle"); setProgress(0); timer = setTimeout(run, 1000); }, 4000);
+    const run = (idx: number) => {
+      if (idx >= sequence.length) {
+        // Pause then restart from 0
+        timer = setTimeout(() => {
+          setStage("idle");
+          setProgress(0);
+          timer = setTimeout(() => run(0), 900);
+        }, 4000);
         return;
       }
-      setStage(sequence[i]);
-      setProgress((i + 1) / sequence.length);
-      i++;
-      timer = setTimeout(run, 2300);
+      setStage(sequence[idx]);
+      setProgress((idx + 1) / sequence.length);
+      timer = setTimeout(() => run(idx + 1), 2300);
     };
 
-    timer = setTimeout(run, 700);
+    timer = setTimeout(() => run(0), 700);
     return () => clearTimeout(timer);
   }, []);
 

@@ -16,7 +16,7 @@ import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
-import { GradientText, TextReveal, AuroraText, WordRotate } from "@/components/TextAnimations";
+import { GradientText, TextReveal, AuroraText, WordRotate, TextHighlighter, UnderlineText, EmText } from "@/components/TextAnimations";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -198,10 +198,10 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3 leading-relaxed">
-            AI hiểu <GradientText>sản phẩm</GradientText>, <GradientText>tồn kho</GradientText>, <GradientText>chính sách</GradientText> —<br className="hidden md:block" />không chỉ là chat template
+            AI hiểu <TextHighlighter color="rgba(59,130,246,0.2)">sản phẩm</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">tồn kho</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">chính sách</TextHighlighter> —<br className="hidden md:block" />không chỉ là <UnderlineText>chat template</UnderlineText>
           </h2>
           <p className="text-sm text-zinc-500 max-w-xl mx-auto">
-            OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng variant", "đúng giá"]} />, giữ nguyên <GradientText>context</GradientText> xuyên suốt.
+            OmniAI <EmText>học catalog</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng variant", "đúng giá"]} />, giữ nguyên <TextHighlighter>context</TextHighlighter> xuyên suốt.
           </p>
         </motion.div>
 
@@ -237,6 +237,15 @@ export default function LandingPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
             <TextReveal text={t("features.title")} />
           </h2>
+          <div className="flex items-center justify-center gap-3 text-[10px] text-zinc-600 mb-6">
+            <UnderlineText><span className="text-xs">Inbox</span></UnderlineText>
+            <span className="text-zinc-700">·</span>
+            <UnderlineText><span className="text-xs">AI</span></UnderlineText>
+            <span className="text-zinc-700">·</span>
+            <UnderlineText><span className="text-xs">Đa kênh</span></UnderlineText>
+            <span className="text-zinc-700">·</span>
+            <UnderlineText><span className="text-xs">Analytics</span></UnderlineText>
+          </div>
           <p className="text-sm max-w-xl mx-auto text-zinc-500"><TextReveal text={t("features.sub")} /></p>
         </motion.div>
         <div className="grid md:grid-cols-2 gap-3">
@@ -277,7 +286,7 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="text-xl md:text-2xl font-extrabold text-center mb-10 text-white"
-        ><TextReveal text={t("pain.title")} /></motion.h2>
+        ><TextReveal text={t("pain.title")} /> <EmText>?</EmText></motion.h2>
         <div className="grid md:grid-cols-2 gap-3">
           {painPoints.map((item, i) => (
             <motion.div key={item.key} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}

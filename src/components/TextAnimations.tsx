@@ -150,3 +150,51 @@ export function ShimmerText({ children, className = "" }: { children: React.Reac
     </span>
   );
 }
+
+// ── 8. Text Highlighter (animated underline highlight like marker pen) ──
+export function TextHighlighter({ children, color = "rgba(37,99,235,0.25)", className = "" }: { children: React.ReactNode; color?: string; className?: string }) {
+  return (
+    <span className={`relative inline-block ${className}`}>
+      <motion.span
+        className="absolute inset-x-0 bottom-0 h-[30%] rounded-sm"
+        style={{ backgroundColor: color }}
+        initial={{ width: "0%" }}
+        whileInView={{ width: "100%" }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+      />
+      <span className="relative z-10">{children}</span>
+    </span>
+  );
+}
+
+// ── 9. Underline Animation (draw underline left to right) ──
+export function UnderlineText({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <span className={`relative inline-block ${className}`}>
+      <span className="relative z-10">{children}</span>
+      <motion.span
+        className="absolute left-0 bottom-0 h-[2px] bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+        initial={{ width: "0%" }}
+        whileInView={{ width: "100%" }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+      />
+    </span>
+  );
+}
+
+// ── 10. Animated Emphasis (scale + color pop on scroll) ──
+export function EmText({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <motion.span
+      initial={{ scale: 0.9, color: "#71717A" }}
+      whileInView={{ scale: 1, color: "#FFFFFF" }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: 0.15 }}
+      className={`inline-block font-bold ${className}`}
+    >
+      {children}
+    </motion.span>
+  );
+}

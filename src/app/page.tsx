@@ -16,6 +16,7 @@ import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
+import { GradientText, TextReveal, WordRotate, ShinyText, AuroraText } from "@/components/TextAnimations";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -109,11 +110,15 @@ export default function LandingPage() {
             {t("badge.mvp")}
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-[clamp(1.75rem,4.5vw,3.5rem)] font-extrabold tracking-tight leading-[1.1] mb-5 text-white"
-          >{t("hero.title")}</motion.h1>
+            className="text-[clamp(1.75rem,4.5vw,3.5rem)] font-extrabold tracking-tight leading-[1.1] mb-5"
+          >
+            <AuroraText>
+              <TextReveal text={t("hero.title")} />
+            </AuroraText>
+          </motion.h1>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
             className="text-base md:text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-zinc-400"
-          >{t("hero.sub")}</motion.p>
+          >{t("hero.sub")} <ShinyText><WordRotate /></ShinyText></motion.p>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="flex items-center justify-center gap-3 flex-wrap"
           >
@@ -190,8 +195,8 @@ export default function LandingPage() {
       {/* ══════ BOT INTELLIGENCE PIPELINE ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">
-            AI hiểu <span className="text-blue-500">sản phẩm</span>, <span className="text-purple-500">tồn kho</span>, <span className="text-pink-500">chính sách</span> —<br className="hidden md:block" />không chỉ là chat template
+          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3 leading-relaxed">
+            AI hiểu <GradientText>sản phẩm</GradientText>, <GradientText>tồn kho</GradientText>, <GradientText>chính sách</GradientText> —<br className="hidden md:block" />không chỉ là chat template
           </h2>
           <p className="text-sm text-zinc-500 max-w-xl mx-auto">
             Bot khác dùng kịch bản có sẵn. OmniAI <span className="text-blue-400 font-medium">học catalog</span> thật, truy xuất <span className="text-purple-400 font-medium">đúng variant</span>, giữ <span className="text-pink-400 font-medium">nguyên context</span>.

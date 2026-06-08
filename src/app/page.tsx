@@ -273,7 +273,7 @@ export default function LandingPage() {
           </div>
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("cta.title")}</h2>
           <p className="text-sm mb-8 max-w-sm mx-auto" style={{ color: "#A1A1AA" }}>
-            Dùng thử miễn phí — không cần thẻ tín dụng. 5 phút bắt đầu.
+            {t("badge.mvp")} {t("cta.sub")}
           </p>
           <Link href="/register"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl text-base font-bold transition-all duration-200 active:scale-[0.97]"

@@ -264,23 +264,29 @@ export default function LandingPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="grid md:grid-cols-2 gap-4"
+          className="grid md:grid-cols-2 gap-3"
         >
-          <div className="p-5 rounded-2xl border border-red-500/10 bg-red-500/5">
-            <p className="text-xs font-bold text-red-400 mb-3 uppercase tracking-wider">Bot thông thường</p>
-            <ul className="space-y-2">
-              {["Trả lời theo kịch bản cố định", "Không hiểu sản phẩm thật", "Mất mạch sau 2-3 tin nhắn", "Trả lời chung chung", "Phải tự huấn luyện thủ công"].map((item) => (
-                <li key={item} className="flex items-start gap-2 text-xs text-zinc-400"><span className="text-red-500 mt-0.5">✕</span> {item}</li>
+          <div className="p-4 rounded-2xl border border-red-500/10 bg-red-500/[0.03]">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-[9px] font-bold text-red-400">✕</div>
+              <span className="text-xs font-bold text-red-400">Bot thông thường</span>
+            </div>
+            <div className="space-y-1.5">
+              {["Kịch bản cố định", "Không hiểu sản phẩm", "Mất ngữ cảnh", "Trả lời chung chung", "Tốn công huấn luyện"].map((item) => (
+                <div key={item} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-zinc-500 bg-black/20"><span className="text-red-500/60 text-[9px]">✕</span> {item}</div>
               ))}
-            </ul>
+            </div>
           </div>
-          <div className="p-5 rounded-2xl border border-green-500/10 bg-green-500/5">
-            <p className="text-xs font-bold text-green-400 mb-3 uppercase tracking-wider">OmniAI</p>
-            <ul className="space-y-2">
-              {["Hiểu danh mục thật: giá, size, màu, tồn kho", "Truy xuất đúng phiên bản", "Giữ mạch hội thoại", "Trả lời cá nhân hóa", "Tự động học, không cần huấn luyện"].map((item) => (
-                <li key={item} className="flex items-start gap-2 text-xs text-zinc-300"><span className="text-green-500 mt-0.5 font-bold">✓</span> {item}</li>
+          <div className="p-4 rounded-2xl border border-green-500/10 bg-green-500/[0.03]">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-6 h-6 rounded-lg bg-green-500/10 flex items-center justify-center text-[9px] font-bold text-green-400">✓</div>
+              <span className="text-xs font-bold text-green-400">OmniAI</span>
+            </div>
+            <div className="space-y-1.5">
+              {["Hiểu danh mục thật", "Truy xuất đúng phiên bản", "Giữ ngữ cảnh", "Cá nhân hóa từng khách", "Tự động học"].map((item) => (
+                <div key={item} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-zinc-300 bg-black/20"><span className="text-green-500/80 text-[9px] font-bold">✓</span> {item}</div>
               ))}
-            </ul>
+            </div>
           </div>
         </motion.div>
       </section>
@@ -305,14 +311,16 @@ export default function LandingPage() {
         <div className="grid md:grid-cols-2 gap-3">
           {features.map((f, i) => (
             <motion.div key={f.key} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-              className="group p-6 rounded-2xl cursor-default transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-600/5"
-              style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+              className="group p-5 rounded-2xl cursor-default transition-all duration-300 hover:-translate-y-0.5"
+              style={{ backgroundColor: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.06)" }}
             >
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl mb-4" style={{ backgroundColor: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.15)" }}>
-                <f.icon className="h-5 w-5 text-blue-400" />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0" style={{ backgroundColor: "rgba(37,99,235,0.1)", border: "1px solid rgba(37,99,235,0.15)" }}>
+                  <f.icon className="h-4 w-4 text-blue-400" />
+                </div>
+                <h3 className="text-sm font-bold text-white">{t(`feat.${f.key}.title`)}</h3>
               </div>
-              <h3 className="text-sm font-bold text-white mb-1.5">{t(`feat.${f.key}.title`)}</h3>
-              <p className="text-sm leading-relaxed text-zinc-500">{t(`feat.${f.key}.desc`)}</p>
+              <p className="text-xs leading-relaxed text-zinc-500 pl-12">{t(`feat.${f.key}.desc`)}</p>
             </motion.div>
           ))}
         </div>

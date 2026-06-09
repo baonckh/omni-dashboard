@@ -82,6 +82,12 @@ const vi: Dict = {
   "chat.feat4": "Phản hồi trong 1-3 giây",
   "chat.feat4_desc": "Khách không phải chờ đợi. Không bỏ lỡ cơ hội bán hàng.",
 
+  // ── Pipeline Section ──
+  "pipeline.title_before": "AI hiểu",
+  "pipeline.title_after": "— không chỉ là trả lời máy móc",
+  "pipeline.vs_before": "Bot thông thường",
+  "pipeline.vs_after": "OmniAI",
+
   "testimonial.text": "\"Từ ngày dùng OmniAI, tôi không còn thức đêm trả lời tin nhắn nữa. Bot trả lời như nhân viên thật, khách còn khen tư vấn nhiệt tình.\"",
   "testimonial.name": "Minh Trang",
   "testimonial.role": "Chủ shop Thời trang ABC",

@@ -222,10 +222,10 @@ export default function LandingPage() {
         </motion.div>
 
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2">
+          <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 h-[480px] shrink-0">
             <ChatDemo />
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 space-y-3">
+          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 space-y-3 h-[480px] overflow-y-auto">
             {[
               { title: t("chat.feat1"), desc: t("chat.feat1_desc") },
               { title: t("chat.feat2"), desc: t("chat.feat2_desc") },
@@ -254,8 +254,8 @@ export default function LandingPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3 leading-relaxed">
             AI hiểu <TextHighlighter color="rgba(59,130,246,0.2)">sản phẩm</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">tồn kho</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">chính sách</TextHighlighter> —<br className="hidden md:block" />không chỉ là <UnderlineText>kịch bản cố định</UnderlineText>
           </h2>
-          <p className="text-sm text-zinc-500 max-w-xl mx-auto">
-            OmniAI <EmText>học danh mục</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng phiên bản", "đúng giá"]} className="text-lg font-bold" />, giữ nguyên <TextHighlighter>ngữ cảnh cuộc trò chuyện</TextHighlighter> xuyên suốt.
+          <p className="text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
+            OmniAI <EmText>học danh mục</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng phiên bản", "đúng giá"]} className="text-xl font-extrabold text-white" />, giữ nguyên <TextHighlighter>ngữ cảnh cuộc trò chuyện</TextHighlighter> xuyên suốt.
           </p>
         </motion.div>
 

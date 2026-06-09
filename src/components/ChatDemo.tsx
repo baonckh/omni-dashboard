@@ -54,7 +54,7 @@ export default function ChatDemo() {
         </div>
       </div>
 
-      <div className="p-4 min-h-[420px] max-h-[420px] flex flex-col justify-end overflow-hidden">
+      <div className="p-4 h-[420px] flex flex-col justify-end overflow-hidden">
         <AnimatePresence mode="popLayout">
           {steps.slice(0, visible).map((msg, i) => (
             <motion.div

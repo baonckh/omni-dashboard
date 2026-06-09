@@ -19,6 +19,8 @@ import BotPipeline from "@/components/BotPipeline";
 import { GradientText, TextReveal, AuroraText, WordRotate, TextHighlighter, UnderlineText, EmText, HeroTitleReveal } from "@/components/TextAnimations";
 import Highlighter from "@/components/Highlighter";
 import BorderBeam from "@/components/BorderBeam";
+import MagicCard from "@/components/MagicCard";
+import Marquee from "@/components/Marquee";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -179,19 +181,7 @@ export default function LandingPage() {
             animation: "gradient 3s ease infinite",
           }}
         >{t("trusted.title")}</motion.p>
-        <div className="flex flex-wrap justify-center gap-6">
-          {["Shop Thời trang ABC", "Mỹ phẩm MJ", "TechStore VN", "Foody Saigon", "Fashion Hub"].map((name) => (
-            <motion.span
-              key={name}
-              initial={{ opacity: 0.4 }}
-              whileInView={{ opacity: 0.4 }}
-              viewport={{ once: true }}
-              whileHover={{ opacity: 1, scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-              className="text-sm font-bold text-zinc-600 hover:text-white cursor-default transition-colors duration-200"
-            >{name}</motion.span>
-          ))}
-        </div>
+        <Marquee items={["Shop Thời trang ABC", "Mỹ phẩm MJ", "TechStore VN", "Foody Saigon", "Fashion Hub"].map(name => ({ text: name }))} className="max-w-xl mx-auto" />
       </section>
 
       {/* ══════ STATS ══════ */}
@@ -304,15 +294,14 @@ export default function LandingPage() {
         </motion.div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {features.map((f, i) => (
-            <motion.div key={f.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-              className="flex flex-col items-center text-center p-4 rounded-xl transition-all duration-200 hover:bg-white/[0.03]"
-              style={{ border: "1px solid rgba(255,255,255,0.04)" }}
-            >
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl mb-2.5" style={{ backgroundColor: "rgba(37,99,235,0.08)" }}>
-                <f.icon className="h-5 w-5 text-blue-400" />
-              </div>
-              <h3 className="text-[11px] font-bold text-white mb-1 leading-tight">{t(`feat.${f.key}.title`)}</h3>
-              <p className="text-[9px] text-zinc-600 leading-relaxed">{t(`feat.${f.key}.desc`)}</p>
+            <motion.div key={f.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+              <MagicCard className="p-4 text-center">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl mb-2.5 mx-auto" style={{ backgroundColor: "rgba(37,99,235,0.08)" }}>
+                  <f.icon className="h-5 w-5 text-blue-400" />
+                </div>
+                <h3 className="text-[11px] font-bold text-white mb-1 leading-tight">{t(`feat.${f.key}.title`)}</h3>
+                <p className="text-[9px] text-zinc-600 leading-relaxed">{t(`feat.${f.key}.desc`)}</p>
+              </MagicCard>
             </motion.div>
           ))}
         </div>
@@ -342,17 +331,16 @@ export default function LandingPage() {
         >{t("pain.title")}</motion.h2>
         <div className="grid md:grid-cols-2 gap-2">
           {painPoints.map((item, i) => (
-            <motion.div key={item.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-              className="flex items-start gap-3 p-3.5 rounded-xl transition-all duration-200 hover:bg-white/[0.02]"
-              style={{ border: "1px solid rgba(255,255,255,0.04)" }}
-            >
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)" }}>
-                <item.icon className="h-4 w-4 text-red-400" />
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-white mb-0.5">{t(`pain.${item.key}.title`)}</h3>
-                <p className="text-[10px] text-zinc-600 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
-              </div>
+            <motion.div key={item.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+              <MagicCard className="flex items-start gap-3 p-3.5" gradientColor="rgba(239,68,68,0.06)">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)" }}>
+                  <item.icon className="h-4 w-4 text-red-400" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-white mb-0.5">{t(`pain.${item.key}.title`)}</h3>
+                  <p className="text-[10px] text-zinc-600 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
+                </div>
+              </MagicCard>
             </motion.div>
           ))}
         </div>

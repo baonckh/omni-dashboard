@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-// Dynamic import to avoid Turbopack resolution issues on Vercel
+// Dark theme globe config — matching landing page black background
 const GLOBE_CONFIG = {
   width: 800,
   height: 800,
@@ -10,18 +10,24 @@ const GLOBE_CONFIG = {
   devicePixelRatio: 2,
   phi: 0,
   theta: 0.3,
-  dark: 0,
-  diffuse: 0.4,
-  mapSamples: 16000,
-  mapBrightness: 1.2,
-  baseColor: [1, 1, 1] as [number, number, number],
-  markerColor: [251 / 255, 100 / 255, 21 / 255] as [number, number, number],
-  glowColor: [1, 1, 1] as [number, number, number],
+  dark: 0.7,
+  diffuse: 0.5,
+  mapSamples: 20000,
+  mapBrightness: 1.8,
+  baseColor: [0.12, 0.18, 0.35] as [number, number, number],
+  markerColor: [1, 0.35, 0.1] as [number, number, number],
+  glowColor: [0.08, 0.12, 0.25] as [number, number, number],
   markers: [
-    { location: [10.8, 106.7] as [number, number], size: 0.08 },
-    { location: [21.0, 105.8] as [number, number], size: 0.06 },
+    { location: [10.8, 106.7], size: 0.08 },
+    { location: [21.0, 105.8], size: 0.06 },
+    { location: [13.7, 100.5], size: 0.05 },
+    { location: [1.35, 103.8], size: 0.05 },
+    { location: [48.85, 2.35], size: 0.04 },
+    { location: [40.7, -74.0], size: 0.04 },
+    { location: [35.6, 139.7], size: 0.04 },
+    { location: [51.5, -0.12], size: 0.04 },
   ],
-};
+} as any;
 
 export default function Globe({ className = "" }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -57,7 +63,6 @@ export default function Globe({ className = "" }: { className?: string }) {
         canvas.style.opacity = "1";
       } catch (e) {
         console.warn("[Globe] Failed to load:", e);
-        // Show placeholder on failure
         canvas.style.opacity = "1";
       }
     };

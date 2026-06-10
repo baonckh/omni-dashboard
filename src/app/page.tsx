@@ -115,9 +115,12 @@ export default function LandingPage() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
         </div>
-        {/* Globe */}
-        <div className="pointer-events-none absolute top-8 right-[5%] hidden h-56 w-56 lg:block">
-          <Globe className="opacity-80" />
+        {/* Globe — Magic UI style */}
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+          <div className="relative w-full max-w-lg mx-auto">
+            <Globe className="top-28 w-[300px] h-[300px] md:w-[400px] md:h-[400px] mx-auto" />
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
+          </div>
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}

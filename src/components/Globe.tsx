@@ -70,7 +70,7 @@ export default function Globe({ className = "" }: { className?: string }) {
     <canvas
       ref={canvasRef}
       className={`w-full h-full opacity-0 transition-opacity duration-500 ${className}`}
-      style={{ aspectRatio: "1/1", maxWidth: 200, maxHeight: 200 }}
+      style={{ aspectRatio: "1/1" }}
     />
   );
 }

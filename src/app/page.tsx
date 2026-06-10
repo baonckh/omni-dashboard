@@ -343,11 +343,17 @@ export default function LandingPage() {
           e.currentTarget.style.setProperty("--my", y + "%");
         }}
       >
-        {/* Mouse-following glow */}
+        {/* Mouse-following glow — full section */}
         <div
-          className="absolute -inset-40 pointer-events-none opacity-0 group-hover/section:opacity-100 transition-opacity duration-500"
+          className="absolute -inset-80 pointer-events-none opacity-0 group-hover/section:opacity-100 transition-opacity duration-700"
           style={{
-            background: "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(37,99,235,0.12) 0%, transparent 60%)",
+            background: "radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(37,99,235,0.15) 0%, transparent 50%)",
+          }}
+        />
+        <div
+          className="absolute -inset-80 pointer-events-none opacity-0 group-hover/section:opacity-100 transition-opacity duration-1000 delay-150"
+          style={{
+            background: "radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(99,102,241,0.08) 0%, transparent 50%)",
           }}
         />
         <DotPattern className="text-white" width={20} height={20} />

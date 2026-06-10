@@ -334,20 +334,21 @@ export default function LandingPage() {
       {/* ══════ FEATURES — BENTO GRID ══════ */}
       <section
         id="features"
-        className="group/section relative max-w-5xl mx-auto px-5 mb-24"
+        className="group/section relative mb-24"
         onMouseMove={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           e.currentTarget.style.setProperty("--mx", (e.clientX - rect.left) + "px");
           e.currentTarget.style.setProperty("--my", (e.clientY - rect.top) + "px");
         }}
       >
-        {/* Mouse-following glow */}
+        {/* Mouse-following glow — full bleed */}
         <div
           className="absolute inset-0 pointer-events-none opacity-0 group-hover/section:opacity-100 transition-opacity duration-500"
           style={{
-            background: "radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%), rgba(37,99,235,0.12) 0%, transparent 50%)",
+            background: "radial-gradient(900px circle at var(--mx, 50%) var(--my, 50%), rgba(37,99,235,0.1) 0%, transparent 40%)",
           }}
         />
+        <div className="max-w-5xl mx-auto px-5">
         <DotPattern className="text-white" width={20} height={20} />
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-xs text-blue-300 mb-4">Tính năng</div>
@@ -367,6 +368,7 @@ export default function LandingPage() {
           <div className="md:col-span-2">
             <BentoCard icon={<BarChart3 className="h-5 w-5 text-blue-400" />} title={t("feat.insight.title")} desc={t("feat.insight.desc")} gradient="from-green-600/15 to-transparent" />
           </div>
+        </div>
         </div>
       </section>
 

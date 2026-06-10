@@ -108,6 +108,9 @@ export default function LandingPage() {
       <section className="relative pt-28 pb-16 px-5">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
+          <div className="absolute -top-20 -right-20 w-60 h-60 opacity-30">
+            <Globe />
+          </div>
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
           <div className="absolute top-40 right-[15%] w-80 h-80 rounded-full bg-purple-500/5 blur-[80px]" />
         </div>
@@ -376,8 +379,8 @@ export default function LandingPage() {
       {/* ══════ PLATFORMS — ORBITING CIRCLES ══════ */}
       <section className="max-w-4xl mx-auto px-5 mb-24 text-center">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-xl md:text-2xl font-extrabold text-white mb-2">{t("platform.title")}</motion.h2>
-        <p className="text-sm text-zinc-500 mb-8">{t("platform.sub")}</p>
+          className="text-2xl md:text-3xl font-extrabold text-white mb-3">{t("platform.title")}</motion.h2>
+        <p className="text-base text-zinc-400 mb-8">{t("platform.sub")}</p>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <div className="flex-1 flex justify-center">
             <OrbitCircles

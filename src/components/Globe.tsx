@@ -10,7 +10,8 @@ export default function Globe({ className = "" }: { className?: string }) {
 
     const init = async () => {
       try {
-        const cobe = await import("cobe");
+        // @ts-ignore - cobe has no types
+        const cobe: any = await import("cobe");
         const createGlobe = cobe.default;
         const canvas = canvasRef.current;
         if (!canvas) return;

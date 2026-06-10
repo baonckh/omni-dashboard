@@ -257,58 +257,60 @@ export default function LandingPage() {
           <BotPipeline />
         </motion.div>
 
-        <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent p-6">
-          <p className="text-xs font-bold text-zinc-500 mb-6 uppercase tracking-wider">So sánh hiệu suất</p>
+        <div className="relative min-h-[260px] pl-6 md:pl-0 flex items-start">
+          {/* Bot cũ — lùi trái, mờ, gạch ngang */}
+          <motion.div
+            initial={{ opacity: 0.6, x: -10 }}
+            whileInView={{ opacity: 0.6, x: -10 }}
+            className="absolute left-0 top-4 w-[75%] p-5 rounded-2xl border border-red-500/10 bg-red-500/[0.03] select-none"
+            style={{ transform: "rotate(-2deg)" }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-[10px] font-bold text-red-400">✕</div>
+              <span className="text-xs font-bold text-red-400/60 line-through">Bot thông thường</span>
+            </div>
+            <div className="space-y-1.5">
+              {["Kịch bản cố định", "Không hiểu sản phẩm", "Mất ngữ cảnh"].map(item => (
+                <div key={item} className="text-[11px] text-zinc-700 line-through flex items-center gap-1.5"><span className="text-red-500/30">✕</span>{item}</div>
+              ))}
+            </div>
+          </motion.div>
 
-          {/* The Gap: Bot thường */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded bg-red-500/10 flex items-center justify-center text-[8px] font-bold text-red-400">✕</div>
-                <span className="text-xs font-bold text-zinc-400">Bot thông thường</span>
+          {/* OmniAI — đè lên, phải, sáng */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative z-10 ml-auto w-[85%] md:w-[70%] p-6 rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-600/[0.08] to-purple-600/[0.05] shadow-xl shadow-blue-600/10"
+          >
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-600/30">
+                <span className="text-white font-bold text-xs">AI</span>
               </div>
-              <span className="text-[10px] text-zinc-600">2/10</span>
-            </div>
-            <div className="h-2 rounded-full bg-white/5 overflow-hidden">
-              <motion.div
-                initial={{ width: "0%" }}
-                whileInView={{ width: "20%" }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-                className="h-full rounded-full bg-gradient-to-r from-red-500/60 to-red-500/30"
-              />
-            </div>
-            <div className="flex justify-between text-[9px] text-zinc-700 mt-1">
-              <span>Kịch bản cố định</span>
-              <span>Không hiểu hàng thật</span>
-              <span>Mất ngữ cảnh</span>
-            </div>
-          </div>
-
-          {/* The Gap: OmniAI */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded bg-green-500/10 flex items-center justify-center text-[8px] font-bold text-green-400">✓</div>
-                <span className="text-xs font-bold text-green-400">OmniAI</span>
+              <div>
+                <p className="text-sm font-bold text-white">OmniAI</p>
+                <p className="text-[10px] text-zinc-500">AI hiểu catalog thật của bạn</p>
               </div>
-              <span className="text-[10px] text-green-400/80">9/10</span>
             </div>
-            <div className="h-2 rounded-full bg-white/5 overflow-hidden">
-              <motion.div
-                initial={{ width: "0%" }}
-                whileInView={{ width: "90%" }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-                className="h-full rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400"
-              />
+            <div className="space-y-2">
+              {[
+                { label: "Hiểu danh mục", desc: "Giá, size, màu, tồn kho — tự động học" },
+                { label: "Truy xuất chính xác", desc: "Đúng phiên bản, đúng variant" },
+                { label: "Giữ ngữ cảnh", desc: "Xuyên suốt cuộc trò chuyện" },
+              ].map(item => (
+                <div key={item.label} className="flex items-start gap-2.5">
+                  <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-green-400 text-[9px]">✓</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">{item.label}</p>
+                    <p className="text-[11px] text-zinc-500">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex justify-between text-[9px] text-zinc-500 mt-1">
-              <span>Hiểu catalog thật</span>
-              <span>Đúng variant</span>
-              <span>Giữ ngữ cảnh</span>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -343,11 +345,11 @@ export default function LandingPage() {
         <p className="text-sm text-zinc-500 mb-8">{t("platform.sub")}</p>
         <OrbitingCircles
           items={[
-            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.facebook"), color: "text-blue-400" },
-            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.zalo"), color: "text-sky-400" },
-            { icon: <ShoppingBag className="h-4 w-4" />, label: t("platform.tiktok"), color: "text-pink-400" },
-            { icon: <ShoppingCart className="h-4 w-4" />, label: t("platform.shopee"), color: "text-orange-400" },
-            { icon: <Instagram className="h-4 w-4" />, label: t("platform.instagram"), color: "text-purple-400" },
+            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.facebook") },
+            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.zalo") },
+            { icon: <ShoppingBag className="h-4 w-4" />, label: t("platform.tiktok") },
+            { icon: <ShoppingCart className="h-4 w-4" />, label: t("platform.shopee") },
+            { icon: <Instagram className="h-4 w-4" />, label: t("platform.instagram") },
           ]}
         />
       </section>

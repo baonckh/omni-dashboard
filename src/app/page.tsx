@@ -25,6 +25,7 @@ import DotPattern from "@/components/DotPattern";
 import BentoCard from "@/components/BentoCard";
 import NumberTicker from "@/components/NumberTicker";
 import OrbitCircles from "@/components/MagicOrbit";
+import Globe from "@/components/Globe";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -373,19 +374,26 @@ export default function LandingPage() {
       </section>
 
       {/* ══════ PLATFORMS — ORBITING CIRCLES ══════ */}
-      <section className="max-w-lg mx-auto px-5 mb-24 text-center">
+      <section className="max-w-4xl mx-auto px-5 mb-24 text-center">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="text-xl md:text-2xl font-extrabold text-white mb-2">{t("platform.title")}</motion.h2>
         <p className="text-sm text-zinc-500 mb-8">{t("platform.sub")}</p>
-        <OrbitCircles
-          items={[
-            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.facebook") },
-            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.zalo") },
-            { icon: <ShoppingBag className="h-4 w-4" />, label: t("platform.tiktok") },
-            { icon: <ShoppingCart className="h-4 w-4" />, label: t("platform.shopee") },
-            { icon: <Instagram className="h-4 w-4" />, label: t("platform.instagram") },
-          ]}
-        />
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <div className="flex-1 flex justify-center">
+            <OrbitCircles
+              items={[
+                { icon: <MessageCircle className="h-5 w-5" />, label: t("platform.facebook") },
+                { icon: <MessageCircle className="h-5 w-5" />, label: t("platform.zalo") },
+                { icon: <ShoppingBag className="h-5 w-5" />, label: t("platform.tiktok") },
+                { icon: <ShoppingCart className="h-5 w-5" />, label: t("platform.shopee") },
+                { icon: <Instagram className="h-5 w-5" />, label: t("platform.instagram") },
+              ]}
+            />
+          </div>
+          <div className="flex-shrink-0">
+            <Globe />
+          </div>
+        </div>
       </section>
 
       {/* ══════ PAIN POINTS — STAT IMPACT ══════ */}

@@ -79,7 +79,7 @@ function OrbitItem({ item, angle, radius, containerRef, centerRef, index }: {
       )}
       <div
         ref={itemRef}
-        className="absolute flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-blue-600/10 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-600/10 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer z-20"
+        className="absolute flex items-center gap-3 px-5 py-3 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-blue-600/10 hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-600/10 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer z-20"
         style={{
           left: `calc(50% + ${x}px)`,
           top: `calc(50% + ${y}px)`,
@@ -87,8 +87,8 @@ function OrbitItem({ item, angle, radius, containerRef, centerRef, index }: {
           animation: `orbit-fadein 0.5s ease-out ${index * 0.1}s both`,
         }}
       >
-        <span className="text-sm">{item.icon}</span>
-        <span className="text-xs font-medium text-zinc-300">{item.label}</span>
+        <span className="text-base">{item.icon}</span>
+        <span className="text-sm font-medium text-zinc-300">{item.label}</span>
       </div>
     </>
   );
@@ -103,12 +103,12 @@ interface OrbitCirclesProps {
 export default function OrbitCircles({ items, className = "" }: OrbitCirclesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const centerRef = useRef<HTMLDivElement>(null);
-  const radius = 140;
-  const angles = [270, 342, 54, 126, 198]; // evenly spaced
+  const radius = 170;
+  const angles = [270, 342, 54, 126, 198];
 
   return (
-    <div ref={containerRef} className={`relative flex items-center justify-center w-full max-w-sm mx-auto ${className}`} style={{ height: 350 }}>
-      <div ref={centerRef} className="absolute w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-2xl shadow-blue-600/40 z-20">
+    <div ref={containerRef} className={`relative flex items-center justify-center w-full max-w-lg mx-auto ${className}`} style={{ height: 420 }}>
+      <div ref={centerRef} className="absolute w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-2xl shadow-blue-600/40 z-20">
         <span className="text-white font-bold text-xs text-center leading-tight">Omni<br />AI</span>
       </div>
 

@@ -25,7 +25,7 @@ import DotPattern from "@/components/DotPattern";
 import BentoCard from "@/components/BentoCard";
 import NumberTicker from "@/components/NumberTicker";
 import OrbitCircles from "@/components/MagicOrbit";
-import Globe from "@/components/Globe";
+import { Globe } from "@/components/ui/globe";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -84,7 +84,7 @@ export default function LandingPage() {
       {/* ══════ FLOATING NAVBAR ══════ */}
       <nav className="fixed top-4 left-4 right-4 z-50 max-w-6xl mx-auto rounded-2xl border border-white/[0.06] bg-black/70 backdrop-blur-2xl shadow-2xl shadow-black/50">
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600">
               <Zap className="h-3.5 w-3.5 text-white" />
             </div>
@@ -92,6 +92,10 @@ export default function LandingPage() {
               Omni<span className="text-zinc-500">AI</span>
             </span>
           </Link>
+          <div className="hidden md:flex items-center gap-6 text-xs font-medium text-zinc-500">
+            <a href="#features" className="hover:text-white transition-colors">{t("footer.features")}</a>
+            <Link href="/pricing" className="hover:text-white transition-colors">{t("footer.pricing")}</Link>
+          </div>
           <div className="flex items-center gap-2">
             <LangToggle />
             <Link href="/login"
@@ -112,8 +116,8 @@ export default function LandingPage() {
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
         </div>
         {/* Globe */}
-        <div className="absolute top-5 right-[5%] w-52 h-52 hidden lg:block z-10">
-          <Globe />
+        <div className="pointer-events-none absolute top-8 right-[5%] hidden h-56 w-56 lg:block">
+          <Globe className="opacity-80" />
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
@@ -394,7 +398,7 @@ export default function LandingPage() {
               ]}
             />
           </div>
-          <div className="flex-shrink-0">
+          <div className="relative h-52 w-52 flex-shrink-0">
             <Globe />
           </div>
         </div>

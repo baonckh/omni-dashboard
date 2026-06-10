@@ -262,16 +262,24 @@ export default function LandingPage() {
           <motion.div
             initial={{ opacity: 0.6, x: -10 }}
             whileInView={{ opacity: 0.6, x: -10 }}
-            className="absolute left-0 top-4 w-[75%] p-5 rounded-2xl border border-red-500/10 bg-red-500/[0.03] select-none"
+            className="absolute left-0 top-6 w-[80%] p-6 rounded-2xl border border-red-500/10 bg-red-500/[0.03] select-none"
             style={{ transform: "rotate(-2deg)" }}
           >
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-lg bg-red-500/10 flex items-center justify-center text-[10px] font-bold text-red-400">✕</div>
-              <span className="text-xs font-bold text-red-400/60 line-through">Bot thông thường</span>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-xs font-bold text-red-400">✕</div>
+              <span className="text-sm font-bold text-red-400/50 line-through">Bot thông thường — Trả lời máy móc</span>
             </div>
-            <div className="space-y-1.5">
-              {["Kịch bản cố định", "Không hiểu sản phẩm", "Mất ngữ cảnh"].map(item => (
-                <div key={item} className="text-[11px] text-zinc-700 line-through flex items-center gap-1.5"><span className="text-red-500/30">✕</span>{item}</div>
+            <div className="space-y-3">
+              {[
+                { title: "Kịch bản cố định", desc: "Trả lời theo mẫu soạn sẵn, không linh hoạt" },
+                { title: "Không hiểu sản phẩm", desc: "Không biết giá, tồn kho, mô tả thực tế" },
+                { title: "Mất ngữ cảnh", desc: "Sau 2-3 tin nhắn là trả lời lạc đề" },
+                { title: "Tốn công đào tạo", desc: "Phải lập trình từng kịch bản thủ công" },
+              ].map(item => (
+                <div key={item.title} className="text-zinc-700 line-through">
+                  <p className="text-xs font-medium flex items-center gap-1.5"><span className="text-red-500/30 text-[10px]">✕</span>{item.title}</p>
+                  <p className="text-[10px] text-zinc-800 pl-4">{item.desc}</p>
+                </div>
               ))}
             </div>
           </motion.div>
@@ -281,31 +289,33 @@ export default function LandingPage() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative z-10 ml-auto w-[85%] md:w-[70%] p-6 rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-600/[0.08] to-purple-600/[0.05] shadow-xl shadow-blue-600/10"
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="relative z-10 ml-auto w-[88%] md:w-[75%] p-6 md:p-7 rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-600/[0.08] to-purple-600/[0.05] shadow-2xl shadow-blue-600/15"
           >
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-600/30">
-                <span className="text-white font-bold text-xs">AI</span>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-600/30">
+                <span className="text-white font-bold text-sm">AI</span>
               </div>
               <div>
-                <p className="text-sm font-bold text-white">OmniAI</p>
-                <p className="text-[10px] text-zinc-500">AI hiểu catalog thật của bạn</p>
+                <p className="text-base font-bold text-white">OmniAI</p>
+                <p className="text-xs text-zinc-500">AI thông minh — hiểu catalog thật của bạn</p>
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {[
-                { label: "Hiểu danh mục", desc: "Giá, size, màu, tồn kho — tự động học" },
-                { label: "Truy xuất chính xác", desc: "Đúng phiên bản, đúng variant" },
-                { label: "Giữ ngữ cảnh", desc: "Xuyên suốt cuộc trò chuyện" },
+                { title: "Hiểu danh mục sản phẩm", desc: "Tự động học giá, size, màu, tồn kho từ catalog thật" },
+                { title: "Truy xuất chính xác", desc: "Tìm đúng sản phẩm, đúng phiên bản, đúng variant khách hỏi" },
+                { title: "Giữ ngữ cảnh hội thoại", desc: "Nhớ toàn bộ cuộc trò chuyện, không bị lạc đề" },
+                { title: "Cá nhân hóa theo shop", desc: "Nói chuyện đúng chất riêng, giọng văn, phong cách của bạn" },
+                { title: "Tự động học, không cần training", desc: "Nhập dữ liệu một lần — AI tự vận hành, không cần lập trình" },
               ].map(item => (
-                <div key={item.label} className="flex items-start gap-2.5">
-                  <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-green-400 text-[9px]">✓</span>
+                <div key={item.title} className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-green-400 text-[11px]">✓</span>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-white">{item.label}</p>
-                    <p className="text-[11px] text-zinc-500">{item.desc}</p>
+                    <p className="text-sm font-bold text-white">{item.title}</p>
+                    <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}

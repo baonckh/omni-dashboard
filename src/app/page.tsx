@@ -21,6 +21,10 @@ import Highlighter from "@/components/Highlighter";
 import BorderBeam from "@/components/BorderBeam";
 import MagicCard from "@/components/MagicCard";
 import Marquee from "@/components/Marquee";
+import DotPattern from "@/components/DotPattern";
+import BentoCard from "@/components/BentoCard";
+import NumberTicker from "@/components/NumberTicker";
+import OrbitingCircles from "@/components/OrbitingCircles";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -253,112 +257,138 @@ export default function LandingPage() {
           <BotPipeline />
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-white/5">
-          {/* Bot thường */}
-          <div className="p-6 bg-gradient-to-br from-red-500/[0.03] to-transparent border-b md:border-b-0 md:border-r border-white/5">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-8 w-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                <span className="text-red-400 font-bold text-sm">✕</span>
+        <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent p-6">
+          <p className="text-xs font-bold text-zinc-500 mb-6 uppercase tracking-wider">So sánh hiệu suất</p>
+
+          {/* The Gap: Bot thường */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded bg-red-500/10 flex items-center justify-center text-[8px] font-bold text-red-400">✕</div>
+                <span className="text-xs font-bold text-zinc-400">Bot thông thường</span>
               </div>
-              <div>
-                <p className="text-sm font-bold text-red-400">Bot thông thường</p>
-                <p className="text-[10px] text-zinc-600">Trả lời máy móc theo kịch bản</p>
-              </div>
+              <span className="text-[10px] text-zinc-600">2/10</span>
             </div>
-            <div className="space-y-2">
-              {[
-                { label: "Kịch bản", val: "Cố định, không linh hoạt" },
-                { label: "Sản phẩm", val: "Không hiểu hàng thật" },
-                { label: "Ngữ cảnh", val: "Mất sau 2-3 tin nhắn" },
-              ].map(item => (
-                <div key={item.label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-red-500/5 border border-red-500/5">
-                  <span className="text-xs text-zinc-500">{item.label}</span>
-                  <span className="text-xs text-red-400/80">{item.val}</span>
-                </div>
-              ))}
+            <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+              <motion.div
+                initial={{ width: "0%" }}
+                whileInView={{ width: "20%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                className="h-full rounded-full bg-gradient-to-r from-red-500/60 to-red-500/30"
+              />
+            </div>
+            <div className="flex justify-between text-[9px] text-zinc-700 mt-1">
+              <span>Kịch bản cố định</span>
+              <span>Không hiểu hàng thật</span>
+              <span>Mất ngữ cảnh</span>
             </div>
           </div>
-          {/* OmniAI */}
-          <div className="p-6 bg-gradient-to-br from-green-500/[0.03] to-blue-600/[0.03]">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-8 w-8 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
-                <span className="text-green-400 font-bold text-sm">✓</span>
+
+          {/* The Gap: OmniAI */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded bg-green-500/10 flex items-center justify-center text-[8px] font-bold text-green-400">✓</div>
+                <span className="text-xs font-bold text-green-400">OmniAI</span>
               </div>
-              <div>
-                <p className="text-sm font-bold text-green-400">OmniAI</p>
-                <p className="text-[10px] text-zinc-500">AI hiểu catalog thật của bạn</p>
-              </div>
+              <span className="text-[10px] text-green-400/80">9/10</span>
             </div>
-            <div className="space-y-2">
-              {[
-                { label: "Kịch bản", val: "Tự động học từ dữ liệu" },
-                { label: "Sản phẩm", val: "Hiểu giá, size, màu, tồn kho" },
-                { label: "Ngữ cảnh", val: "Giữ xuyên suốt hội thoại" },
-              ].map(item => (
-                <div key={item.label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-green-500/5 border border-green-500/5">
-                  <span className="text-xs text-zinc-400">{item.label}</span>
-                  <span className="text-xs text-green-400/90">{item.val}</span>
-                </div>
-              ))}
+            <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+              <motion.div
+                initial={{ width: "0%" }}
+                whileInView={{ width: "90%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+                className="h-full rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400"
+              />
+            </div>
+            <div className="flex justify-between text-[9px] text-zinc-500 mt-1">
+              <span>Hiểu catalog thật</span>
+              <span>Đúng variant</span>
+              <span>Giữ ngữ cảnh</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════ FEATURES ══════ */}
-      <section id="features" className="max-w-5xl mx-auto px-5 mb-24">
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-zinc-500 mb-4">Tính năng</div>
+      {/* ══════ FEATURES — BENTO GRID ══════ */}
+      <section id="features" className="relative max-w-5xl mx-auto px-5 mb-24 overflow-hidden">
+        <DotPattern className="text-white" width={20} height={20} />
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-xs text-blue-300 mb-4">Tính năng</div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">{t("features.title")}</h2>
           <p className="text-sm text-zinc-500 max-w-lg mx-auto leading-relaxed">{t("features.sub")}</p>
         </motion.div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {features.map((f, i) => (
-            <motion.div key={f.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-              <MagicCard className="p-5 text-center h-full">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl mb-3 mx-auto" style={{ backgroundColor: "rgba(37,99,235,0.08)" }}>
-                  <f.icon className="h-6 w-6 text-blue-400" />
-                </div>
-                <h3 className="text-sm font-bold text-white mb-1.5 leading-tight">{t(`feat.${f.key}.title`)}</h3>
-                <p className="text-[11px] text-zinc-600 leading-relaxed">{t(`feat.${f.key}.desc`)}</p>
-              </MagicCard>
-            </motion.div>
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
+          {/* Inbox — tall */}
+          <div className="md:col-span-2 md:row-span-2">
+            <BentoCard icon={<MessageSquareCode className="h-5 w-5 text-blue-400" />} title={t("feat.inbox.title")} desc={t("feat.inbox.desc")} className="h-full" gradient="from-blue-600/15 to-transparent" />
+          </div>
+          {/* AI */}
+          <BentoCard icon={<Bot className="h-5 w-5 text-blue-400" />} title={t("feat.ai.title")} desc={t("feat.ai.desc")} gradient="from-purple-600/15 to-transparent" />
+          {/* Channels */}
+          <BentoCard icon={<Smartphone className="h-5 w-5 text-blue-400" />} title={t("feat.channels.title")} desc={t("feat.channels.desc")} gradient="from-pink-600/15 to-transparent" />
+          {/* Analytics — wide */}
+          <div className="md:col-span-2">
+            <BentoCard icon={<BarChart3 className="h-5 w-5 text-blue-400" />} title={t("feat.insight.title")} desc={t("feat.insight.desc")} gradient="from-green-600/15 to-transparent" />
+          </div>
         </div>
       </section>
 
-      {/* ══════ PLATFORMS ══════ */}
-      <section className="max-w-3xl mx-auto px-5 mb-24 text-center">
+      {/* ══════ PLATFORMS — ORBITING CIRCLES ══════ */}
+      <section className="max-w-lg mx-auto px-5 mb-24 text-center">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-lg md:text-xl font-extrabold text-white mb-6">{t("platform.title")}</motion.h2>
-        <div className="flex flex-wrap justify-center gap-2">
-          {platforms.map((p, i) => (
-            <motion.div key={p.nameKey} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.04 }}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg"
-              style={{ backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
-            >
-              <p.icon className="h-3.5 w-3.5 text-zinc-500" />
-              <span className="text-xs font-medium text-zinc-300">{t(p.nameKey)}</span>
-            </motion.div>
-          ))}
-        </div>
+          className="text-xl md:text-2xl font-extrabold text-white mb-2">{t("platform.title")}</motion.h2>
+        <p className="text-sm text-zinc-500 mb-8">{t("platform.sub")}</p>
+        <OrbitingCircles
+          items={[
+            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.facebook"), color: "text-blue-400" },
+            { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.zalo"), color: "text-sky-400" },
+            { icon: <ShoppingBag className="h-4 w-4" />, label: t("platform.tiktok"), color: "text-pink-400" },
+            { icon: <ShoppingCart className="h-4 w-4" />, label: t("platform.shopee"), color: "text-orange-400" },
+            { icon: <Instagram className="h-4 w-4" />, label: t("platform.instagram"), color: "text-purple-400" },
+          ]}
+        />
       </section>
 
-      {/* ══════ PAIN POINTS ══════ */}
+      {/* ══════ PAIN POINTS — STAT IMPACT ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="text-2xl md:text-3xl font-extrabold text-center mb-10 text-white"
         >{t("pain.title")}</motion.h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          {[
+            { stat: 87, suffix: "%", label: "Khách bỏ đi sau 5 phút chờ", color: "text-red-400" },
+            { stat: 15, prefix: ">", suffix: "tr", label: "Triệu/tháng chi phí CSKH", color: "text-orange-400" },
+            { stat: 5, suffix: "", label: "App khác nhau mỗi ngày", color: "text-yellow-400" },
+            { stat: 80, suffix: "%", label: "Khách hỏi lại vì bot không hiểu", color: "text-pink-400" },
+          ].map((item, i) => (
+            <motion.div
+              key={item.label}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="text-center p-4 rounded-xl bg-white/[0.02] border border-white/5"
+            >
+              <div className={`text-3xl font-extrabold mb-1 ${item.color}`}>
+                {item.prefix || ""}<NumberTicker value={item.stat} duration={2} />{item.suffix}
+              </div>
+              <p className="text-[10px] text-zinc-600 leading-tight">{item.label}</p>
+            </motion.div>
+          ))}
+        </div>
         <div className="grid md:grid-cols-2 gap-3">
           {painPoints.map((item, i) => (
             <motion.div key={item.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-              <MagicCard className="flex items-start gap-4 p-5" gradientColor="rgba(239,68,68,0.06)">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)" }}>
-                  <item.icon className="h-5 w-5 text-red-400" />
+              <MagicCard className="flex items-start gap-3 p-4" gradientColor="rgba(239,68,68,0.06)">
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)" }}>
+                  <item.icon className="h-4 w-4 text-red-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white mb-1">{t(`pain.${item.key}.title`)}</h3>
-                  <p className="text-xs text-zinc-500 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
+                  <h3 className="text-xs font-bold text-white mb-0.5">{t(`pain.${item.key}.title`)}</h3>
+                  <p className="text-[11px] text-zinc-600 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
                 </div>
               </MagicCard>
             </motion.div>

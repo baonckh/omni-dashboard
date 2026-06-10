@@ -275,25 +275,26 @@ export default function LandingPage() {
         <div className="relative min-h-[260px] pl-6 md:pl-0 flex items-start">
           {/* Bot cũ — lùi trái, mờ, gạch ngang */}
           <motion.div
-            initial={{ opacity: 0.6, x: -10 }}
-            whileInView={{ opacity: 0.6, x: -10 }}
-            className="absolute left-0 top-6 w-[80%] p-6 rounded-2xl border border-red-500/10 bg-red-500/[0.03] select-none"
+            initial={{ opacity: 0.85, x: -10 }}
+            whileInView={{ opacity: 0.85, x: -10 }}
+            className="absolute left-0 top-6 w-[80%] p-6 rounded-2xl border border-red-500/10 bg-red-500/[0.02] select-none"
             style={{ transform: "rotate(-2deg)" }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-xs font-bold text-red-400">✕</div>
-              <span className="text-sm font-bold text-red-400/50 line-through">Bot thông thường — Trả lời máy móc</span>
+              <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-sm font-bold text-red-400">✕</div>
+              <span className="text-base font-bold text-red-400/80">Bot thông thường</span>
+              <span className="text-[10px] text-red-400/40 line-through ml-auto">Trả lời máy móc</span>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2.5 pl-1">
               {[
                 { title: "Kịch bản cố định", desc: "Trả lời theo mẫu soạn sẵn, không linh hoạt" },
                 { title: "Không hiểu sản phẩm", desc: "Không biết giá, tồn kho, mô tả thực tế" },
                 { title: "Mất ngữ cảnh", desc: "Sau 2-3 tin nhắn là trả lời lạc đề" },
                 { title: "Tốn công đào tạo", desc: "Phải lập trình từng kịch bản thủ công" },
               ].map(item => (
-                <div key={item.title} className="text-zinc-700 line-through">
-                  <p className="text-xs font-medium flex items-center gap-1.5"><span className="text-red-500/30 text-[10px]">✕</span>{item.title}</p>
-                  <p className="text-[10px] text-zinc-800 pl-4">{item.desc}</p>
+                <div key={item.title}>
+                  <p className="text-sm font-medium text-zinc-600 flex items-center gap-2"><span className="text-red-500/40 text-xs">✕</span>{item.title}</p>
+                  <p className="text-xs text-zinc-500 pl-5">{item.desc}</p>
                 </div>
               ))}
             </div>

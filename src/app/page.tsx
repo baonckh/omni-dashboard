@@ -106,13 +106,14 @@ export default function LandingPage() {
 
       {/* ══════ HERO ══════ */}
       <section className="relative pt-28 pb-16 px-5">
+        {/* Background blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
-          <div className="absolute top-10 right-[8%] w-48 h-48 hidden md:block z-0 opacity-80">
-            <Globe />
-          </div>
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
-          <div className="absolute top-40 right-[15%] w-80 h-80 rounded-full bg-purple-500/5 blur-[80px]" />
+        </div>
+        {/* Globe */}
+        <div className="absolute top-5 right-[5%] w-52 h-52 hidden lg:block z-10">
+          <Globe />
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}

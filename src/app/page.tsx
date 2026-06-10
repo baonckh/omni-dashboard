@@ -24,7 +24,7 @@ import Marquee from "@/components/Marquee";
 import DotPattern from "@/components/DotPattern";
 import BentoCard from "@/components/BentoCard";
 import NumberTicker from "@/components/NumberTicker";
-import OrbitingCircles from "@/components/OrbitingCircles";
+import OrbitCircles from "@/components/MagicOrbit";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -377,7 +377,7 @@ export default function LandingPage() {
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="text-xl md:text-2xl font-extrabold text-white mb-2">{t("platform.title")}</motion.h2>
         <p className="text-sm text-zinc-500 mb-8">{t("platform.sub")}</p>
-        <OrbitingCircles
+        <OrbitCircles
           items={[
             { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.facebook") },
             { icon: <MessageCircle className="h-4 w-4" />, label: t("platform.zalo") },

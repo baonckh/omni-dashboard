@@ -253,54 +253,74 @@ export default function LandingPage() {
           <BotPipeline />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent"
-        >
-          <div className="flex">
-            <div className="w-1/2 p-4 border-r border-white/5">
-              <div className="flex items-center gap-1.5 mb-3">
-                <div className="flex -space-x-1">
-                  {[1,2,3].map(i => <div key={i} className="w-4 h-4 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-[6px] font-bold text-red-400">✕</div>)}
-                </div>
-                <span className="text-[10px] font-bold text-red-400/80">Bot thường</span>
+        <div className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-white/5">
+          {/* Bot thường */}
+          <div className="p-6 bg-gradient-to-br from-red-500/[0.03] to-transparent border-b md:border-b-0 md:border-r border-white/5">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-8 w-8 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <span className="text-red-400 font-bold text-sm">✕</span>
               </div>
-              <div className="space-y-1">
-                {["Kịch bản có sẵn", "Không hiểu hàng thật", "Mất ngữ cảnh"].map(item => (
-                  <div key={item} className="flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] text-zinc-600 bg-red-500/5"><span className="text-red-500/40">✕</span>{item}</div>
-                ))}
+              <div>
+                <p className="text-sm font-bold text-red-400">Bot thông thường</p>
+                <p className="text-[10px] text-zinc-600">Trả lời máy móc theo kịch bản</p>
               </div>
             </div>
-            <div className="w-1/2 p-4 bg-blue-600/[0.03]">
-              <div className="flex items-center gap-1.5 mb-3">
-                <div className="w-4 h-4 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center text-[6px] font-bold text-green-400">✓</div>
-                <span className="text-[10px] font-bold text-green-400">OmniAI</span>
-              </div>
-              <div className="space-y-1">
-                {["Hiểu catalog thật", "Đúng variant", "Giữ ngữ cảnh"].map(item => (
-                  <div key={item} className="flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] text-zinc-300 bg-green-500/5"><span className="text-green-500/60">✓</span>{item}</div>
-                ))}
-              </div>
+            <div className="space-y-2">
+              {[
+                { label: "Kịch bản", val: "Cố định, không linh hoạt" },
+                { label: "Sản phẩm", val: "Không hiểu hàng thật" },
+                { label: "Ngữ cảnh", val: "Mất sau 2-3 tin nhắn" },
+              ].map(item => (
+                <div key={item.label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-red-500/5 border border-red-500/5">
+                  <span className="text-xs text-zinc-500">{item.label}</span>
+                  <span className="text-xs text-red-400/80">{item.val}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </motion.div>
+          {/* OmniAI */}
+          <div className="p-6 bg-gradient-to-br from-green-500/[0.03] to-blue-600/[0.03]">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-8 w-8 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                <span className="text-green-400 font-bold text-sm">✓</span>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-green-400">OmniAI</p>
+                <p className="text-[10px] text-zinc-500">AI hiểu catalog thật của bạn</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {[
+                { label: "Kịch bản", val: "Tự động học từ dữ liệu" },
+                { label: "Sản phẩm", val: "Hiểu giá, size, màu, tồn kho" },
+                { label: "Ngữ cảnh", val: "Giữ xuyên suốt hội thoại" },
+              ].map(item => (
+                <div key={item.label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-green-500/5 border border-green-500/5">
+                  <span className="text-xs text-zinc-400">{item.label}</span>
+                  <span className="text-xs text-green-400/90">{item.val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ══════ FEATURES ══════ */}
       <section id="features" className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] text-zinc-500 mb-4">Tính năng</div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-2">{t("features.title")}</h2>
-          <p className="text-xs text-zinc-500 max-w-md mx-auto">{t("features.sub")}</p>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-zinc-500 mb-4">Tính năng</div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">{t("features.title")}</h2>
+          <p className="text-sm text-zinc-500 max-w-lg mx-auto leading-relaxed">{t("features.sub")}</p>
         </motion.div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {features.map((f, i) => (
             <motion.div key={f.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-              <MagicCard className="p-4 text-center">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl mb-2.5 mx-auto" style={{ backgroundColor: "rgba(37,99,235,0.08)" }}>
-                  <f.icon className="h-5 w-5 text-blue-400" />
+              <MagicCard className="p-5 text-center h-full">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl mb-3 mx-auto" style={{ backgroundColor: "rgba(37,99,235,0.08)" }}>
+                  <f.icon className="h-6 w-6 text-blue-400" />
                 </div>
-                <h3 className="text-[11px] font-bold text-white mb-1 leading-tight">{t(`feat.${f.key}.title`)}</h3>
-                <p className="text-[9px] text-zinc-600 leading-relaxed">{t(`feat.${f.key}.desc`)}</p>
+                <h3 className="text-sm font-bold text-white mb-1.5 leading-tight">{t(`feat.${f.key}.title`)}</h3>
+                <p className="text-[11px] text-zinc-600 leading-relaxed">{t(`feat.${f.key}.desc`)}</p>
               </MagicCard>
             </motion.div>
           ))}
@@ -327,18 +347,18 @@ export default function LandingPage() {
       {/* ══════ PAIN POINTS ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-lg md:text-xl font-extrabold text-center mb-8 text-zinc-300"
+          className="text-2xl md:text-3xl font-extrabold text-center mb-10 text-white"
         >{t("pain.title")}</motion.h2>
-        <div className="grid md:grid-cols-2 gap-2">
+        <div className="grid md:grid-cols-2 gap-3">
           {painPoints.map((item, i) => (
             <motion.div key={item.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-              <MagicCard className="flex items-start gap-3 p-3.5" gradientColor="rgba(239,68,68,0.06)">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)" }}>
-                  <item.icon className="h-4 w-4 text-red-400" />
+              <MagicCard className="flex items-start gap-4 p-5" gradientColor="rgba(239,68,68,0.06)">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)" }}>
+                  <item.icon className="h-5 w-5 text-red-400" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-white mb-0.5">{t(`pain.${item.key}.title`)}</h3>
-                  <p className="text-[10px] text-zinc-600 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
+                  <h3 className="text-sm font-bold text-white mb-1">{t(`pain.${item.key}.title`)}</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
                 </div>
               </MagicCard>
             </motion.div>

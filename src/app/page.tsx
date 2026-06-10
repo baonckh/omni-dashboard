@@ -308,8 +308,15 @@ export default function LandingPage() {
                 { title: "Giữ ngữ cảnh hội thoại", desc: "Nhớ toàn bộ cuộc trò chuyện, không bị lạc đề" },
                 { title: "Cá nhân hóa theo shop", desc: "Nói chuyện đúng chất riêng, giọng văn, phong cách của bạn" },
                 { title: "Tự động học, không cần training", desc: "Nhập dữ liệu một lần — AI tự vận hành, không cần lập trình" },
-              ].map(item => (
-                <div key={item.title} className="flex items-start gap-3">
+              ].map((item, idx) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: 0.35 + idx * 0.1 }}
+                  className="flex items-start gap-3"
+                >
                   <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5">
                     <span className="text-green-400 text-[11px]">✓</span>
                   </div>
@@ -317,7 +324,7 @@ export default function LandingPage() {
                     <p className="text-sm font-bold text-white">{item.title}</p>
                     <p className="text-xs text-zinc-500 mt-0.5 leading-relaxed">{item.desc}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -325,12 +332,25 @@ export default function LandingPage() {
       </section>
 
       {/* ══════ FEATURES — BENTO GRID ══════ */}
-      <section id="features" className="group/section relative max-w-5xl mx-auto px-5 mb-24 overflow-hidden">
+      <section
+        id="features"
+        className="group/section relative max-w-5xl mx-auto px-5 mb-24 overflow-hidden"
+        onMouseMove={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          e.currentTarget.style.setProperty("--mx", x + "%");
+          e.currentTarget.style.setProperty("--my", y + "%");
+        }}
+      >
+        {/* Mouse-following glow */}
+        <div
+          className="absolute -inset-40 pointer-events-none opacity-0 group-hover/section:opacity-100 transition-opacity duration-500"
+          style={{
+            background: "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(37,99,235,0.12) 0%, transparent 60%)",
+          }}
+        />
         <DotPattern className="text-white" width={20} height={20} />
-        {/* Background glow follows mouse */}
-        <div className="absolute -inset-40 opacity-0 group-hover/section:opacity-100 transition-opacity duration-700 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 w-96 h-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/10 blur-[100px]" />
-        </div>
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-xs text-blue-300 mb-4">Tính năng</div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">{t("features.title")}</h2>

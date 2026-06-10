@@ -277,13 +277,12 @@ export default function LandingPage() {
           <motion.div
             initial={{ opacity: 0.85, x: -10 }}
             whileInView={{ opacity: 0.85, x: -10 }}
-            className="absolute left-0 top-6 w-[80%] p-6 rounded-2xl border border-red-500/10 bg-red-500/[0.02] select-none"
+            className="absolute left-0 top-6 w-[72%] p-6 rounded-2xl border border-red-500/10 bg-red-500/[0.02] select-none"
             style={{ transform: "rotate(-2deg)" }}
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-sm font-bold text-red-400">✕</div>
               <span className="text-base font-bold text-red-400/80">Bot thông thường</span>
-              <span className="text-[10px] text-red-400/40 line-through ml-auto">Trả lời máy móc</span>
             </div>
             <div className="space-y-2.5 pl-1">
               {[
@@ -302,11 +301,11 @@ export default function LandingPage() {
 
           {/* OmniAI — đè lên, phải, sáng */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="relative z-10 ml-auto w-[88%] md:w-[75%] p-6 md:p-7 rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-600/[0.08] to-purple-600/[0.05] shadow-2xl shadow-blue-600/15"
+            className="relative z-10 ml-auto w-[82%] md:w-[68%] mr-2 p-6 md:p-7 rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-600/[0.08] to-purple-600/[0.05] shadow-2xl shadow-blue-600/15"
           >
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-600/30">

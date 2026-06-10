@@ -1,5 +1,5 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDLFfLJvXnehrovdg_xVK6CMN899HFzMSI",
@@ -10,18 +10,19 @@ const firebaseConfig = {
   appId: "1:526789618041:web:4041f704d5862e419827a8",
 };
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+const app = firebase.apps.length === 0 ? firebase.initializeApp(firebaseConfig) : firebase.app();
+const auth = firebase.auth(app);
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 export async function signInWithGoogle(): Promise<string | null> {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    const idToken = await result.user.getIdToken();
-    return idToken;
-  } catch (error: any) {
-    if (error?.code === "auth/popup-closed-by-user") return null;
-    if (error?.code === "auth/cancelled-popup-request") return null;
+    const result = await auth.signInWithPopup(googleProvider);
+    const idToken = await result.user?.getIdToken();
+    return idToken ?? null;
+  } catch (error: unknown) {
+    const code = error && typeof error === "object" && "code" in error ? error.code : null;
+    if (code === "auth/popup-closed-by-user") return null;
+    if (code === "auth/cancelled-popup-request") return null;
     console.error("[FIREBASE] Google sign-in error:", error);
     return null;
   }

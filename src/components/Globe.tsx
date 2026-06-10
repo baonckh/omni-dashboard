@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import createGlobe, { type COBEOptions } from "cobe";
 
-const GLOBE_CONFIG: COBEOptions = {
+// Dynamic import to avoid Turbopack resolution issues on Vercel
+const GLOBE_CONFIG = {
   width: 800,
   height: 800,
   onRender: () => {},
@@ -14,12 +14,12 @@ const GLOBE_CONFIG: COBEOptions = {
   diffuse: 0.4,
   mapSamples: 16000,
   mapBrightness: 1.2,
-  baseColor: [1, 1, 1],
-  markerColor: [251 / 255, 100 / 255, 21 / 255],
-  glowColor: [1, 1, 1],
+  baseColor: [1, 1, 1] as [number, number, number],
+  markerColor: [251 / 255, 100 / 255, 21 / 255] as [number, number, number],
+  glowColor: [1, 1, 1] as [number, number, number],
   markers: [
-    { location: [10.8, 106.7], size: 0.08 },
-    { location: [21.0, 105.8], size: 0.06 },
+    { location: [10.8, 106.7] as [number, number], size: 0.08 },
+    { location: [21.0, 105.8] as [number, number], size: 0.06 },
   ],
 };
 
@@ -29,36 +29,48 @@ export default function Globe({ className = "" }: { className?: string }) {
   const widthRef = useRef(0);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    let globe: { destroy: () => void } | null = null;
 
-    const onResize = () => { widthRef.current = canvas.offsetWidth; };
-    window.addEventListener("resize", onResize);
-    onResize();
+    const init = async () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
-    const globe = createGlobe(canvas, {
-      ...GLOBE_CONFIG,
-      width: widthRef.current * 2 || 400,
-      height: widthRef.current * 2 || 400,
-      onRender: (state) => {
-        phiRef.current += 0.003;
-        state.phi = phiRef.current;
-        state.width = widthRef.current * 2 || 400;
-        state.height = widthRef.current * 2 || 400;
-      },
-    });
+      try {
+        const cobe = await import("cobe");
+        const createGlobe = cobe.default || cobe;
 
-    setTimeout(() => { canvas.style.opacity = "1"; }, 0);
-    return () => globe.destroy();
+        const onResize = () => { widthRef.current = canvas.offsetWidth; };
+        onResize();
+
+        globe = createGlobe(canvas, {
+          ...GLOBE_CONFIG,
+          width: (widthRef.current || 200) * 2,
+          height: (widthRef.current || 200) * 2,
+          onRender: (state: any) => {
+            phiRef.current += 0.003;
+            state.phi = phiRef.current;
+            state.width = (widthRef.current || 200) * 2;
+            state.height = (widthRef.current || 200) * 2;
+          },
+        });
+
+        canvas.style.opacity = "1";
+      } catch (e) {
+        console.warn("[Globe] Failed to load:", e);
+        // Show placeholder on failure
+        canvas.style.opacity = "1";
+      }
+    };
+
+    init();
+    return () => { if (globe?.destroy) globe.destroy(); };
   }, []);
 
   return (
-    <div className={`relative mx-auto w-full max-w-[200px] aspect-square ${className}`}>
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full opacity-0 transition-opacity duration-500"
-        style={{ contain: "layout paint size" }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className={`w-full h-full opacity-0 transition-opacity duration-500 ${className}`}
+      style={{ aspectRatio: "1/1", maxWidth: 200, maxHeight: 200 }}
+    />
   );
 }

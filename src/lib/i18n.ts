@@ -88,9 +88,9 @@ const vi: Dict = {
   "pipeline.vs_before": "Bot thông thường",
   "pipeline.vs_after": "OmniAI",
 
-  "testimonial.text": "\"Từ ngày dùng OmniAI, tôi không còn thức đêm trả lời tin nhắn nữa. Bot trả lời như nhân viên thật, khách còn khen tư vấn nhiệt tình.\"",
-  "testimonial.name": "Minh Trang",
-  "testimonial.role": "Chủ shop Thời trang ABC",
+  "testimonial.text": "Mình xây OmniAI vì chính mình từng là chủ shop online — hiểu cảm giác khách nhắn đêm không ai trả lời, thuê nhân viên CSKH tốn kém, bot chat thì trả lời như robot, mất chất riêng của shop.",
+  "testimonial.name": "Bảo — Founder OmniAI",
+  "testimonial.role": "Từng là chủ shop SME, giờ xây giải pháp AI cho chủ shop",
 
   // ── CTA ──
   "cta.title": "Hơn 50 shop đã dùng OmniAI để tự động hóa CSKH",
@@ -217,9 +217,9 @@ const en: Dict = {
   "chat.feat4": "Replies in 1-3 seconds",
   "chat.feat4_desc": "Customers never wait. Never miss a sales opportunity.",
 
-  "testimonial.text": "\"Since using OmniAI, I no longer stay up late replying to messages. The bot replies like a real staff — customers even compliment the helpful advice.\"",
-  "testimonial.name": "Minh Trang",
-  "testimonial.role": "Owner of ABC Fashion Shop",
+  "testimonial.text": "I built OmniAI because I was once an online shop owner myself — I know the pain of customers messaging at night with no one to reply, the cost of hiring CS staff, and chatbots that sound robotic and kill your shop's personality.",
+  "testimonial.name": "Bao — Founder of OmniAI",
+  "testimonial.role": "Former SME shop owner, now building AI for shop owners",
 
   // ── CTA ──
   "cta.title": "50+ SMEs are already using OmniAI",

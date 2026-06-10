@@ -399,14 +399,16 @@ export default function LandingPage() {
       {/* ══════ PAIN POINTS — STAT IMPACT ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-2xl md:text-3xl font-extrabold text-center mb-10 text-white"
+          className="text-2xl md:text-3xl font-extrabold text-center mb-12 text-white"
         >{t("pain.title")}</motion.h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+
+        {/* 4 Stat Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           {[
-            { stat: 87, suffix: "%", label: "Khách bỏ đi sau 5 phút chờ", color: "text-red-400" },
-            { stat: 15, prefix: ">", suffix: "tr", label: "Triệu/tháng chi phí CSKH", color: "text-orange-400" },
-            { stat: 5, suffix: "", label: "App khác nhau mỗi ngày", color: "text-yellow-400" },
-            { stat: 80, suffix: "%", label: "Khách hỏi lại vì bot không hiểu", color: "text-pink-400" },
+            { stat: 87, suffix: "%", label: "Khách bỏ đi sau 5 phút chờ", icon: Clock, color: "text-red-400", bg: "bg-red-500/10" },
+            { stat: 15, prefix: ">", suffix: "tr", label: "Triệu/tháng chi phí CSKH", icon: Users, color: "text-orange-400", bg: "bg-orange-500/10" },
+            { stat: 5, suffix: "", label: "App khác nhau mỗi ngày", icon: MessageSquareCode, color: "text-yellow-400", bg: "bg-yellow-500/10" },
+            { stat: 80, suffix: "%", label: "Khách hỏi lại vì bot không hiểu", icon: HeartHandshake, color: "text-pink-400", bg: "bg-pink-500/10" },
           ].map((item, i) => (
             <motion.div
               key={item.label}
@@ -414,8 +416,12 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="text-center p-4 rounded-xl bg-white/[0.02] border border-white/5"
+              className="text-center p-5 rounded-xl border border-white/5 hover:border-white/10 transition-all"
+              style={{ backgroundColor: "rgba(255,255,255,0.015)" }}
             >
+              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3 ${item.bg}`}>
+                <item.icon className={`h-5 w-5 ${item.color}`} />
+              </div>
               <div className={`text-3xl font-extrabold mb-1 ${item.color}`}>
                 {item.prefix || ""}<NumberTicker value={item.stat} duration={2} />{item.suffix}
               </div>
@@ -423,16 +429,18 @@ export default function LandingPage() {
             </motion.div>
           ))}
         </div>
+
+        {/* 4 Pain Cards */}
         <div className="grid md:grid-cols-2 gap-3">
           {painPoints.map((item, i) => (
             <motion.div key={item.key} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-              <MagicCard className="flex items-start gap-3 p-4" gradientColor="rgba(239,68,68,0.06)">
-                <div className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)" }}>
-                  <item.icon className="h-4 w-4 text-red-400" />
+              <MagicCard className="flex items-start gap-4 p-5" gradientColor="rgba(239,68,68,0.06)">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl shrink-0" style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.1)" }}>
+                  <item.icon className="h-6 w-6 text-red-400" />
                 </div>
-                <div>
-                  <h3 className="text-xs font-bold text-white mb-0.5">{t(`pain.${item.key}.title`)}</h3>
-                  <p className="text-[11px] text-zinc-600 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold text-white mb-1">{t(`pain.${item.key}.title`)}</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed">{t(`pain.${item.key}.desc`)}</p>
                 </div>
               </MagicCard>
             </motion.div>

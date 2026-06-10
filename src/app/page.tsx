@@ -108,7 +108,7 @@ export default function LandingPage() {
       <section className="relative pt-28 pb-16 px-5">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
-          <div className="absolute -top-20 -right-20 w-60 h-60 opacity-30">
+          <div className="absolute top-10 right-[5%] w-44 h-44 opacity-40 hidden md:block">
             <Globe />
           </div>
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />

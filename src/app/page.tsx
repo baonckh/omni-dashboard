@@ -208,21 +208,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ GEO PASSAGE ══════ */}
-      <section className="max-w-4xl mx-auto px-5 mb-24">
-        <div className="p-6 rounded-2xl border border-blue-500/10 bg-gradient-to-br from-blue-600/[0.03] to-transparent">
-          <h2 className="text-base md:text-lg font-extrabold text-white mb-3">OmniAI thay đổi cách chăm sóc khách hàng đa sàn như thế nào?</h2>
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            Thay vì thuê 2-3 nhân viên CSKH với chi phí 15-30 triệu/tháng, OmniAI tự động trả lời tin nhắn từ Facebook Messenger, Zalo OA, TikTok Shop, Shopee và Instagram 24/7 không nghỉ. 
-            AI hiểu catalog sản phẩm thật — bao gồm giá, size, màu sắc và tồn kho — thông qua việc tự động học từ dữ liệu shop tải lên một lần duy nhất. 
-            Bot giữ nguyên phong cách tư vấn riêng của shop, không trả lời chung chung như tổng đài. 
-            Chủ shop SME có thể tập trung vào kinh doanh, không lo bỏ lỡ đơn hàng vì tin nhắn không được trả lời kịp. 
-            Tích hợp sẵn với Facebook Graph API v25.0 và Zalo OA API. Dùng thử miễn phí tại OmniAI, không cần thẻ tín dụng. 
-            <span className="text-[10px] text-zinc-600 block mt-2">Nguồn: Google AI Optimization Guide 2026, Facebook Graph API docs, Zalo OA Platform docs</span>
-          </p>
-        </div>
-      </section>
-
       {/* ══════ CHAT DEMO ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
@@ -340,8 +325,12 @@ export default function LandingPage() {
       </section>
 
       {/* ══════ FEATURES — BENTO GRID ══════ */}
-      <section id="features" className="relative max-w-5xl mx-auto px-5 mb-24 overflow-hidden">
+      <section id="features" className="group/section relative max-w-5xl mx-auto px-5 mb-24 overflow-hidden">
         <DotPattern className="text-white" width={20} height={20} />
+        {/* Background glow follows mouse */}
+        <div className="absolute -inset-40 opacity-0 group-hover/section:opacity-100 transition-opacity duration-700 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/10 blur-[100px]" />
+        </div>
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-xs text-blue-300 mb-4">Tính năng</div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">{t("features.title")}</h2>
@@ -349,8 +338,8 @@ export default function LandingPage() {
         </motion.div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
           {/* Inbox — tall */}
-          <div className="md:col-span-2 md:row-span-2">
-            <BentoCard icon={<MessageSquareCode className="h-5 w-5 text-blue-400" />} title={t("feat.inbox.title")} desc={t("feat.inbox.desc")} className="h-full" gradient="from-blue-600/15 to-transparent" />
+          <div className="md:col-span-2 md:row-span-2 flex">
+            <BentoCard icon={<MessageSquareCode className="h-5 w-5 text-blue-400" />} title={t("feat.inbox.title")} desc={t("feat.inbox.desc")} className="h-full w-full flex flex-col justify-center items-center text-center" gradient="from-blue-600/15 to-transparent" />
           </div>
           {/* AI */}
           <BentoCard icon={<Bot className="h-5 w-5 text-blue-400" />} title={t("feat.ai.title")} desc={t("feat.ai.desc")} gradient="from-purple-600/15 to-transparent" />

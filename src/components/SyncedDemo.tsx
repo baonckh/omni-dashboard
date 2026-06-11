@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { Zap } from "lucide-react";
 import ChatDemo from "./ChatDemo";
 import BotPipeline from "./BotPipeline";
+import { AnimatedBeam } from "./ui/animated-beam";
 import type { Stage } from "./BotPipeline";
 
 type TickDef = { visible: number; stage: Stage };
@@ -36,51 +38,94 @@ export default function SyncedDemo() {
   const { visible, stage } = TICKS[tick] ?? TICKS[0];
   const isActive = stage !== "idle";
 
+  // Refs for AnimatedBeam
+  const containerRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const aiRef = useRef<HTMLDivElement>(null);
+  const pipelineRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       {/* Shared background glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-gradient-to-r from-blue-600/10 via-purple-600/8 to-transparent blur-[100px] rounded-full" />
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 items-start relative z-0">
+      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-3 relative z-0">
         {/* Chat panel */}
         <motion.div
+          ref={chatRef}
           initial={{ opacity: 0, x: -10 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="w-full md:w-1/2"
+          className="w-full md:flex-1"
         >
           <ChatDemo controlledVisible={visible} />
         </motion.div>
 
-        {/* Connecting gradient beam (desktop) */}
-        <div className="hidden md:flex absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-6 items-center justify-center z-10">
-          <div className="relative w-0.5 h-full">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/25 via-purple-500/15 to-transparent" />
-            <motion.div
-              className="absolute w-0.5 h-16 rounded-full bg-gradient-to-b from-blue-400 to-purple-400"
-              animate={
-                isActive
-                  ? { top: ["0%", "calc(100% - 4rem)", "0%"], opacity: [0.3, 0.9, 0.3] }
-                  : { top: "0%", opacity: 0.15 }
-              }
-              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-            />
-          </div>
-        </div>
+        {/* AI icon — center node */}
+        <motion.div
+          ref={aiRef}
+          initial={{ opacity: 0, scale: 0 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15, type: "spring", stiffness: 200 }}
+          className="shrink-0 relative z-20"
+        >
+          <motion.div
+            className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg shadow-blue-600/30 border-2 border-blue-400/30"
+            animate={isActive ? { scale: [1, 1.08, 1], boxShadow: ["0 0 20px rgba(59,130,246,0.3)", "0 0 40px rgba(168,85,247,0.5)", "0 0 20px rgba(59,130,246,0.3)"] } : { scale: 1 }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+          >
+            <Zap className="h-5 w-5 md:h-6 md:w-6 text-white drop-shadow-lg" />
+          </motion.div>
+          <span className="hidden md:block absolute -bottom-5 left-1/2 -translate-x-1/2 text-[8px] font-bold text-blue-400/70 tracking-widest">
+            AI
+          </span>
+        </motion.div>
 
         {/* Pipeline panel */}
         <motion.div
+          ref={pipelineRef}
           initial={{ opacity: 0, x: 10 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="w-full md:w-1/2"
+          className="w-full md:flex-1"
         >
-          <div className="h-full">
-            <BotPipeline controlledStage={stage} />
-          </div>
+          <BotPipeline controlledStage={stage} />
         </motion.div>
+      </div>
+
+      {/* Animated beams — desktop only */}
+      <div className="hidden md:block">
+        <AnimatedBeam
+          containerRef={containerRef}
+          fromRef={chatRef}
+          toRef={aiRef}
+          curvature={-20}
+          pathColor="rgba(59,130,246,0.15)"
+          pathWidth={2}
+          pathOpacity={0.3}
+          gradientStartColor="#3B82F6"
+          gradientStopColor="#8B5CF6"
+          duration={3}
+          delay={0}
+          repeatDelay={0.5}
+        />
+        <AnimatedBeam
+          containerRef={containerRef}
+          fromRef={aiRef}
+          toRef={pipelineRef}
+          curvature={-20}
+          pathColor="rgba(59,130,246,0.15)"
+          pathWidth={2}
+          pathOpacity={0.3}
+          gradientStartColor="#8B5CF6"
+          gradientStopColor="#3B82F6"
+          duration={3}
+          delay={0.3}
+          repeatDelay={0.5}
+        />
       </div>
     </div>
   );

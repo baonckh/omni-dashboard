@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Zap } from "lucide-react";
 import ChatDemo from "./ChatDemo";
 import BotPipeline from "./BotPipeline";
 import type { Stage } from "./BotPipeline";
@@ -39,49 +38,48 @@ export default function SyncedDemo() {
 
   return (
     <div className="relative">
-      {/* Shared background glow behind both panels */}
+      {/* Shared background glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/4 w-1/2 h-3/4 bg-gradient-to-r from-blue-600/8 via-purple-600/8 to-transparent blur-[80px] rounded-full" />
-      </div>
-
-      {/* Desktop connector arrow */}
-      <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex-col items-center gap-1">
-        <motion.div
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/25 shadow-lg shadow-blue-500/10 backdrop-blur-sm"
-          animate={
-            isActive
-              ? { scale: [1, 1.12, 1], borderColor: ["rgba(59,130,246,0.25)", "rgba(168,85,247,0.4)", "rgba(59,130,246,0.25)"] }
-              : { scale: 1, borderColor: "rgba(59,130,246,0.15)" }
-          }
-          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-        >
-          <ArrowRight className="h-4 w-4 text-blue-400" />
-        </motion.div>
-        <motion.span
-          className="text-[9px] font-medium text-blue-500/60 tracking-wider"
-          animate={isActive ? { opacity: [0.4, 1, 0.4] } : { opacity: 0.3 }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          AI
-        </motion.span>
+        <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-gradient-to-r from-blue-600/10 via-purple-600/8 to-transparent blur-[100px] rounded-full" />
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 items-start relative z-0">
+        {/* Chat panel */}
         <motion.div
           initial={{ opacity: 0, x: -10 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="w-full md:w-1/2 h-[480px] shrink-0"
+          className="w-full md:w-1/2"
         >
           <ChatDemo controlledVisible={visible} />
         </motion.div>
+
+        {/* Connecting gradient beam (desktop) */}
+        <div className="hidden md:flex absolute left-1/2 top-0 bottom-0 -translate-x-1/2 w-6 items-center justify-center z-10">
+          <div className="relative w-0.5 h-full">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/25 via-purple-500/15 to-transparent" />
+            <motion.div
+              className="absolute w-0.5 h-16 rounded-full bg-gradient-to-b from-blue-400 to-purple-400"
+              animate={
+                isActive
+                  ? { top: ["0%", "calc(100% - 4rem)", "0%"], opacity: [0.3, 0.9, 0.3] }
+                  : { top: "0%", opacity: 0.15 }
+              }
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+            />
+          </div>
+        </div>
+
+        {/* Pipeline panel */}
         <motion.div
           initial={{ opacity: 0, x: 10 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="w-full md:w-1/2 h-[480px] overflow-y-auto"
+          className="w-full md:w-1/2"
         >
-          <BotPipeline controlledStage={stage} />
+          <div className="h-full">
+            <BotPipeline controlledStage={stage} />
+          </div>
         </motion.div>
       </div>
     </div>

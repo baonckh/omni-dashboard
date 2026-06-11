@@ -256,6 +256,11 @@ export default function LandingPage() {
         </div>
 
         <div className="relative min-h-[260px] pl-6 md:pl-0 flex items-start">
+          {/* Label */}
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-1 rounded-full bg-zinc-900/80 border border-white/5 text-[9px] font-medium text-zinc-500 backdrop-blur-sm">
+            {lang === "vi" ? "Bot cũ vs OmniAI" : "Old Bot vs OmniAI"}
+          </div>
+
           {/* Bot cũ — lùi trái, mờ, gạch ngang */}
           <motion.div
             initial={{ opacity: 0.85, x: -10 }}

@@ -251,7 +251,9 @@ export default function LandingPage() {
           )}
         </motion.div>
 
-        <SyncedDemo />
+        <div className="mb-16">
+          <SyncedDemo />
+        </div>
 
         <div className="relative min-h-[260px] pl-6 md:pl-0 flex items-start">
           {/* Bot cũ — lùi trái, mờ, gạch ngang */}

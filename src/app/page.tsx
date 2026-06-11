@@ -458,9 +458,8 @@ export default function LandingPage() {
           <blockquote className="text-lg md:text-xl font-medium leading-relaxed text-zinc-300 mb-6">
             {t("testimonial.text")}
           </blockquote>
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">MT</div>
-            <div className="text-left">
+          <div className="flex items-center justify-center">
+            <div className="text-center">
               <p className="text-sm font-bold text-white">{t("testimonial.name")}</p>
               <p className="text-xs text-zinc-500">{t("testimonial.role")}</p>
             </div>

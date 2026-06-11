@@ -115,19 +115,17 @@ export default function LandingPage() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
         </div>
-        {/* Globe — nằm sau trusted by + CTA buttons */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] overflow-hidden pointer-events-none opacity-40">
-          <Globe className="-top-10" config={{
+        {/* Globe — chỉ lộ nửa trên, nằm sau trusted by + CTA */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[200px] overflow-hidden pointer-events-none opacity-70">
+          <Globe className="-top-32" config={{
             width: 400, height: 400, devicePixelRatio: 1.5, phi: 0, theta: 0.3,
-            dark: 0.8, diffuse: 0.3, mapSamples: 8000, mapBrightness: 1.2,
-            baseColor: [0.08, 0.12, 0.25],
-            markerColor: [1, 0.35, 0.1],
-            glowColor: [0.05, 0.08, 0.2],
+            dark: 0.4, diffuse: 0.4, mapSamples: 10000, mapBrightness: 1.5,
+            baseColor: [0.15, 0.25, 0.5],
+            markerColor: [1, 0.45, 0.15],
+            glowColor: [0.1, 0.15, 0.35],
             markers: [
               { location: [10.8, 106.7], size: 0.08 },
               { location: [21.0, 105.8], size: 0.06 },
-              { location: [40.7, -74.0], size: 0.04 },
-              { location: [35.6, 139.7], size: 0.04 },
             ],
             onRender: () => {},
           }} />

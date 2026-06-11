@@ -29,23 +29,26 @@ const STEPS_EN: Message[] = [
 const PER_STEP = 1800;
 const PAUSE = 7000;
 
-export default function ChatDemo() {
+export default function ChatDemo({ controlledVisible }: { controlledVisible?: number }) {
   const { lang } = useLang();
+  const isControlled = controlledVisible !== undefined;
   const [visible, setVisible] = useState(0);
   const steps = lang === "vi" ? STEPS_VI : STEPS_EN;
+  const effectiveVisible = isControlled ? controlledVisible : visible;
 
   const tick = useCallback(() => {
     setVisible(prev => (prev >= steps.length ? prev : prev + 1));
   }, [steps.length]);
 
   useEffect(() => {
+    if (isControlled) return;
     if (visible >= steps.length) {
       const t = setTimeout(() => setVisible(0), PAUSE);
       return () => clearTimeout(t);
     }
     const t = setTimeout(tick, PER_STEP);
     return () => clearTimeout(t);
-  }, [visible, tick, steps.length]);
+  }, [visible, tick, steps.length, isControlled]);
 
   return (
     <div className="w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-600/5 bg-[#0A0A0F]">
@@ -68,7 +71,7 @@ export default function ChatDemo() {
 
       <div className="p-4 h-[420px] flex flex-col justify-end overflow-hidden">
         <AnimatePresence mode="popLayout">
-          {steps.slice(0, visible).map((msg, i) => (
+          {steps.slice(0, effectiveVisible).map((msg, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 15, scale: 0.97 }}
@@ -121,7 +124,7 @@ export default function ChatDemo() {
           ))}
         </AnimatePresence>
 
-        {visible > 0 && visible < steps.length && steps[visible]?.role !== "user" && (
+        {effectiveVisible > 0 && effectiveVisible < steps.length && steps[effectiveVisible]?.role !== "user" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-1.5 px-2 py-2">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: "0s" }} />
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: "0.15s" }} />

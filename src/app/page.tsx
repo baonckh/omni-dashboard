@@ -16,6 +16,7 @@ import { useLang } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
 import ChatDemo from "@/components/ChatDemo";
 import BotPipeline from "@/components/BotPipeline";
+import SyncedDemo from "@/components/SyncedDemo";
 import { GradientText, TextReveal, AuroraText, WordRotate, TextHighlighter, UnderlineText, EmText, HeroTitleReveal } from "@/components/TextAnimations";
 import Highlighter from "@/components/Highlighter";
 import BorderBeam from "@/components/BorderBeam";
@@ -227,20 +228,13 @@ export default function LandingPage() {
       </section>
 
       {/* ══════ CHAT DEMO + BOT PIPELINE ══════ */}
-      <section className="max-w-5xl mx-auto px-5 mb-24">
+      <section className="max-w-5xl mx-auto px-5 mb-32">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("chat.title")}</h2>
           <p className="text-sm text-zinc-500 max-w-lg mx-auto">{t("chat.sub")}</p>
         </motion.div>
 
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-          <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 h-[480px] shrink-0">
-            <ChatDemo />
-          </motion.div>
-          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 h-[480px] overflow-y-auto">
-            <BotPipeline />
-          </motion.div>
-        </div>
+        <SyncedDemo />
 
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
           {lang === "vi" ? (

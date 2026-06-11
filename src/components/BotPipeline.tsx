@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bot, Database, Search, Heart, MessageSquare, Zap, FileText, CheckCircle2 } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
-type Stage = "idle" | "ingest" | "vector" | "retrieve" | "filter" | "persona" | "respond";
+export type Stage = "idle" | "ingest" | "vector" | "retrieve" | "filter" | "persona" | "respond";
 
 const VI = {
   stages: ["Nhập dữ liệu", "Vector hóa", "Truy xuất", "Chọn lọc", "Cá tính shop", "Phản hồi"],
@@ -57,11 +57,19 @@ const EN = {
   idle_sub: "Pipeline will auto-run for demo",
 };
 
-export default function BotPipeline() {
+const STAGE_ORDER: Stage[] = ["idle", "ingest", "vector", "retrieve", "filter", "persona", "respond"];
+
+export default function BotPipeline({ controlledStage }: { controlledStage?: Stage }) {
   const { lang } = useLang();
   const t = lang === "vi" ? VI : EN;
+  const isControlled = controlledStage !== undefined;
   const [stage, setStage] = useState<Stage>("idle");
   const [progress, setProgress] = useState(0);
+
+  const effectiveStage = isControlled ? controlledStage : stage;
+  const effectiveProgress = isControlled
+    ? Math.max(0, STAGE_ORDER.indexOf(controlledStage) / (STAGE_ORDER.length - 1))
+    : progress;
 
   const STAGES: { key: Stage; label: string; icon: typeof FileText }[] = [
     { key: "ingest", label: t.stages[0], icon: FileText },
@@ -73,6 +81,7 @@ export default function BotPipeline() {
   ];
 
   useEffect(() => {
+    if (isControlled) return;
     const sequence: Stage[] = ["ingest", "vector", "retrieve", "filter", "persona", "respond"];
     let timer: ReturnType<typeof setTimeout>;
     const run = (idx: number) => {
@@ -86,9 +95,9 @@ export default function BotPipeline() {
     };
     timer = setTimeout(() => run(0), 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isControlled]);
 
-  const currentIdx = STAGES.findIndex((s) => s.key === stage);
+  const currentIdx = STAGES.findIndex((s) => s.key === effectiveStage);
   const isActive = (idx: number) => idx <= currentIdx;
   const isCurrent = (idx: number) => idx === currentIdx;
 
@@ -102,7 +111,7 @@ export default function BotPipeline() {
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
           <span className="text-[10px] text-green-500 font-medium">
-            {stage === "idle" ? (lang === "vi" ? "Sẵn sàng" : "Ready") : `${lang === "vi" ? "Bước" : "Step"} ${currentIdx + 1}/${STAGES.length}`}
+            {effectiveStage === "idle" ? (lang === "vi" ? "Sẵn sàng" : "Ready") : `${lang === "vi" ? "Bước" : "Step"} ${currentIdx + 1}/${STAGES.length}`}
           </span>
         </div>
       </div>
@@ -110,7 +119,7 @@ export default function BotPipeline() {
       <div className="p-5 space-y-6">
         <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
           <motion.div className="h-full rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-green-600"
-            initial={{ width: "0%" }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 0.6 }} />
+            initial={{ width: "0%" }} animate={{ width: `${effectiveProgress * 100}%` }} transition={{ duration: 0.6 }} />
         </div>
 
         <div className="grid grid-cols-6 gap-2">
@@ -127,7 +136,7 @@ export default function BotPipeline() {
 
         <div className="min-h-[260px] rounded-xl border border-white/5 bg-black/40 p-4 relative overflow-hidden">
           <AnimatePresence mode="wait">
-            {stage === "ingest" && (
+            {effectiveStage === "ingest" && (
               <motion.div key="ingest" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">
                 <p className="text-xs text-blue-400 font-medium mb-3 flex items-center gap-2"><FileText className="h-3.5 w-3.5" /> {t.s1}</p>
                 {t.docs.map((doc, i) => (
@@ -140,7 +149,7 @@ export default function BotPipeline() {
                 ))}
               </motion.div>
             )}
-            {stage === "vector" && (
+            {effectiveStage === "vector" && (
               <motion.div key="vector" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
                 <p className="text-xs text-cyan-400 font-medium flex items-center gap-2"><Database className="h-3.5 w-3.5" /> {t.s2}</p>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-cyan-600/5 border border-cyan-500/10">
@@ -158,7 +167,7 @@ export default function BotPipeline() {
                 </div>
               </motion.div>
             )}
-            {stage === "retrieve" && (
+            {effectiveStage === "retrieve" && (
               <motion.div key="retrieve" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
                 <p className="text-xs text-purple-400 font-medium flex items-center gap-2"><Search className="h-3.5 w-3.5" /> {t.s3}</p>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-600/5 border border-purple-500/10">
@@ -176,7 +185,7 @@ export default function BotPipeline() {
                 </div>
               </motion.div>
             )}
-            {stage === "filter" && (
+            {effectiveStage === "filter" && (
               <motion.div key="filter" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
                 <p className="text-xs text-pink-400 font-medium flex items-center gap-2"><Heart className="h-3.5 w-3.5" /> {t.s4}</p>
                 <div className="grid grid-cols-2 gap-2">
@@ -199,7 +208,7 @@ export default function BotPipeline() {
                 </motion.div>
               </motion.div>
             )}
-            {stage === "persona" && (
+            {effectiveStage === "persona" && (
               <motion.div key="persona" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
                 <p className="text-xs text-orange-400 font-medium flex items-center gap-2"><Heart className="h-3.5 w-3.5" /> {t.s5}</p>
                 <div className="space-y-2">
@@ -214,7 +223,7 @@ export default function BotPipeline() {
                 </div>
               </motion.div>
             )}
-            {stage === "respond" && (
+            {effectiveStage === "respond" && (
               <motion.div key="respond" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
                 <p className="text-xs text-green-400 font-medium flex items-center gap-2"><MessageSquare className="h-3.5 w-3.5" /> {t.s6}</p>
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
@@ -233,7 +242,7 @@ export default function BotPipeline() {
                 </motion.div>
               </motion.div>
             )}
-            {stage === "idle" && (
+            {effectiveStage === "idle" && (
               <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center h-full py-8 text-zinc-600">
                 <Bot className="h-10 w-10 mb-3 opacity-30" />

@@ -16,8 +16,8 @@ export default function PricingPage() {
 
   const plans = [
     { nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "pricing.free_cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },
-    { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: true, disabled: true, color: "border-blue-500" },
-    { nameKey: "pricing.pro_name", price: lang === "vi" ? "499k" : "$20", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-purple-500" },
+    { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-white/5" },
+    { nameKey: "pricing.pro_name", price: "0", periodKey: "pricing.pro_period", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "/register", highlight: true, disabled: false, color: "border-purple-500" },
   ];
 
   return (
@@ -29,7 +29,10 @@ export default function PricingPage() {
             <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600"><Zap className="h-3.5 w-3.5 text-white" /></div>
             <span className="font-bold text-base tracking-tight text-white">Omni<span className="text-zinc-500">AI</span></span>
           </Link>
-          <Link href="/login" className="text-xs text-zinc-400 hover:text-white transition-colors">{t("hero.login")}</Link>
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="text-xs text-zinc-400 hover:text-white transition-colors">{t("hero.login")}</Link>
+            <LangToggle />
+          </div>
         </div>
       </nav>
 
@@ -55,17 +58,17 @@ export default function PricingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
               viewport={{ once: true }}
-              className={`group relative rounded-2xl border p-6 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${plan.highlight ? "border-blue-500 shadow-lg shadow-blue-600/10 scale-[1.02]" : "border-white/5"} ${plan.disabled ? "opacity-80 hover:opacity-100" : ""}`}
-              style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+              className={`group relative rounded-2xl border p-6 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${plan.highlight ? "shadow-lg scale-[1.02]" : "border-white/5"} ${plan.disabled ? "opacity-80 hover:opacity-100" : ""}`}
+              style={{ backgroundColor: "rgba(255,255,255,0.02)", borderColor: plan.highlight ? "rgba(168,85,247,0.4)" : undefined }}
             >
               {plan.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-blue-600 text-[10px] font-bold text-white shadow-lg z-10">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-[10px] font-bold text-white shadow-lg z-10">
                   {t(plan.badgeKey)}
                 </div>
               )}
               {!plan.highlight && <div className="inline-flex self-start px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium text-zinc-400 mb-2">{t(plan.badgeKey)}</div>}
 
-              {plan.highlight && <BorderBeam size={60} duration={4} colorFrom="#60A5FA" colorTo="#A855F7" borderWidth={1} />}
+              {plan.highlight && <BorderBeam size={80} duration={4} colorFrom="#A855F7" colorTo="#3B82F6" borderWidth={1.5} />}
 
               <h3 className="text-lg font-extrabold text-white mt-2">{t(plan.nameKey)}</h3>
               <div className="mt-3 mb-2">

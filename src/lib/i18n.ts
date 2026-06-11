@@ -96,6 +96,14 @@ const vi: Dict = {
   "vs.feat5_desc": "Nhập dữ liệu một lần — AI tự vận hành, không cần lập trình",
   "feat.badge": "Tính năng",
   "vs.oldbot": "Bot thông thường",
+  "vs.old1": "Kịch bản cố định",
+  "vs.old1_desc": "Trả lời theo mẫu soạn sẵn, không linh hoạt",
+  "vs.old2": "Không hiểu sản phẩm",
+  "vs.old2_desc": "Không biết giá, tồn kho, mô tả thực tế",
+  "vs.old3": "Mất ngữ cảnh",
+  "vs.old3_desc": "Sau 2-3 tin nhắn là trả lời lạc đề",
+  "vs.old4": "Tốn công đào tạo",
+  "vs.old4_desc": "Phải lập trình từng kịch bản thủ công",
 };
 
 const en: Dict = {
@@ -125,6 +133,14 @@ const en: Dict = {
   "vs.feat5_desc": "Import data once — AI runs on its own, no programming required",
   "feat.badge": "Features",
   "vs.oldbot": "Regular bot",
+  "vs.old1": "Fixed scripts",
+  "vs.old1_desc": "Replies from pre-made templates, no flexibility",
+  "vs.old2": "No product understanding",
+  "vs.old2_desc": "Doesn't know prices, stock, real descriptions",
+  "vs.old3": "Loses context",
+  "vs.old3_desc": "Goes off-topic after 2-3 messages",
+  "vs.old4": "Costly training",
+  "vs.old4_desc": "Must manually program each scenario",
 
   // ── Pain Point Stats ──
   "stat.pain1": "Customers leave after 5 min wait",

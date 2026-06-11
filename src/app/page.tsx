@@ -289,10 +289,10 @@ export default function LandingPage() {
             </div>
             <div className="space-y-2.5 pl-1">
               {[
-                { title: "Kịch bản cố định", desc: "Trả lời theo mẫu soạn sẵn, không linh hoạt" },
-                { title: "Không hiểu sản phẩm", desc: "Không biết giá, tồn kho, mô tả thực tế" },
-                { title: "Mất ngữ cảnh", desc: "Sau 2-3 tin nhắn là trả lời lạc đề" },
-                { title: "Tốn công đào tạo", desc: "Phải lập trình từng kịch bản thủ công" },
+                { title: t("vs.old1"), desc: t("vs.old1_desc") },
+                { title: t("vs.old2"), desc: t("vs.old2_desc") },
+                { title: t("vs.old3"), desc: t("vs.old3_desc") },
+                { title: t("vs.old4"), desc: t("vs.old4_desc") },
               ].map(item => (
                 <div key={item.title}>
                   <p className="text-sm font-medium text-zinc-600 flex items-center gap-2"><span className="text-red-500/40 text-xs">✕</span>{item.title}</p>

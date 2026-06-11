@@ -251,7 +251,7 @@ export default function LandingPage() {
           )}
         </motion.div>
 
-        <div className="mb-16">
+        <div className="mb-24">
           <SyncedDemo />
         </div>
 

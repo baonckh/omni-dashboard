@@ -119,25 +119,28 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
       <div className="p-5 space-y-6">
         <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
           <motion.div className="h-full rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-green-600"
-            initial={{ width: "0%" }} animate={{ width: `${effectiveProgress * 100}%` }} transition={{ duration: 0.6 }} />
+            initial={{ width: "0%" }} animate={{ width: `${effectiveProgress * 100}%` }} transition={{ type: "spring", stiffness: 60, damping: 15 }} />
         </div>
 
         <div className="grid grid-cols-6 gap-2">
           {STAGES.map((s, idx) => (
             <div key={s.key} className="flex flex-col items-center gap-1.5">
               <motion.div animate={{ scale: isCurrent(idx) ? [1, 1.15, 1] : 1, backgroundColor: isActive(idx) ? "rgba(37,99,235,0.15)" : "rgba(255,255,255,0.03)", borderColor: isActive(idx) ? "rgba(37,99,235,0.3)" : "rgba(255,255,255,0.06)" }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                layout
                 className="w-9 h-9 rounded-xl border flex items-center justify-center">
                 <s.icon className={`h-4 w-4 ${isActive(idx) ? "text-blue-500" : "text-zinc-600"}`} />
               </motion.div>
-              <span className={`text-[8px] font-medium text-center leading-tight ${isActive(idx) ? "text-zinc-300" : "text-zinc-700"}`}>{s.label}</span>
+              <motion.span animate={{ color: isActive(idx) ? "#D4D4D8" : "#3F3F46" }} transition={{ duration: 0.4 }} className="text-[8px] font-medium text-center leading-tight">{s.label}</motion.span>
             </div>
           ))}
         </div>
 
-        <div className="min-h-[260px] rounded-xl border border-white/5 bg-black/40 p-4 relative overflow-hidden">
-          <AnimatePresence mode="wait">
+        <motion.div animate={{ backgroundColor: effectiveStage !== "idle" ? "rgba(37,99,235,0.06)" : "rgba(0,0,0,0.4)" }} transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="min-h-[260px] rounded-xl border border-white/5 bg-black/40 p-4 relative overflow-hidden">
+          <AnimatePresence mode="wait" onExitComplete={() => {}}>
             {effectiveStage === "ingest" && (
-              <motion.div key="ingest" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">
+              <motion.div key="ingest" initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="space-y-2">
                 <p className="text-xs text-blue-400 font-medium mb-3 flex items-center gap-2"><FileText className="h-3.5 w-3.5" /> {t.s1}</p>
                 {t.docs.map((doc, i) => (
                   <motion.div key={doc} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.2 }}
@@ -150,7 +153,7 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
               </motion.div>
             )}
             {effectiveStage === "vector" && (
-              <motion.div key="vector" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
+              <motion.div key="vector" initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="space-y-3">
                 <p className="text-xs text-cyan-400 font-medium flex items-center gap-2"><Database className="h-3.5 w-3.5" /> {t.s2}</p>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-cyan-600/5 border border-cyan-500/10">
                   <Database className="h-8 w-8 text-cyan-500 shrink-0" />
@@ -168,7 +171,7 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
               </motion.div>
             )}
             {effectiveStage === "retrieve" && (
-              <motion.div key="retrieve" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
+              <motion.div key="retrieve" initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="space-y-3">
                 <p className="text-xs text-purple-400 font-medium flex items-center gap-2"><Search className="h-3.5 w-3.5" /> {t.s3}</p>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-600/5 border border-purple-500/10">
                   <Search className="h-5 w-5 text-purple-500" /><div className="flex-1"><p className="text-xs font-bold text-white">{t.s3_q}</p><p className="text-[10px] text-zinc-500">{lang === "vi" ? "Score: 0.94 • Top matches: 3" : "Score: 0.94 • Top matches: 3"}</p></div>
@@ -186,7 +189,7 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
               </motion.div>
             )}
             {effectiveStage === "filter" && (
-              <motion.div key="filter" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
+              <motion.div key="filter" initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="space-y-3">
                 <p className="text-xs text-pink-400 font-medium flex items-center gap-2"><Heart className="h-3.5 w-3.5" /> {t.s4}</p>
                 <div className="grid grid-cols-2 gap-2">
                   {[
@@ -209,7 +212,7 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
               </motion.div>
             )}
             {effectiveStage === "persona" && (
-              <motion.div key="persona" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
+              <motion.div key="persona" initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="space-y-3">
                 <p className="text-xs text-orange-400 font-medium flex items-center gap-2"><Heart className="h-3.5 w-3.5" /> {t.s5}</p>
                 <div className="space-y-2">
                   {t.s5_items.map((item, i) => (
@@ -224,7 +227,7 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
               </motion.div>
             )}
             {effectiveStage === "respond" && (
-              <motion.div key="respond" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
+              <motion.div key="respond" initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="space-y-3">
                 <p className="text-xs text-green-400 font-medium flex items-center gap-2"><MessageSquare className="h-3.5 w-3.5" /> {t.s6}</p>
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                   className="p-4 rounded-xl bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/15">
@@ -243,7 +246,7 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
               </motion.div>
             )}
             {effectiveStage === "idle" && (
-              <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              <motion.div key="idle" initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }} transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="flex flex-col items-center justify-center h-full py-8 text-zinc-600">
                 <Bot className="h-10 w-10 mb-3 opacity-30" />
                 <p className="text-xs font-medium">{t.idle_text}</p>
@@ -251,7 +254,7 @@ export default function BotPipeline({ controlledStage }: { controlledStage?: Sta
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

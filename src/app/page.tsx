@@ -226,7 +226,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ CHAT DEMO ══════ */}
+      {/* ══════ CHAT DEMO + BOT PIPELINE ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("chat.title")}</h2>
@@ -237,31 +237,11 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 h-[480px] shrink-0">
             <ChatDemo />
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 space-y-3 h-[480px] overflow-y-auto">
-            {[
-              { title: t("chat.feat1"), desc: t("chat.feat1_desc") },
-              { title: t("chat.feat2"), desc: t("chat.feat2_desc") },
-              { title: t("chat.feat3"), desc: t("chat.feat3_desc") },
-              { title: t("chat.feat4"), desc: t("chat.feat4_desc") },
-            ].map((item, i) => (
-              <motion.div key={item.title} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                className="flex items-start gap-3 p-4 rounded-xl transition-all" style={{ backgroundColor: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
-              >
-                <div className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center" style={{ backgroundColor: "rgba(37,99,235,0.1)" }}>
-                  <CheckCircle2 className="h-4 w-4 text-blue-400" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-white mb-0.5">{item.title}</h4>
-                  <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+          <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="w-full md:w-1/2 h-[480px] overflow-y-auto">
+            <BotPipeline />
           </motion.div>
         </div>
-      </section>
 
-      {/* ══════ BOT INTELLIGENCE PIPELINE ══════ */}
-      <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
           {lang === "vi" ? (
             <>
@@ -282,10 +262,6 @@ export default function LandingPage() {
               </p>
             </>
           )}
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
-          <BotPipeline />
         </motion.div>
 
         <div className="relative min-h-[260px] pl-6 md:pl-0 flex items-start">

@@ -305,16 +305,16 @@ export default function LandingPage() {
               </div>
               <div>
                 <p className="text-base font-bold text-white">OmniAI</p>
-                <p className="text-xs text-zinc-500">AI thông minh — hiểu catalog thật của bạn</p>
+                <p className="text-xs text-zinc-500">{t("vs.omnismart")}</p>
               </div>
             </div>
             <div className="space-y-3">
               {[
-                { title: "Hiểu danh mục sản phẩm", desc: "Tự động học giá, size, màu, tồn kho từ catalog thật" },
-                { title: "Truy xuất chính xác", desc: "Tìm đúng sản phẩm, đúng phiên bản, đúng variant khách hỏi" },
-                { title: "Giữ ngữ cảnh hội thoại", desc: "Nhớ toàn bộ cuộc trò chuyện, không bị lạc đề" },
-                { title: "Cá nhân hóa theo shop", desc: "Nói chuyện đúng chất riêng, giọng văn, phong cách của bạn" },
-                { title: "Tự động học, không cần training", desc: "Nhập dữ liệu một lần — AI tự vận hành, không cần lập trình" },
+                { title: t("vs.feat1"), desc: t("vs.feat1_desc") },
+                { title: t("vs.feat2"), desc: t("vs.feat2_desc") },
+                { title: t("vs.feat3"), desc: t("vs.feat3_desc") },
+                { title: t("vs.feat4"), desc: t("vs.feat4_desc") },
+                { title: t("vs.feat5"), desc: t("vs.feat5_desc") },
               ].map((item, idx) => (
                 <motion.div
                   key={item.title}
@@ -358,7 +358,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto px-5">
         <DotPattern className="text-white" width={20} height={20} />
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-xs text-blue-300 mb-4">Tính năng</div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-600/10 border border-blue-500/20 text-xs text-blue-300 mb-4">{t("feat.badge")}</div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">{t("features.title")}</h2>
           <p className="text-sm text-zinc-500 max-w-lg mx-auto leading-relaxed">{t("features.sub")}</p>
         </motion.div>
@@ -408,13 +408,13 @@ export default function LandingPage() {
         {/* 4 Stat Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           {[
-            { stat: 87, suffix: "%", label: "Khách bỏ đi sau 5 phút chờ", icon: Clock, color: "text-red-400", bg: "bg-red-500/10" },
-            { stat: 15, prefix: ">", suffix: "tr", label: "Triệu/tháng chi phí CSKH", icon: Users, color: "text-orange-400", bg: "bg-orange-500/10" },
-            { stat: 5, suffix: "", label: "App khác nhau mỗi ngày", icon: MessageSquareCode, color: "text-yellow-400", bg: "bg-yellow-500/10" },
-            { stat: 80, suffix: "%", label: "Khách hỏi lại vì bot không hiểu", icon: HeartHandshake, color: "text-pink-400", bg: "bg-pink-500/10" },
+            { stat: 87, suffix: "%", key: "stat.pain1", icon: Clock, color: "text-red-400", bg: "bg-red-500/10" },
+            { stat: 15, prefix: ">", suffix: "tr", key: "stat.pain2", icon: Users, color: "text-orange-400", bg: "bg-orange-500/10" },
+            { stat: 5, suffix: "", key: "stat.pain3", icon: MessageSquareCode, color: "text-yellow-400", bg: "bg-yellow-500/10" },
+            { stat: 80, suffix: "%", key: "stat.pain4", icon: HeartHandshake, color: "text-pink-400", bg: "bg-pink-500/10" },
           ].map((item, i) => (
             <motion.div
-              key={item.label}
+              key={item.key}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -428,7 +428,7 @@ export default function LandingPage() {
               <div className={`text-3xl font-extrabold mb-1 ${item.color}`}>
                 {item.prefix || ""}<NumberTicker value={item.stat} duration={2} />{item.suffix}
               </div>
-              <p className="text-[10px] text-zinc-600 leading-tight">{item.label}</p>
+              <p className="text-[10px] text-zinc-600 leading-tight">{t(item.key)}</p>
             </motion.div>
           ))}
         </div>

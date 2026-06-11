@@ -82,6 +82,27 @@ const vi: Dict = {
   "chat.feat4": "Phản hồi trong 1-3 giây",
   "chat.feat4_desc": "Khách không phải chờ đợi. Không bỏ lỡ cơ hội bán hàng.",
 
+  // ── Comparison Section ──
+  "vs.omnismart": "AI thông minh — hiểu catalog thật của bạn",
+  "vs.feat1": "Hiểu danh mục sản phẩm",
+  "vs.feat1_desc": "Tự động học giá, size, màu, tồn kho từ catalog thật",
+  "vs.feat2": "Truy xuất chính xác",
+  "vs.feat2_desc": "Tìm đúng sản phẩm, đúng phiên bản, đúng variant khách hỏi",
+  "vs.feat3": "Giữ ngữ cảnh hội thoại",
+  "vs.feat3_desc": "Nhớ toàn bộ cuộc trò chuyện, không bị lạc đề",
+  "vs.feat4": "Cá nhân hóa theo shop",
+  "vs.feat4_desc": "Nói chuyện đúng chất riêng, giọng văn, phong cách của bạn",
+  "vs.feat5": "Tự động học, không cần training",
+  "vs.feat5_desc": "Nhập dữ liệu một lần — AI tự vận hành, không cần lập trình",
+  "feat.badge": "Tính năng",
+
+  // ── Pain Point Stats ──
+  "stat.pain1": "Khách bỏ đi sau 5 phút chờ",
+  "stat.pain2": "Triệu/tháng chi phí CSKH",
+  "stat.pain3": "App khác nhau mỗi ngày",
+  "stat.pain4": "Khách hỏi lại vì bot không hiểu",
+
+
   // ── Pipeline Section ──
   "pipeline.title_before": "AI hiểu",
   "pipeline.title_after": "— không chỉ là trả lời máy móc",
@@ -262,6 +283,26 @@ const en: Dict = {
   "chat.feat3_desc": "AI talks in your brand's style, tone, and personality.",
   "chat.feat4": "Replies in 1-3 seconds",
   "chat.feat4_desc": "Customers never wait. Never miss a sales opportunity.",
+
+  // ── Comparison Section ──
+  "vs.omnismart": "AI — understands your real catalog",
+  "vs.feat1": "Understands product catalog",
+  "vs.feat1_desc": "Auto-learns prices, sizes, colors, stock from real catalog",
+  "vs.feat2": "Accurate retrieval",
+  "vs.feat2_desc": "Finds the right product, right variant customers ask for",
+  "vs.feat3": "Conversation context",
+  "vs.feat3_desc": "Remembers entire conversation, never loses track",
+  "vs.feat4": "Shop-personalized",
+  "vs.feat4_desc": "Talks in your brand's unique voice, tone and style",
+  "vs.feat5": "Self-learning, no training needed",
+  "vs.feat5_desc": "Import data once — AI runs on its own, no programming required",
+  "feat.badge": "Features",
+
+  // ── Pain Point Stats ──
+  "stat.pain1": "Customers leave after 5 min wait",
+  "stat.pain2": "Million VND/month CS costs",
+  "stat.pain3": "Different apps every day",
+  "stat.pain4": "Customers re-ask because bot doesn't understand",
 
   "testimonial.text": "I used to build chatbots for shop owners. I saw them struggling — late-night messages with no one to reply, paying 15-30 million VND/month for CS staff, bots that sounded robotic and killed their brand voice. I asked myself: why not build an AI that actually understands products, policies, and talks like the shop? So I built OmniAI. After testing with a few shops, the results were better than I expected — they cut CS costs, never missed an order, customers even complimented the helpful advice. That's when I decided to turn it into a full platform, not just for a few friends, but for every SME shop owner in Vietnam.",
   "testimonial.name": "Bao — Founder & Developer",

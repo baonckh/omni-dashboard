@@ -115,9 +115,9 @@ export default function LandingPage() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
         </div>
-        {/* Globe — cắt bottom, lộ phần đầu */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] overflow-hidden pointer-events-none opacity-60">
-          <Globe className="-top-20" config={{
+        {/* Globe — nằm sau trusted by + CTA buttons */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] overflow-hidden pointer-events-none opacity-40">
+          <Globe className="-top-10" config={{
             width: 400, height: 400, devicePixelRatio: 1.5, phi: 0, theta: 0.3,
             dark: 0.8, diffuse: 0.3, mapSamples: 8000, mapBrightness: 1.2,
             baseColor: [0.08, 0.12, 0.25],

@@ -285,7 +285,7 @@ export default function LandingPage() {
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-sm font-bold text-red-400">✕</div>
-              <span className="text-base font-bold text-red-400/80">Bot thông thường</span>
+              <span className="text-base font-bold text-red-400/80">{t("vs.oldbot")}</span>
             </div>
             <div className="space-y-2.5 pl-1">
               {[

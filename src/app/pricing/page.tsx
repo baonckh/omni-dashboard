@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Bot, Zap, Mail, Check, Star, ArrowRight } from "lucide-react";
+import { Bot, Zap, Mail, Check } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import BorderBeam from "@/components/BorderBeam";
+import LangToggle from "@/components/LangToggle";
 
 const freeFeats = ["pricing.free_feat1", "pricing.free_feat2", "pricing.free_feat3", "pricing.free_feat4", "pricing.free_feat5", "pricing.free_feat6", "pricing.free_feat7"];
 const starterFeats = ["pricing.starter_feat1", "pricing.starter_feat2", "pricing.starter_feat3", "pricing.starter_feat4", "pricing.starter_feat5", "pricing.starter_feat6", "pricing.starter_feat7", "pricing.starter_feat8"];
@@ -15,8 +16,8 @@ export default function PricingPage() {
 
   const plans = [
     { nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "pricing.free_cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },
-    { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: "/tháng", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: true, disabled: true, color: "border-blue-500" },
-    { nameKey: "pricing.pro_name", price: lang === "vi" ? "499k" : "$20", period: "/tháng", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-purple-500" },
+    { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: true, disabled: true, color: "border-blue-500" },
+    { nameKey: "pricing.pro_name", price: lang === "vi" ? "499k" : "$20", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-purple-500" },
   ];
 
   return (
@@ -111,16 +112,40 @@ export default function PricingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-8 px-5">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-blue-600"><Zap className="h-3 w-3 text-white" /></div>
-            <span className="text-sm font-bold text-white">Omni<span className="text-zinc-500">AI</span></span>
-          </Link>
-          <p className="text-xs text-zinc-600">© 2026 OmniAI. {t("footer.rights")}</p>
-          <div className="flex items-center gap-4 text-xs text-zinc-600">
-            <Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
+      <footer className="border-t border-white/[0.06] pt-14 pb-8 px-5">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-10">
+            <div>
+              <Link href="/" className="flex items-center gap-2.5 mb-4">
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600"><Zap className="h-3.5 w-3.5 text-white" /></div>
+                <span className="font-bold text-base tracking-tight text-white">Omni<span className="text-zinc-500">AI</span></span>
+              </Link>
+              <p className="text-sm leading-relaxed max-w-xs text-zinc-500">{t("footer.desc")}</p>
+            </div>
+            <div className="flex gap-8">
+              {[
+                { title: "footer.product", links: [["footer.features", "/#features"], ["footer.docs", "/docs"]] },
+                { title: "footer.company", links: [["footer.about", "/about"], ["footer.contact", "mailto:giabao991199@gmail.com"]] },
+                { title: "footer.legal", links: [["footer.privacy", "/privacy"], ["footer.terms", "/terms"]] },
+              ].map((col) => (
+                <div key={col.title}>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">{t(col.title)}</h4>
+                  <ul className="space-y-2.5">
+                    {col.links.map(([key, href]) => (
+                      <li key={key}><Link href={href} className="text-sm text-zinc-600 hover:text-white transition-colors">{t(key)}</Link></li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="border-t border-white/[0.06] pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-zinc-600">© 2026 OmniAI. {t("footer.rights")}</p>
+            <LangToggle />
+            <div className="flex items-center gap-4 text-xs text-zinc-600">
+              <Link href="/privacy" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
+            </div>
           </div>
         </div>
       </footer>

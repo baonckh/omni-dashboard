@@ -4,10 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, Search, Package, Heart, MessageSquare } from "lucide-react";
 import { TypewriterText } from "@/components/TextAnimations";
+import { useLang } from "@/lib/i18n";
 
 type Message = { role: "user" | "bot" | "step"; text: string; sub?: string };
 
-const steps: Message[] = [
+const STEPS_VI: Message[] = [
   { role: "user", text: "Cho tôi hỏi áo thun nam có màu đen không?" },
   { role: "step", text: "🔍 Phân tích intent...", sub: "Intent: hỏi sản phẩm | Entity: áo thun nam, màu đen" },
   { role: "step", text: "📦 Truy xuất sản phẩm...", sub: "Tìm thấy: Áo thun nam cotton — 4 variants" },
@@ -16,15 +17,26 @@ const steps: Message[] = [
   { role: "bot", text: "Có bạn nhé! Áo thun nam đen còn size S đến XL đầy đủ ạ. Giá 150.000đ, chất liệu cotton 100%. Bạn muốn đặt size nào để mình gửi link đặt hàng? Tặng bạn mã giảm 10% cho đơn đầu tiên luôn!" },
 ];
 
+const STEPS_EN: Message[] = [
+  { role: "user", text: "Do you have this T-shirt in black?" },
+  { role: "step", text: "🔍 Analyzing intent...", sub: "Intent: product inquiry | Entity: T-shirt, black color" },
+  { role: "step", text: "📦 Retrieving products...", sub: "Found: Cotton T-shirt — 4 variants" },
+  { role: "step", text: "🎨 Checking variant + stock...", sub: "Black: 28 in stock | Size S-XL available" },
+  { role: "step", text: "💬 Applying shop tone...", sub: "Tone: friendly | Style: casual, warm" },
+  { role: "bot", text: "Yes we do! Black cotton T-shirt is available in sizes S to XL. Price: 150,000 VND, 100% cotton. Which size would you like to order? I'll send you the order link. Here's a 10% discount code for your first order!" },
+];
+
 const PER_STEP = 1800;
 const PAUSE = 7000;
 
 export default function ChatDemo() {
+  const { lang } = useLang();
   const [visible, setVisible] = useState(0);
+  const steps = lang === "vi" ? STEPS_VI : STEPS_EN;
 
   const tick = useCallback(() => {
     setVisible(prev => (prev >= steps.length ? prev : prev + 1));
-  }, []);
+  }, [steps.length]);
 
   useEffect(() => {
     if (visible >= steps.length) {
@@ -33,7 +45,7 @@ export default function ChatDemo() {
     }
     const t = setTimeout(tick, PER_STEP);
     return () => clearTimeout(t);
-  }, [visible, tick]);
+  }, [visible, tick, steps.length]);
 
   return (
     <div className="w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-600/5 bg-[#0A0A0F]">
@@ -46,11 +58,11 @@ export default function ChatDemo() {
             <p className="text-sm font-bold text-white">OmniAI Bot</p>
             <span className="px-1.5 py-0.5 rounded text-[8px] font-bold bg-green-500/20 text-green-400 border border-green-500/20">LIVE</span>
           </div>
-          <p className="text-[10px] text-zinc-500">AI trả lời trong 1-3 giây — 24/7</p>
+          <p className="text-[10px] text-zinc-500">{lang === "vi" ? "AI trả lời trong 1-3 giây — 24/7" : "AI replies in 1-3 seconds — 24/7"}</p>
         </div>
         <div className="flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-[10px] text-green-500 font-medium">Online</span>
+          <span className="text-[10px] text-green-500 font-medium">{lang === "vi" ? "Online" : "Online"}</span>
         </div>
       </div>
 
@@ -90,7 +102,7 @@ export default function ChatDemo() {
                     <TypewriterText text={msg.text} speed={18} />
                     <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/5">
                       <span className="text-[10px] text-green-500 font-medium">✅ AI</span>
-                      <span className="text-[9px] text-zinc-600">• 1.2 giây</span>
+                      <span className="text-[9px] text-zinc-600">• {lang === "vi" ? "1.2 giây" : "1.2s"}</span>
                       <span className="text-[9px] text-zinc-600">• 24/7</span>
                     </div>
                   </div>

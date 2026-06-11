@@ -300,7 +300,7 @@ export default function LandingPage() {
                 <span className="text-white font-bold text-sm">AI</span>
               </div>
               <div>
-                <p className="text-base font-bold text-white">OmniAI</p>
+                <p className="text-lg md:text-xl font-extrabold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">OmniAI</p>
                 <p className="text-xs text-zinc-500">{t("vs.omnismart")}</p>
               </div>
             </div>

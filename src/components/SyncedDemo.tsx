@@ -63,25 +63,55 @@ export default function SyncedDemo() {
           <ChatDemo controlledVisible={visible} />
         </motion.div>
 
-        {/* AI icon — center node */}
+        {/* AI node — glass pill */}
         <motion.div
           ref={aiRef}
-          initial={{ opacity: 0, scale: 0 }}
+          initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.15, type: "spring", stiffness: 200 }}
+          transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 12 }}
           className="shrink-0 relative z-20"
         >
           <motion.div
-            className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg shadow-blue-600/30 border-2 border-blue-400/30"
-            animate={isActive ? { scale: [1, 1.08, 1], boxShadow: ["0 0 20px rgba(59,130,246,0.3)", "0 0 40px rgba(168,85,247,0.5)", "0 0 20px rgba(59,130,246,0.3)"] } : { scale: 1 }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+            className="relative flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-white/[0.12] shadow-xl"
+            style={{ backgroundColor: "rgba(255,255,255,0.04)", backdropFilter: "blur(12px)" }}
+            animate={
+              isActive
+                ? {
+                    boxShadow: [
+                      "0 0 0px rgba(59,130,246,0)",
+                      "0 0 25px rgba(59,130,246,0.25)",
+                      "0 0 0px rgba(59,130,246,0)",
+                    ],
+                    borderColor: [
+                      "rgba(255,255,255,0.12)",
+                      "rgba(59,130,246,0.4)",
+                      "rgba(255,255,255,0.12)",
+                    ],
+                  }
+                : { boxShadow: "0 0 0px rgba(59,130,246,0)", borderColor: "rgba(255,255,255,0.08)" }
+            }
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
           >
-            <Zap className="h-5 w-5 md:h-6 md:w-6 text-white drop-shadow-lg" />
+            {/* Pulse dot */}
+            <motion.span
+              className="w-2 h-2 rounded-full bg-blue-500 shrink-0"
+              animate={isActive ? { scale: [1, 1.6, 1], opacity: [0.7, 1, 0.7] } : { scale: 1, opacity: 0.4 }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+            />
+            {/* AI text */}
+            <span className="text-[11px] md:text-xs font-bold text-zinc-300 tracking-[0.15em]">AI</span>
+            {/* Subtle separator */}
+            <span className="w-px h-3 bg-white/10" />
+            {/* Processing indicator */}
+            <motion.span
+              className="text-[9px] md:text-[10px] font-medium text-zinc-500"
+              animate={isActive ? { opacity: [0.4, 1, 0.4] } : { opacity: 0.3 }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              {isActive ? "PROCESSING" : "STANDBY"}
+            </motion.span>
           </motion.div>
-          <span className="hidden md:block absolute -bottom-5 left-1/2 -translate-x-1/2 text-[8px] font-bold text-blue-400/70 tracking-widest">
-            AI
-          </span>
         </motion.div>
 
         {/* Pipeline panel */}

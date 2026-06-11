@@ -229,13 +229,6 @@ export default function LandingPage() {
 
       {/* ══════ CHAT DEMO + BOT PIPELINE ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-32">
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3">{t("chat.title")}</h2>
-          <p className="text-sm text-zinc-500 max-w-lg mx-auto">{t("chat.sub")}</p>
-        </motion.div>
-
-        <SyncedDemo />
-
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
           {lang === "vi" ? (
             <>
@@ -257,6 +250,8 @@ export default function LandingPage() {
             </>
           )}
         </motion.div>
+
+        <SyncedDemo />
 
         <div className="relative min-h-[260px] pl-6 md:pl-0 flex items-start">
           {/* Bot cũ — lùi trái, mờ, gạch ngang */}

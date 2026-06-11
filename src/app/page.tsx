@@ -25,7 +25,7 @@ import DotPattern from "@/components/DotPattern";
 import BentoCard from "@/components/BentoCard";
 import NumberTicker from "@/components/NumberTicker";
 import OrbitCircles from "@/components/MagicOrbit";
-import { Globe } from "@/components/ui/globe";
+import Globe from "@/components/Globe";
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -115,9 +115,22 @@ export default function LandingPage() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
         </div>
-        {/* Globe — Magic UI */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <Globe className="top-28" />
+        {/* Globe — cắt bottom, lộ phần đầu */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] overflow-hidden pointer-events-none opacity-60">
+          <Globe className="-top-20" config={{
+            width: 400, height: 400, devicePixelRatio: 1.5, phi: 0, theta: 0.3,
+            dark: 0.8, diffuse: 0.3, mapSamples: 8000, mapBrightness: 1.2,
+            baseColor: [0.08, 0.12, 0.25],
+            markerColor: [1, 0.35, 0.1],
+            glowColor: [0.05, 0.08, 0.2],
+            markers: [
+              { location: [10.8, 106.7], size: 0.08 },
+              { location: [21.0, 105.8], size: 0.06 },
+              { location: [40.7, -74.0], size: 0.04 },
+              { location: [35.6, 139.7], size: 0.04 },
+            ],
+            onRender: () => {},
+          }} />
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
@@ -397,9 +410,6 @@ export default function LandingPage() {
                 { icon: <Instagram className="h-5 w-5" />, label: t("platform.instagram") },
               ]}
             />
-          </div>
-          <div className="relative h-52 w-52 flex-shrink-0">
-            <Globe />
           </div>
         </div>
       </section>

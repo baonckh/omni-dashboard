@@ -107,6 +107,70 @@ const vi: Dict = {
 };
 
 const en: Dict = {
+  // ── Nav ──
+  "nav.login": "Login",
+  "nav.getstarted": "Try Free",
+
+  // ── Hero ──
+  "badge.mvp": "Try Free — No credit card needed",
+  "hero.title": "Never miss a customer message again",
+  "hero.sub": "Unify Facebook, Zalo, TikTok Shop, Shopee, Instagram into one inbox. AI replies 24/7 — like your best salesperson, but never sleeps.",
+  "hero.cta": "Try Free",
+  "hero.login": "Login",
+
+  // ── Pain Points ──
+  "pain.title": "Sound familiar?",
+  "pain.1.title": "Messages pile up at night & holidays",
+  "pain.1.desc": "Small shop: you can't reply fast enough. Big brand: your 10-person CS team still can't catch up with message volume.",
+  "pain.2.title": "Endless hiring & training CS staff",
+  "pain.2.desc": "Old staff quit — you lose momentum. New staff join — 2 weeks training. 3-5 staff cost $600-1500/month.",
+  "pain.3.title": "Facebook, Zalo, TikTok, Shopee — separate chats everywhere",
+  "pain.3.desc": "5 apps, 5 accounts, 5 different reply styles. Fragmented management, missed messages.",
+  "pain.4.title": "Afraid AI will sound robotic & kill your brand voice",
+  "pain.4.desc": "Generic chatbot replies lose customer trust. Your shop has its own personality and tone — AI must preserve it.",
+
+  // ── Stats ──
+  "stat.reply": "Auto Reply",
+  "stat.response": "Response Speed",
+  "stat.channels": "Channels",
+  "stat.staff": "Staff You Can Save",
+
+  // ── Features ──
+  "features.title": "What OmniAI does for your business",
+  "features.sub": "Whether you're a solo seller or a growing enterprise with a large CS team — OmniAI automates customer care while keeping your brand voice.",
+  "feat.inbox.title": "Unified Inbox — 5 channels in 1",
+  "feat.inbox.desc": "All messages from Facebook, Zalo, TikTok Shop, Shopee, Instagram in one place. No more switching 5 apps daily.",
+  "feat.ai.title": "AI knows your products, policies & inventory",
+  "feat.ai.desc": "Upload catalog & policies once — AI learns automatically. Talks like a 3-month veteran, no training needed.",
+  "feat.channels.title": "Connect every sales channel",
+  "feat.channels.desc": "Facebook Messenger, Zalo OA, TikTok Shop, Shopee, Instagram — built-in, one-click connect. No coding.",
+  "feat.insight.title": "Know what customers think & how your bot performs",
+  "feat.insight.desc": "Leads, revenue, bot performance, customer insights — real-time dashboard. Find weak points and improve.",
+
+  // ── Platform Section ──
+  "platform.title": "Connect wherever your customers are",
+  "platform.sub": "Wherever your customers message — OmniAI catches every conversation.",
+  "platform.facebook": "Facebook Messenger",
+  "platform.zalo": "Zalo OA",
+  "platform.tiktok": "TikTok Shop",
+  "platform.shopee": "Shopee",
+  "platform.instagram": "Instagram",
+
+  // ── Use Case Section ──
+  "usecase.title": "An AI CS staff — works 24/7, no shifts, no 13th-month salary",
+  "usecase.sub": "Runs 24/7, matches your brand voice, costs less than 1 staff salary — no overtime, no holidays, no raise demands.",
+  "usecase.1.title": "Replies anytime — even 3 AM",
+  "usecase.1.desc": "Customer messages at midnight, holidays, Tet? AI replies within 3 seconds. Zero missed opportunities.",
+  "usecase.2.title": "Knows products from day one, no retraining",
+  "usecase.2.desc": "Upload your catalog once — AI learns prices, stock, descriptions instantly. No more repetitive training.",
+  "usecase.3.title": "Advises in YOUR shop's unique voice",
+  "usecase.3.desc": "Not generic call-center replies. AI perfectly matches your shop's tone, style, and personality.",
+  "usecase.4.title": "Save $600-1500/month on CS staff",
+  "usecase.4.desc": "One AI staff works 24/7 — no shifts, no overtime pay, no sick leave, no holiday bonuses, no salary negotiation.",
+
+  // ── Social Proof ──
+  "trusted.title": "Trusted by SME shop owners",
+
   // ── Chat Demo Section ──
   "chat.title": "See how AI replies to customers",
   "chat.sub": "Bot understands products, policies, inventory — replies naturally like a real salesperson.",
@@ -263,7 +327,7 @@ const LangContext = createContext<LangCtx>({
 
 export function LangProvider({ children, initialLang }: { children: React.ReactNode; initialLang?: Lang }) {
   const [lang, setLang] = useState<Lang>(initialLang || "vi");
-  const t = (key: string): string => translations[lang]?.[key] || translations[lang === "vi" ? "en" : "vi"]?.[key] || key;
+  const t = (key: string): string => translations[lang]?.[key] || translations["vi"]?.[key] || key;
 
   useEffect(() => {
     document.documentElement.lang = lang;

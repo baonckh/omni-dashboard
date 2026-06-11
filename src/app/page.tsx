@@ -134,14 +134,25 @@ export default function LandingPage() {
           >
             <AuroraText>
               <span className="flex flex-wrap items-center justify-center gap-x-3">
-                <span>Đừng để</span>
-                <Highlighter action="highlight" color="#2563EB" animationDuration={800}>
-                  <span className="text-blue-300">khách hỏi</span>
-                </Highlighter>
-                <span>mà không ai</span>
-                <Highlighter action="underline" color="#A855F7" animationDuration={800}>
-                  <span className="text-purple-300">trả lời</span>
-                </Highlighter>
+                {lang === "vi" ? (
+                  <><span>Đừng để</span>
+                  <Highlighter action="highlight" color="#2563EB" animationDuration={800}>
+                    <span className="text-blue-300">khách hỏi</span>
+                  </Highlighter>
+                  <span>mà không ai</span>
+                  <Highlighter action="underline" color="#A855F7" animationDuration={800}>
+                    <span className="text-purple-300">trả lời</span>
+                  </Highlighter></>
+                ) : (
+                  <><span>Never let</span>
+                  <Highlighter action="highlight" color="#2563EB" animationDuration={800}>
+                    <span className="text-blue-300">a customer wait</span>
+                  </Highlighter>
+                  <span>with no one to</span>
+                  <Highlighter action="underline" color="#A855F7" animationDuration={800}>
+                    <span className="text-purple-300">reply</span>
+                  </Highlighter></>
+                )}
               </span>
             </AuroraText>
           </motion.h1>

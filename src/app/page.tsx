@@ -263,12 +263,25 @@ export default function LandingPage() {
       {/* ══════ BOT INTELLIGENCE PIPELINE ══════ */}
       <section className="max-w-5xl mx-auto px-5 mb-24">
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
-          <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3 leading-relaxed">
-            AI hiểu <TextHighlighter color="rgba(59,130,246,0.2)">sản phẩm</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">tồn kho</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">chính sách</TextHighlighter> —<br className="hidden md:block" />không chỉ là <UnderlineText>kịch bản cố định</UnderlineText>
-          </h2>
-          <p className="text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            OmniAI <EmText>học danh mục</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng phiên bản", "đúng giá"]} className="text-xl font-extrabold text-white" />, giữ nguyên <TextHighlighter>ngữ cảnh cuộc trò chuyện</TextHighlighter> xuyên suốt.
-          </p>
+          {lang === "vi" ? (
+            <>
+              <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3 leading-relaxed">
+                AI hiểu <TextHighlighter color="rgba(59,130,246,0.2)">sản phẩm</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">tồn kho</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">chính sách</TextHighlighter> —<br className="hidden md:block" />không chỉ là <UnderlineText>kịch bản cố định</UnderlineText>
+              </h2>
+              <p className="text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
+                OmniAI <EmText>học danh mục</EmText> thật của bạn, truy xuất <WordRotate words={["đúng size", "đúng màu", "đúng phiên bản", "đúng giá"]} className="text-xl font-extrabold text-white" />, giữ nguyên <TextHighlighter>ngữ cảnh cuộc trò chuyện</TextHighlighter> xuyên suốt.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl md:text-2xl font-extrabold text-white mb-3 leading-relaxed">
+                AI understands <TextHighlighter color="rgba(59,130,246,0.2)">products</TextHighlighter>, <TextHighlighter color="rgba(168,85,247,0.2)">inventory</TextHighlighter>, <TextHighlighter color="rgba(236,72,153,0.2)">policies</TextHighlighter> —<br className="hidden md:block" />not just <UnderlineText>fixed scripts</UnderlineText>
+              </h2>
+              <p className="text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
+                OmniAI <EmText>learns your real catalog</EmText>, retrieves <WordRotate words={["exact size", "exact color", "exact variant", "exact price"]} className="text-xl font-extrabold text-white" />, keeps full <TextHighlighter>conversation context</TextHighlighter> end-to-end.
+              </p>
+            </>
+          )}
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">

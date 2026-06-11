@@ -97,7 +97,7 @@ export default function BotPipeline() {
       <div className="px-5 py-3 border-b border-white/10 bg-black/40 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Zap className="h-4 w-4 text-blue-500" />
-          <span className="text-sm font-bold text-white">Bot Intelligence Pipeline</span>
+          <span className="text-sm font-bold text-white">{lang === "vi" ? "Quy trình AI" : "Bot Intelligence Pipeline"}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />

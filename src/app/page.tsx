@@ -25,7 +25,8 @@ import DotPattern from "@/components/DotPattern";
 import BentoCard from "@/components/BentoCard";
 import NumberTicker from "@/components/NumberTicker";
 import OrbitCircles from "@/components/MagicOrbit";
-import Globe from "@/components/Globe";
+
+
 
 // ── Count-up hook ──
 function useCountUp(target: number, duration = 1500) {
@@ -115,21 +116,7 @@ export default function LandingPage() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] rounded-full bg-gradient-to-b from-blue-600/15 via-blue-500/5 to-transparent blur-[100px]" />
           <div className="absolute top-20 left-[15%] w-72 h-72 rounded-full bg-blue-500/5 blur-[80px]" />
         </div>
-        {/* Globe — chỉ lộ nửa trên, nằm sau trusted by + CTA */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[200px] overflow-hidden pointer-events-none opacity-70">
-          <Globe className="-top-32" config={{
-            width: 400, height: 400, devicePixelRatio: 1.5, phi: 0, theta: 0.3,
-            dark: 0.4, diffuse: 0.4, mapSamples: 10000, mapBrightness: 1.5,
-            baseColor: [0.15, 0.25, 0.5],
-            markerColor: [1, 0.45, 0.15],
-            glowColor: [0.1, 0.15, 0.35],
-            markers: [
-              { location: [10.8, 106.7], size: 0.08 },
-              { location: [21.0, 105.8], size: 0.06 },
-            ],
-            onRender: () => {},
-          }} />
-        </div>
+
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
             className="relative inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-medium mb-8 overflow-hidden"

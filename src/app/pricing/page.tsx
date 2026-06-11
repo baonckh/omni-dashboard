@@ -19,6 +19,7 @@ export default function PricingPage() {
     { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-white/5" },
     { nameKey: "pricing.pro_name", price: "0", periodKey: "pricing.pro_period", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "/register", highlight: true, disabled: false, color: "border-purple-500" },
   ];
+  const sortedPlans = [plans[2], plans[0], plans[1]]; // Pro first (featured), then Free, then Starter
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -51,7 +52,7 @@ export default function PricingPage() {
       {/* Plans */}
       <section className="max-w-5xl mx-auto px-5 pb-24">
         <div className="grid md:grid-cols-3 gap-4">
-          {plans.map((plan, i) => (
+          {sortedPlans.map((plan, i) => (
             <motion.div
               key={plan.nameKey}
               initial={{ opacity: 0, y: 15 }}

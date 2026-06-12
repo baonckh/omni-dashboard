@@ -110,7 +110,7 @@ export default function OnboardingPage() {
         console.error("Save onboarding error:", err);
       }
       setSaving(false);
-      router.push("/overview");
+      router.push("/app/overview");
       return;
     }
     setStep(Math.min(step + 1, STEPS.length - 1));
@@ -118,7 +118,7 @@ export default function OnboardingPage() {
 
   const handleSkip = () => {
     if (step === 5) {
-      router.push("/overview");
+      router.push("/app/overview");
       return;
     }
     setStep(Math.min(step + 1, STEPS.length - 1));

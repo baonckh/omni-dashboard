@@ -22,15 +22,15 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { name: "Overview", href: "/overview", icon: LayoutDashboard },
-  { name: "Inbox", href: "/inbox", icon: MessageSquareCode },
-  { name: "Products", href: "/products", icon: Package },
-  { name: "Channels", href: "/channels", icon: Zap },
-  { name: "Leads", href: "/leads", icon: Users },
-  { name: "Insights", href: "/insights", icon: BrainCircuit },
-  { name: "AI Bots", href: "/bots", icon: Bot },
-  { name: "Usage & Billing", href: "/billing", icon: CreditCard },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Overview", href: "/app/overview", icon: LayoutDashboard },
+  { name: "Inbox", href: "/app/inbox", icon: MessageSquareCode },
+  { name: "Products", href: "/app/products", icon: Package },
+  { name: "Channels", href: "/app/channels", icon: Zap },
+  { name: "Leads", href: "/app/leads", icon: Users },
+  { name: "Insights", href: "/app/insights", icon: BrainCircuit },
+  { name: "AI Bots", href: "/app/bots", icon: Bot },
+  { name: "Usage & Billing", href: "/app/billing", icon: CreditCard },
+  { name: "Settings", href: "/app/settings", icon: Settings },
 ];
 
 export function Sidebar() {

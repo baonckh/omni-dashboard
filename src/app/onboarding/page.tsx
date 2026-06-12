@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Zap, ChevronRight, ChevronLeft, SkipForward } from "lucide-react";
+import { Zap, ChevronRight, ChevronLeft } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { getSession } from "next-auth/react";
 import { STEPS, emptyOnboardingData, type OnboardingData } from "@/types/onboarding";
@@ -155,13 +155,6 @@ export default function OnboardingPage() {
             )}
           </div>
           <div className="flex items-center gap-3">
-            {step < STEPS.length - 1 && (
-              <button onClick={handleSkip}
-                className="flex items-center gap-1.5 px-4 py-2 text-xs text-neutral-600 hover:text-neutral-400 transition-colors font-medium"
-              >
-                <SkipForward className="h-3.5 w-3.5" /> {lang === "vi" ? "Bỏ qua" : "Skip"}
-              </button>
-            )}
             <button onClick={handleNext} disabled={saving}
               className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed rounded-xl text-sm font-bold transition-all active:scale-95"
             >

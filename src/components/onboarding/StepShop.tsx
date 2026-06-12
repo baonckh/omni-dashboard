@@ -56,7 +56,7 @@ export default function StepShop({ data, onUpdate }: StepProps) {
           <Package className="inline w-4 h-4 mr-1.5 text-blue-400" />
           {lang === "vi" ? "Ngành hàng" : "Category"}
         </label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
@@ -72,6 +72,17 @@ export default function StepShop({ data, onUpdate }: StepProps) {
               {cat}
             </button>
           ))}
+        </div>
+        {/* Custom category input */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-zinc-600 shrink-0">{lang === "vi" ? "Hoặc nhập:" : "Or type:"}</span>
+          <input
+            type="text"
+            value={data.shopCategory}
+            onChange={(e) => onUpdate({ shopCategory: e.target.value })}
+            placeholder={lang === "vi" ? "Ngành hàng khác..." : "Other category..."}
+            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500 transition-colors"
+          />
         </div>
       </div>
     </motion.div>

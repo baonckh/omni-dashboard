@@ -29,5 +29,6 @@ declare module "next-auth/jwt" {
     backendToken?: string;
     shopId?: string;
     id?: string;
+    plan?: string;
   }
 }

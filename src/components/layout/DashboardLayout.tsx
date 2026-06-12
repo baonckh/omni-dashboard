@@ -5,7 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { NotificationBell } from "./NotificationBell";
-import { Store, ChevronDown, Check, Plus } from "lucide-react";
+import { Store, ChevronDown, Check, Plus, Sparkles } from "lucide-react";
+import { getPlan } from "@/lib/plans";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
@@ -18,6 +19,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const shopRef = useRef<HTMLDivElement>(null);
   const shops = user?.shops || [];
   const currentShopId = user?.shopId || "";
+  const userPlan = user?.plan || "free";
+  const planLimits = getPlan(userPlan);
+  const canCreateNewShop = shops.length < planLimits.maxShops;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -103,11 +107,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </button>
                   ))}
                   <div className="border-t border-white/5 mt-1 pt-1">
-                    <button onClick={createShop} disabled={creating}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
-                    >
+                    <button onClick={createShop} disabled={creating || !canCreateNewShop}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50">
                       <Plus className="h-3.5 w-3.5" />
-                      {creating ? "Đang tạo..." : "Tạo shop mới"}
+                      {creating ? "Đang tạo..." : !canCreateNewShop ? `Đã đạt giới hạn (${planLimits.maxShops} shop)` : "Tạo shop mới"}
                     </button>
                   </div>
                 </div>
@@ -122,6 +125,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <div className="hidden md:block text-left leading-tight">
                 <p className="text-xs font-medium text-white">{user?.name || user?.email || "User"}</p>
                 <p className="text-[10px] text-neutral-500">{user?.email || ""}</p>
+              </div>
+              {/* Plan badge */}
+              <div className={`hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${userPlan === "pro" ? "bg-purple-600/20 text-purple-300 border border-purple-500/20" : "bg-blue-600/15 text-blue-300 border border-blue-500/15"}`}>
+                <Sparkles className="h-2.5 w-2.5" />
+                {userPlan}
               </div>
             </div>
           </div>

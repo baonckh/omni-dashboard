@@ -25,6 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: credentials.email as string,
             shopId: credentials.shopId as string,
             backendToken: credentials.backendToken as string,
+            plan: "free", // Google signup defaults to free
           };
         }
 
@@ -44,6 +45,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: credentials.email as string,
             shopId: data.shop_id,
             backendToken: data.token,
+            plan: data.plan || data.tier || "free",
           };
         } catch { return null; }
       },
@@ -58,6 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.backendToken = user.backendToken;
         token.shopId = user.shopId;
         token.id = user.id;
+        token.plan = user.plan || "free";
       }
       return token;
     },
@@ -65,6 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.backendToken) session.user.backendToken = token.backendToken as string;
       if (token.shopId) session.user.shopId = token.shopId as string;
       if (token.id) session.user.id = token.id as string;
+      session.user.plan = (token.plan as string) || "free";
       return session;
     },
   },

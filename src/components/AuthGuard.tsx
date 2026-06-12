@@ -1,22 +1,19 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
-  const router = useRouter();
-  const [decision, setDecision] = useState<"loading" | "onboarding" | "dashboard">("loading");
   const checked = useRef(false);
 
   useEffect(() => {
     if (status === "loading") return;
     if (status === "unauthenticated") {
       console.log("[AUTH] Unauthenticated → /login");
-      router.replace("/login");
+      window.location.href = "/login";
       return;
     }
     if (!session?.user?.backendToken) return;
@@ -33,20 +30,18 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       .then((data) => {
         const complete = data.onboarding_complete === true;
         console.log("[AUTH] Onboarding:", complete ? "✅ done" : "❌ needs onboarding");
-        if (complete) {
-          setDecision("dashboard");
-        } else {
-          setDecision("onboarding");
-          router.replace("/onboarding");
+        if (!complete) {
+          // Hard redirect to avoid flash/black screen
+          window.location.replace("/onboarding");
         }
       })
       .catch((err) => {
         console.error("[AUTH] Failed to check onboarding:", err);
-        setDecision("dashboard"); // fallback: show dashboard
       });
-  }, [status, session, router]);
+  }, [status, session]);
 
-  if (status === "loading" || decision === "loading") {
+  // Show loading while checking auth
+  if (status === "loading") {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -57,9 +52,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (status === "unauthenticated" || decision === "onboarding") {
-    return null; // Don't render anything, redirect is happening
+  if (status === "unauthenticated") {
+    return null;
   }
 
+  // Only render children after confirming onboarded
+  // (if not onboarded, window.location.replace handles redirect)
   return <>{children}</>;
 }

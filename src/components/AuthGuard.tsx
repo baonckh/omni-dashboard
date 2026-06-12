@@ -15,8 +15,13 @@ export default function AuthGuard({
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
+      return;
     }
-  }, [status, router]);
+    // New user? Send to onboarding
+    if (status === "authenticated" && session?.user?.onboardingComplete === false) {
+      router.replace("/onboarding");
+    }
+  }, [status, session, router]);
 
   if (status === "loading") {
     return (

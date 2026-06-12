@@ -7,6 +7,7 @@ declare module "next-auth" {
     shops?: { id: string; name: string; isDefault: boolean }[];
     maxShops?: number;
     plan?: string;
+    onboardingComplete?: boolean;
   }
 
   interface Session {
@@ -16,6 +17,7 @@ declare module "next-auth" {
       shops?: { id: string; name: string; isDefault: boolean }[];
       maxShops?: number;
       plan?: string;
+      onboardingComplete?: boolean;
       id?: string;
       name?: string | null;
       email?: string | null;
@@ -30,5 +32,6 @@ declare module "next-auth/jwt" {
     shopId?: string;
     id?: string;
     plan?: string;
+    onboardingComplete?: boolean;
   }
 }

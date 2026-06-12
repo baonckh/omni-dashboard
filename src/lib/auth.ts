@@ -61,6 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.shopId = user.shopId;
         token.id = user.id;
         token.plan = user.plan || "free";
+        token.onboardingComplete = user.onboardingComplete;
       }
       return token;
     },
@@ -69,6 +70,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.shopId) session.user.shopId = token.shopId as string;
       if (token.id) session.user.id = token.id as string;
       session.user.plan = (token.plan as string) || "free";
+      session.user.onboardingComplete = token.onboardingComplete as boolean | undefined;
       return session;
     },
   },

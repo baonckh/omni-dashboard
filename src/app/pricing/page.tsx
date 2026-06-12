@@ -17,9 +17,8 @@ export default function PricingPage() {
   const plans = [
     { nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "pricing.free_cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },
     { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-white/5" },
-    { nameKey: "pricing.pro_name", price: "0", periodKey: "pricing.pro_period", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "/register", highlight: true, disabled: false, color: "border-purple-500" },
+    { nameKey: "pricing.pro_name", price: lang === "vi" ? "0đ" : "$0", periodKey: "pricing.pro_period", originalPrice: lang === "vi" ? "499k" : "$20", originalPeriod: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "/register", highlight: true, disabled: false, color: "border-purple-500" },
   ];
-  const sortedPlans = [plans[2], plans[0], plans[1]]; // Pro first (featured), then Free, then Starter
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -52,7 +51,7 @@ export default function PricingPage() {
       {/* Plans */}
       <section className="max-w-5xl mx-auto px-5 pb-24">
         <div className="grid md:grid-cols-3 gap-4">
-          {sortedPlans.map((plan, i) => (
+          {plans.map((plan, i) => (
             <motion.div
               key={plan.nameKey}
               initial={{ opacity: 0, y: 15 }}
@@ -73,6 +72,9 @@ export default function PricingPage() {
 
               <h3 className="text-lg font-extrabold text-white mt-2">{t(plan.nameKey)}</h3>
               <div className="mt-3 mb-2">
+                {plan.originalPrice && (
+                  <span className="text-lg font-bold text-zinc-600 line-through mr-2">{plan.originalPrice}<span className="text-sm">{plan.originalPeriod}</span></span>
+                )}
                 <span className="text-3xl font-extrabold text-white">{plan.price}</span>
                 <span className="text-sm text-zinc-500 ml-1">{plan.period || (plan.periodKey ? t(plan.periodKey) : "")}</span>
               </div>

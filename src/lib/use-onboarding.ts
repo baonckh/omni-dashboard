@@ -2,30 +2,73 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+
+// Fetch onboarding status from backend (more reliable than session)
+async function fetchOnboardingStatus(token: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    console.log("[ONBOARDING] /auth/me response:", data);
+    return data.onboarding_complete === true;
+  } catch (err) {
+    console.error("[ONBOARDING] fetch error:", err);
+    return false;
+  }
+}
 
 // Check if user needs to complete onboarding
 export function useOnboardingGuard() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
+  const checked = useRef(false);
 
   useEffect(() => {
-    if (status !== "authenticated") return;
-    const complete = session?.user?.onboardingComplete;
-    if (complete === false) {
-      router.replace("/onboarding");
+    if (status !== "authenticated" || !session?.user?.backendToken) return;
+    if (checked.current) return;
+    checked.current = true;
+
+    console.log("[ONBOARDING] Session:", {
+      onboardingComplete: session.user.onboardingComplete,
+      email: session.user.email,
+      shopId: session.user.shopId,
+    });
+
+    // Quick check from session first
+    if (session.user.onboardingComplete === true) {
+      console.log("[ONBOARDING] Already complete (from session)");
+      return;
     }
-  }, [status, session, router]);
+
+    // Verify with backend API
+    fetchOnboardingStatus(session.user.backendToken).then((complete) => {
+      console.log("[ONBOARDING] Backend check:", { complete });
+      if (complete) {
+        // Update session to reflect backend state
+        update().then(() => {
+          console.log("[ONBOARDING] Session updated");
+        });
+      } else {
+        console.log("[ONBOARDING] Redirecting to /onboarding");
+        router.replace("/onboarding");
+      }
+    });
+  }, [status, session, router, update]);
 
   return { loading: status === "loading" };
 }
 
-// Mark onboarding as complete (call from deploy step or skip-all)
+// Mark onboarding as complete
 export async function completeOnboarding(): Promise<boolean> {
   try {
     const session = await import("next-auth/react").then(m => m.getSession());
     const token = session?.user?.backendToken;
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+    console.log("[ONBOARDING] Completing onboarding...");
     const res = await fetch(`${API_BASE}/onboarding/complete`, {
       method: "POST",
       headers: {
@@ -33,8 +76,11 @@ export async function completeOnboarding(): Promise<boolean> {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
-    return res.ok;
-  } catch {
+    const ok = res.ok;
+    console.log("[ONBOARDING] Complete result:", { ok });
+    return ok;
+  } catch (err) {
+    console.error("[ONBOARDING] Complete error:", err);
     return false;
   }
 }

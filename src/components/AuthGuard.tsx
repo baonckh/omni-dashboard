@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useOnboardingGuard } from "@/lib/use-onboarding";
 
 export default function AuthGuard({
   children,
@@ -11,19 +12,16 @@ export default function AuthGuard({
 }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { loading } = useOnboardingGuard();
 
   useEffect(() => {
     if (status === "unauthenticated") {
+      console.log("[AUTH] Unauthenticated, redirecting to /login");
       router.push("/login");
-      return;
     }
-    // New user? Send to onboarding
-    if (status === "authenticated" && session?.user?.onboardingComplete === false) {
-      router.replace("/onboarding");
-    }
-  }, [status, session, router]);
+  }, [status, router]);
 
-  if (status === "loading") {
+  if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -38,5 +36,6 @@ export default function AuthGuard({
     return null;
   }
 
+  console.log("[AUTH] Authenticated, rendering children");
   return <>{children}</>;
 }

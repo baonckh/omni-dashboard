@@ -118,7 +118,7 @@ const vi: Dict = {
   "pricing.free_feat5": "Nhập sản phẩm CSV/text",
   "pricing.free_feat6": "AI insights & leads",
   "pricing.free_feat7": "Hỗ trợ cộng đồng",
-  "pricing.free_cta": "Đang hoạt động",
+  "pricing.free_cta": "Dùng thử ngay",
   "pricing.starter_name": "Starter",
   "pricing.starter_price": "$8",
   "pricing.starter_badge": "Sắp ra mắt",

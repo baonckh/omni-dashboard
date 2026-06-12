@@ -15,7 +15,7 @@ export default function PricingPage() {
   const { t, lang } = useLang();
 
   const plans = [
-    { nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "pricing.free_cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },
+    { nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "hero.cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },
     { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-white/5" },
     { nameKey: "pricing.pro_name", price: lang === "vi" ? "0đ" : "$0", periodKey: "pricing.pro_period", originalPrice: lang === "vi" ? "499k" : "$20", originalPeriod: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "/register", highlight: true, disabled: false, color: "border-purple-500" },
   ];
@@ -93,6 +93,10 @@ export default function PricingPage() {
                 <a href={plan.ctaLink} className="block w-full text-center py-3 rounded-xl text-sm font-bold border border-white/10 text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer">
                   {t(plan.ctaKey)} →
                 </a>
+              ) : plan.highlight ? (
+                <Link href={plan.ctaLink} className="block w-full text-center py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg shadow-purple-600/25 active:scale-[0.98]">
+                  {t(plan.ctaKey)}
+                </Link>
               ) : (
                 <Link href={plan.ctaLink} className="block w-full text-center py-3 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all active:scale-[0.98]">
                   {t(plan.ctaKey)}

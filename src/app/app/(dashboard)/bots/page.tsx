@@ -5,9 +5,10 @@ import Link from "next/link";
 import { fetchBots, saveBot } from "@/lib/api";
 import { Plus, Bot, ChevronRight, Hash } from "lucide-react";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
-import { SHOP_ID } from "./[botId]/components/shared";
+import { useShopId } from "@/lib/use-shop";
 
 export default function BotsListPage() {
+  const shopId = useShopId();
   const [bots, setBots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +19,7 @@ export default function BotsListPage() {
   const loadBots = async () => {
     setLoading(true);
     try {
-      const data = await fetchBots(SHOP_ID);
+      const data = await fetchBots(shopId);
       setBots(data || []);
     } catch (e) {
       console.error(e);
@@ -30,7 +31,7 @@ export default function BotsListPage() {
   const handleCreateNew = async () => {
     try {
       // Create an empty new bot via POST API (omitting ID forces create on backend logic)
-      const res = await saveBot(SHOP_ID, "", {
+      const res = await saveBot(shopId, "", {
         botName: "Nhân viên mới",
         persona: "Chưa có thông tin",
         tone: "Chuyên nghiệp",

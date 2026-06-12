@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils";
 import { fetchBot, saveBot } from "@/lib/api";
 
 // Components
-import { Card, Field, SectionHeader, SHOP_ID, TONES, DEFAULT_STAGES } from "./components/shared";
+import { useShopId } from "@/lib/use-shop";
+import { Card, Field, SectionHeader, TONES, DEFAULT_STAGES } from "./components/shared";
 import { KnowledgeSection } from "./components/KnowledgeSection";
 import { MultiChatSection } from "./components/MultiChatSection";
 import { AgentWorkspaceSection } from "./components/AgentWorkspaceSection";
@@ -83,9 +84,10 @@ export default function BotConfigPage({ params }: { params: Promise<{ botId: str
 // STAGES SECTION
 // ============================================================
 function StagesSection({ botId }: { botId: string }) {
+  const shopId = useShopId();
   const [stages, setStages] = useState(DEFAULT_STAGES);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { fetchBot(SHOP_ID, botId).then((p) => { if (p?.stages?.length) setStages(p.stages); }).catch(() => {}); }, [botId]);
+  useEffect(() => { fetchBot(shopId, botId).then((p) => { if (p?.stages?.length) setStages(p.stages); }).catch(() => {}); }, [botId]);
 
   const addStage = () => setStages([...stages, { order: stages.length + 1, name: "", description: "", prompt: "" }]);
   const removeStage = (i: number) => setStages(stages.filter((_, idx) => idx !== i).map((st, idx) => ({ ...st, order: idx + 1 })));
@@ -94,8 +96,8 @@ function StagesSection({ botId }: { botId: string }) {
   const handleSave = async () => {
     setSaving(true);
     try { 
-      const e = await fetchBot(SHOP_ID, botId); 
-      await saveBot(SHOP_ID, botId, { ...(e || { shopId: SHOP_ID }), stages }); 
+      const e = await fetchBot(shopId, botId); 
+      await saveBot(shopId, botId, { ...(e || { shopId: shopId }), stages }); 
     } catch (e) { console.error(e); } finally { setSaving(false); }
   };
 
@@ -150,11 +152,12 @@ type Persona = {
 };
 
 function PersonaSection({ botId }: { botId: string }) {
-  const [p, setP] = useState<Persona>({ shopId: SHOP_ID, id: botId, botName: "Vera", persona: "Nhân viên tư vấn", tone: "friendly", language: "vi", greeting: "Chào bạn! 👋", rules: ["Luôn trả lời tiếng Việt", "Không bịa giá", "Thu thập SĐT"], scenarios: [], stages: [] });
+  const shopId = useShopId();
+  const [p, setP] = useState<Persona>({ shopId: shopId, id: botId, botName: "Vera", persona: "Nhân viên tư vấn", tone: "friendly", language: "vi", greeting: "Chào bạn! 👋", rules: ["Luôn trả lời tiếng Việt", "Không bịa giá", "Thu thập SĐT"], scenarios: [], stages: [] });
   const [saving, setSaving] = useState(false);
-  useEffect(() => { fetchBot(SHOP_ID, botId).then((d) => d && setP(d)).catch(() => {}); }, [botId]);
+  useEffect(() => { fetchBot(shopId, botId).then((d) => d && setP(d)).catch(() => {}); }, [botId]);
   
-  const handleSave = async () => { setSaving(true); try { await saveBot(SHOP_ID, botId, p); alert("Đã cập nhật Identity Bot"); } catch (e) { console.error(e); } finally { setSaving(false); } };
+  const handleSave = async () => { setSaving(true); try { await saveBot(shopId, botId, p); alert("Đã cập nhật Identity Bot"); } catch (e) { console.error(e); } finally { setSaving(false); } };
   
   const addRule = () => setP({ ...p, rules: [...p.rules, ""] });
   const removeRule = (i: number) => setP({ ...p, rules: p.rules.filter((_, idx) => idx !== i) });
@@ -224,7 +227,7 @@ function PersonaSection({ botId }: { botId: string }) {
              if(window.confirm("Cảnh báo: Xóa bot AI này? Mọi lịch sử và rules sẽ mất.")) {
                 try {
                    const { deleteBot } = await import('@/lib/api');
-                   await deleteBot(SHOP_ID, botId);
+                   await deleteBot(shopId, botId);
                    window.location.href = '/bots';
                 } catch(e) { console.error(e); }
              }
@@ -241,15 +244,16 @@ function PersonaSection({ botId }: { botId: string }) {
 // RULES SECTION GỌI COMPONENT
 // ============================================================
 function RulesSection({ botId }: { botId: string }) {
+  const shopId = useShopId();
   const [data, setData] = useState<any>(null);
   
   useEffect(() => {
-    fetchBot(SHOP_ID, botId).then(d => setData(d || { shopId: SHOP_ID, botName: "AI Proxy", scenarios: [] }));
+    fetchBot(shopId, botId).then(d => setData(d || { shopId: shopId, botName: "AI Proxy", scenarios: [] }));
   }, [botId]);
 
   const handleSaveWrapper = async () => {
     try {
-      await saveBot(SHOP_ID, botId, data);
+      await saveBot(shopId, botId, data);
       alert("Đã lưu Bộ Rules Proxy thành công 😎");
     } catch (e) {
       console.error(e);
@@ -272,8 +276,9 @@ function RulesSection({ botId }: { botId: string }) {
 // SALES GUIDE
 // ============================================================
 function SalesGuideSection({ botId }: { botId: string }) {
+  const shopId = useShopId();
   const [stages, setStages] = useState(DEFAULT_STAGES);
-  useEffect(() => { fetchBot(SHOP_ID, botId).then((p) => { if (p?.stages?.length) setStages(p.stages); }).catch(() => {}); }, [botId]);
+  useEffect(() => { fetchBot(shopId, botId).then((p) => { if (p?.stages?.length) setStages(p.stages); }).catch(() => {}); }, [botId]);
 
   return (
     <div className="space-y-5 pb-8">

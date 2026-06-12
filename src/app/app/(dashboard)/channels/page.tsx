@@ -12,6 +12,7 @@ import {
   ShoppingBag,
   Zap
 } from "lucide-react";
+import { useShopId } from "@/lib/use-shop";
 import { fetchChannels, getConnectUrl } from "@/lib/api";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { cn } from "@/lib/utils";
@@ -35,7 +36,7 @@ const PLATFORM_INFO: Record<string, any> = {
 export default function ChannelsPage() {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
-  const shopId = "test_shop";
+  const shopId = useShopId();
 
   useEffect(() => {
     loadChannels();

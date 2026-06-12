@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Bot, Send, Smartphone, Users, BrainCircuit, Target, RefreshCw, Plus, X } from "lucide-react";
-import { Card, SectionHeader, SHOP_ID, DEFAULT_STAGES, PLATFORMS } from "./shared";
+import { useShopId } from "@/lib/use-shop";
+import { Card, SectionHeader, DEFAULT_STAGES, PLATFORMS } from "./shared";
 import { playgroundChat, fetchBotSettings, type BotSetting } from "@/lib/api";
 import { ProductCarousel } from "@/components/ui/ProductCarousel";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,7 @@ type ChatMessage = {
 type ChatSession = { id: string; name: string; senderId: string; messages: ChatMessage[]; stage: number; platform: string; lastMsg: string; unread: number };
 
 export function MultiChatSection({ botId }: { botId: string }) {
+  const shopId = useShopId();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [botSettings, setBotSettings] = useState<BotSetting | null>(null);
   const [activeId, setActiveId] = useState("");
@@ -106,7 +108,7 @@ export function MultiChatSection({ botId }: { botId: string }) {
 
   // Fetch Bot Settings independently
   useEffect(() => {
-    fetchBotSettings(SHOP_ID).then((s) => {
+    fetchBotSettings(shopId).then((s) => {
       setBotSettings(s);
       
       // Only set defaults if no saved config exists
@@ -183,7 +185,7 @@ const pendingRef = useRef<string[]>([]);
 
     try {
       const resp = await playgroundChat({ 
-        shopId: SHOP_ID, 
+        shopId: shopId, 
         botId,
         senderId: session.senderId, 
         message: input, 

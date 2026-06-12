@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { useShopId } from "@/lib/use-shop";
 
 interface Product {
   id: string;
@@ -31,7 +32,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<ProductFilters>({ limit: 20 });
   const [total, setTotal] = useState(0);
-  const [shopId, setShopId] = useState("test_shop");
+  const shopId = useShopId();
   const [groupByCategory, setGroupByCategory] = useState(true);
 
   // Group products by category

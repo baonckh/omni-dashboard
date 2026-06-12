@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { api } from "@/lib/api";
 import Link from "next/link";
 import VariantEditor from "@/components/products/VariantEditor";
+import { useShopId } from "@/lib/use-shop";
 
 interface VariantDef {
   name: string;
@@ -76,7 +77,7 @@ export default function ProductDetailPage() {
   });
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
-  const [shopId] = useState("test_shop");
+  const shopId = useShopId();
 
   useEffect(() => {
     if (!isNew) {

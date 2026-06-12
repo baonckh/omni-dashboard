@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { BookOpen, Upload, Globe, Database, Trash2, Search, FileUp, Layers, Server, Cpu, Zap, GitBranch } from "lucide-react";
-import { Card, Field, SectionHeader, SHOP_ID } from "./shared";
+import { useShopId } from "@/lib/use-shop";
+import { Card, Field, SectionHeader } from "./shared";
 import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, updateKnowledgeDoc, fetchBotSettings, type BotSetting } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ const RETRIEVAL_ADAPTERS = [
 ];
 
 export function KnowledgeSection() {
+  const shopId = useShopId();
   const [docs, setDocs] = useState<any[]>([]);
   const [botSettings, setBotSettings] = useState<BotSetting | null>(null);
   const [title, setTitle] = useState("");
@@ -42,10 +44,9 @@ export function KnowledgeSection() {
   const [embedModel, setEmbedModel] = useState("text-embedding-005");
 
   useEffect(() => { 
-    listKnowledgeDocs(SHOP_ID).then((d) => { if (Array.isArray(d)) setDocs(d); }).catch(() => {}); 
-    fetchBotSettings(SHOP_ID).then((s) => {
+    listKnowledgeDocs(shopId).then((d) => { if (Array.isArray(d)) setDocs(d); }).catch(() => {}); 
+    fetchBotSettings(shopId).then((s) => {
       setBotSettings(s);
-      // Pick first active provider if default is not active
       const keys = s?.aiConfig?.keys || [];
       const activeGemini = keys.find(k => k.provider === "gemini" && k.isActive);
       const activeOpenAI = keys.find(k => k.provider === "openai" && k.isActive);
@@ -60,20 +61,20 @@ export function KnowledgeSection() {
     }).catch(console.error);
   }, []);
   const reload = async () => { 
-    const d = await listKnowledgeDocs(SHOP_ID); 
+    const d = await listKnowledgeDocs(shopId); 
     if (Array.isArray(d)) setDocs(d); 
-    const s = await fetchBotSettings(SHOP_ID);
+    const s = await fetchBotSettings(shopId);
     setBotSettings(s);
   };
 
   const handleIngestText = async () => {
     if (!content.trim()) return; setIngesting(true);
-    try { await ingestKnowledge(SHOP_ID, { title: title || "Untitled", content, source: "manual_text", config: { provider: embedProvider, model: embedModel } }); setTitle(""); setContent(""); await reload(); } catch (e) { console.error(e); } finally { setIngesting(false); }
+    try {       await ingestKnowledge(shopId, { title: title || "Untitled", content, source: "manual_text", config: { provider: embedProvider, model: embedModel } }); setTitle(""); setContent(""); await reload(); } catch (e) { console.error(e); } finally { setIngesting(false); }
   };
 
   const handleIngestWeb = async () => {
     if (!webUrl.trim()) return; setIngesting(true);
-    try { await ingestWebKnowledge(SHOP_ID, { url: webUrl, recursive: false, config: { provider: embedProvider, model: embedModel } }); setWebUrl(""); await reload(); } catch (e) { console.error(e); } finally { setIngesting(false); }
+    try { await ingestWebKnowledge(shopId, { url: webUrl, recursive: false, config: { provider: embedProvider, model: embedModel } }); setWebUrl(""); await reload(); } catch (e) { console.error(e); } finally { setIngesting(false); }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +101,7 @@ export function KnowledgeSection() {
         }
 
         if (text.trim()) {
-          await ingestKnowledge(SHOP_ID, { title: file.name, content: text, source: "file_upload", config: { provider: embedProvider, model: embedModel } });
+          await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload", config: { provider: embedProvider, model: embedModel } });
         }
       }
       await reload();
@@ -130,7 +131,7 @@ export function KnowledgeSection() {
     if (!selectedDoc) return;
     setLoading(true);
     try {
-      await updateKnowledgeDoc(SHOP_ID, selectedDoc.id, {
+      await updateKnowledgeDoc(shopId, selectedDoc.id, {
         title: editTitle,
         content: editContent,
         source: selectedDoc.source
@@ -149,7 +150,7 @@ export function KnowledgeSection() {
     if (!window.confirm("Sếp chắc chắn muốn xóa tài liệu này? Điều này sẽ xóa sạch các vector liên quan.")) return;
     setLoading(true);
     try {
-      await deleteKnowledgeDoc(SHOP_ID, docId);
+      await deleteKnowledgeDoc(shopId, docId);
       // Optimistic UI: Xoá khỏi local state ngay lập tức
       setDocs(prev => prev.filter(d => d.id !== docId));
       if (selectedDoc?.id === docId) {

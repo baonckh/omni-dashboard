@@ -33,7 +33,8 @@ export function Field({ label, value, onChange, placeholder, multiline, rows }: 
   );
 }
 
-export const SHOP_ID = "test_shop";
+import { useShopId } from "@/lib/use-shop";
+export { useShopId };
 
 export const TONES = [
   { value: "professional", label: "🏢 Chuyên nghiệp" },

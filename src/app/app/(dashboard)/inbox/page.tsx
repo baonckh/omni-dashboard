@@ -15,6 +15,7 @@ import {
   ExternalLink,
   CheckCheck
 } from "lucide-react";
+import { useShopId } from "@/lib/use-shop";
 import { fetchThreads, fetchMessages, sendReply, updateThreadStatus } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ export default function InboxPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const shopId = "test_shop";
+  const shopId = useShopId();
 
   useEffect(() => {
     loadThreads();

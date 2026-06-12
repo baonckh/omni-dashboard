@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { CreditCard, TrendingUp, BarChart3, PieChart, Calendar, ArrowUpRight, DollarSign, Zap } from "lucide-react";
-import { Card, SectionHeader, SHOP_ID } from "../bots/[botId]/components/shared";
+import { useShopId } from "@/lib/use-shop";
+import { Card, SectionHeader } from "../bots/[botId]/components/shared";
 import { getUsageStats } from "@/lib/api";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function BillingPage() {
+  const shopId = useShopId();
   const [stats, setStats] = useState<any[]>([]);
   const [totalCost, setTotalCost] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -18,7 +20,7 @@ export default function BillingPage() {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const data = await getUsageStats(SHOP_ID, dateRange.from, dateRange.to);
+      const data = await getUsageStats(shopId, dateRange.from, dateRange.to);
       setStats(data.stats || []);
       setTotalCost(data.total_cost || 0);
     } catch (e) {

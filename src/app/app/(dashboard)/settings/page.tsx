@@ -19,6 +19,7 @@ import {
   Trash2,
   Antenna
 } from "lucide-react";
+import { useShopId } from "@/lib/use-shop";
 import { 
   fetchAlertConfig, 
   saveAlertConfig, 
@@ -43,7 +44,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const shopId = "test_shop";
+  const shopId = useShopId();
   const EMBED_CODE = `<script 
   src="https://cdn.omni-ai.com/widget.js" 
   data-shop-id="${shopId}"

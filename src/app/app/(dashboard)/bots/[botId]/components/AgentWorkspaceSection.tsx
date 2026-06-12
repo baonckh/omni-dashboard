@@ -1,13 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Users, Target, TrendingUp, Clock, Shield, Bot, BrainCircuit, AlertTriangle, ChevronRight, ArrowUpRight, Phone, Tag, MessageSquare } from "lucide-react";
-import { Card, SectionHeader, SHOP_ID, DEFAULT_STAGES } from "./shared";
+import { useShopId } from "@/lib/use-shop";
+import { Card, SectionHeader, DEFAULT_STAGES } from "./shared";
 import { fetchInsights, fetchLeads, fetchThreads, fetchMessages, sendReply, fetchBotSettings, type BotSetting } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 // MOCK DATA REMOVED - Using live data from API
 
 export function AgentWorkspaceSection() {
+  const shopId = useShopId();
   const [insights, setInsights] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
@@ -20,10 +22,10 @@ export function AgentWorkspaceSection() {
   const [chatModel, setChatModel] = useState("gemini-flash-lite-latest");
 
   useEffect(() => {
-    fetchInsights(SHOP_ID).then((d) => { if (Array.isArray(d)) setInsights(d); }).catch(() => {});
-    fetchLeads(SHOP_ID).then((d) => { if (Array.isArray(d)) setLeads(d); }).catch(() => {});
-    fetchThreads(SHOP_ID).then((d) => { if (Array.isArray(d)) setConversations(d); }).catch(() => {});
-    fetchBotSettings(SHOP_ID).then(setBotSettings).catch(console.error);
+    fetchInsights(shopId).then((d) => { if (Array.isArray(d)) setInsights(d); }).catch(() => {});
+    fetchLeads(shopId).then((d) => { if (Array.isArray(d)) setLeads(d); }).catch(() => {});
+    fetchThreads(shopId).then((d) => { if (Array.isArray(d)) setConversations(d); }).catch(() => {});
+    fetchBotSettings(shopId).then(setBotSettings).catch(console.error);
   }, []);
 
   useEffect(() => {

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Bell, Zap, Calendar, User } from "lucide-react";
+import { useShopId } from "@/lib/use-shop";
 import { fetchNotifications } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +10,7 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const shopId = "test_shop";
+  const shopId = useShopId();
 
   useEffect(() => {
     loadNotifications();

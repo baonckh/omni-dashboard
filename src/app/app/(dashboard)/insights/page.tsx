@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Zap
 } from "lucide-react";
+import { useShopId } from "@/lib/use-shop";
 import { fetchInsights } from "@/lib/api";
 import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
 import { cn } from "@/lib/utils";
@@ -28,7 +29,7 @@ type Insight = {
 export default function InsightsPage() {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(true);
-  const shopId = "test_shop";
+  const shopId = useShopId();
 
   useEffect(() => {
     loadInsights();

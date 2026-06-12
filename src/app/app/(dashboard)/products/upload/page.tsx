@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { useShopId } from "@/lib/use-shop";
 
 interface ParsedProduct {
   product_code: string;
@@ -31,7 +32,7 @@ export default function ProductUploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [parseResult, setParseResult] = useState<ParseResult | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<Set<number>>(new Set());
-  const [shopId, setShopId] = useState("test_shop");
+  const shopId = useShopId();
   const [error, setError] = useState("");
   
   // Handle file selection

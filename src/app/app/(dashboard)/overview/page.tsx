@@ -14,13 +14,14 @@ import {
   Smartphone,
   CheckCircle2
 } from "lucide-react";
+import { useShopId } from "@/lib/use-shop";
 import { fetchAnalytics } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
-  const shopId = "test_shop";
+  const shopId = useShopId();
 
   useEffect(() => {
     loadData();

@@ -10,6 +10,7 @@ import {
   AlertCircle,
   ChevronRight
 } from "lucide-react";
+import { useShopId } from "@/lib/use-shop";
 import { fetchLeads, updateLeadStatus } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +28,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const shopId = "test_shop"; // Thực tế lấy từ Auth/Context
+  const shopId = useShopId();
 
   useEffect(() => {
     loadLeads();

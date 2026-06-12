@@ -39,13 +39,7 @@ export function useOnboardingGuard() {
       shopId: session.user.shopId,
     });
 
-    // Quick check from session first
-    if (session.user.onboardingComplete === true) {
-      console.log("[ONBOARDING] Already complete (from session)");
-      return;
-    }
-
-    // Verify with backend API
+    // Always verify with backend API (session may be stale for existing users)
     fetchOnboardingStatus(session.user.backendToken).then((complete) => {
       console.log("[ONBOARDING] Backend check:", { complete });
       if (complete) {

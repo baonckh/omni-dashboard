@@ -21,10 +21,23 @@ const QUICK_QUESTIONS = [
   "Giao hàng thế nào?",
 ];
 
-const PROVIDERS: { value: AIProvider; label: string; desc: string; docUrl: string }[] = [
-  { value: "openai", label: "OpenAI", desc: "GPT-4o, GPT-4o-mini", docUrl: "https://platform.openai.com/api-keys" },
-  { value: "gemini", label: "Gemini", desc: "Gemini 2.0 Flash", docUrl: "https://aistudio.google.com/apikey" },
-  { value: "openrouter", label: "OpenRouter", desc: "Nhiều model giá rẻ", docUrl: "https://openrouter.ai/keys" },
+const PROVIDERS: { value: AIProvider; label: string; docUrl: string; models: { value: string; label: string }[] }[] = [
+  { value: "openai", label: "OpenAI", docUrl: "https://platform.openai.com/api-keys", models: [
+    { value: "gpt-4o", label: "GPT-4o" },
+    { value: "gpt-4o-mini", label: "GPT-4o-mini" },
+    { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
+  ]},
+  { value: "gemini", label: "Gemini", docUrl: "https://aistudio.google.com/apikey", models: [
+    { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" },
+    { value: "gemini-2.0-flash-lite", label: "Gemini 2.0 Flash Lite" },
+    { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro" },
+  ]},
+  { value: "openrouter", label: "OpenRouter", docUrl: "https://openrouter.ai/keys", models: [
+    { value: "openai/gpt-4o", label: "OpenAI GPT-4o" },
+    { value: "google/gemini-2.0-flash", label: "Gemini 2.0 Flash" },
+    { value: "deepseek/deepseek-chat", label: "DeepSeek V3" },
+    { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku" },
+  ]},
 ];
 
 export default function StepPlayground({ data, onUpdate }: StepProps) {
@@ -35,7 +48,7 @@ export default function StepPlayground({ data, onUpdate }: StepProps) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const chatEnd = useRef<HTMLDivElement>(null);
-  const hasKey = data.aiProvider && data.aiKey;
+  const hasKey = data.aiProvider && data.aiModel && data.aiKey;
 
   useEffect(() => {
     chatEnd.current?.scrollIntoView({ behavior: "smooth" });
@@ -133,13 +146,27 @@ export default function StepPlayground({ data, onUpdate }: StepProps) {
               )}
             >
               {p.label}
-              <span className="block text-[9px] text-zinc-600 font-normal">{p.desc}</span>
             </button>
           ))}
         </div>
 
         {data.aiProvider && (
           <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
+            {/* Model selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider shrink-0">{lang === "vi" ? "Mô hình" : "Model"}</span>
+              <select
+                value={data.aiModel}
+                onChange={(e) => onUpdate({ aiModel: e.target.value })}
+                className="bg-white/5 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500/50 transition-colors"
+              >
+                <option value="">{lang === "vi" ? "Chọn mô hình..." : "Select model..."}</option>
+                {PROVIDERS.find((p) => p.value === data.aiProvider)?.models.map((m) => (
+                  <option key={m.value} value={m.value} className="bg-zinc-900">{m.label}</option>
+                ))}
+              </select>
+            </div>
+            {/* API Key */}
             <div className="flex items-center gap-2">
               <Key className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
               <input

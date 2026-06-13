@@ -2,6 +2,7 @@
 
 export type ToneType = "professional" | "friendly" | "humorous" | "warm" | "luxury";
 export type ChannelKey = "facebook" | "tiktok" | "shopee" | "zalo" | "web";
+export type AIProvider = "openai" | "gemini" | "openrouter" | "";
 
 export interface Product {
   name: string;
@@ -25,7 +26,10 @@ export interface OnboardingData {
   // Step 4: Channels
   channels: Record<ChannelKey, boolean>;
 
-  // Step 5: Playground (local state, không persist)
+  // Step 5: AI Key + Playground
+  aiProvider: AIProvider;
+  aiKey: string;
+
   // Step 6: Deploy (read-only summary)
 }
 
@@ -75,5 +79,7 @@ export function emptyOnboardingData(): OnboardingData {
     botTone: "friendly",
     botRules: [...DEFAULT_RULES],
     channels: { facebook: false, tiktok: false, shopee: false, zalo: false, web: false },
+    aiProvider: "",
+    aiKey: "",
   };
 }

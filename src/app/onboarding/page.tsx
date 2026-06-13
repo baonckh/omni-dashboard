@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Zap, ChevronRight, ChevronLeft } from "lucide-react";
 import { useLang } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import { getSession } from "next-auth/react";
 import { STEPS, emptyOnboardingData, type OnboardingData } from "@/types/onboarding";
 import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
@@ -143,29 +144,32 @@ export default function OnboardingPage() {
       </div>
 
       {/* Controls */}
-      <div className="relative z-10 border-t border-white/5 py-4 px-6">
+      <div className="relative z-10 border-t border-white/[0.04] py-4 px-6">
         <div className="max-w-xl mx-auto flex items-center justify-between">
           <div>
             {step > 0 && (
               <button onClick={handleBack}
-                className="flex items-center gap-1.5 px-4 py-2 text-sm text-neutral-400 hover:text-white transition-colors font-medium"
+                className="flex items-center gap-1.5 px-3 py-2 text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-medium"
               >
-                <ChevronLeft className="h-4 w-4" /> {lang === "vi" ? "Quay lại" : "Back"}
+                <ChevronLeft className="h-3.5 w-3.5" /> {lang === "vi" ? "Quay lại" : "Back"}
               </button>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <button onClick={handleNext} disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed rounded-xl text-sm font-bold transition-all active:scale-95"
-            >
-              {saving
-                ? (lang === "vi" ? "Đang lưu..." : "Saving...")
-                : step >= STEPS.length - 1
-                  ? (lang === "vi" ? "🚀 Vào Dashboard" : "🚀 Go to Dashboard")
-                  : (lang === "vi" ? "Tiếp tục" : "Continue")}
-              {step < STEPS.length - 1 && <ChevronRight className="h-4 w-4" />}
-            </button>
-          </div>
+          <button onClick={handleNext} disabled={saving}
+            className={cn(
+              "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.97]",
+              saving
+                ? "bg-blue-600/50 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20"
+            )}
+          >
+            {saving
+              ? (lang === "vi" ? "Đang lưu..." : "Saving...")
+              : step >= STEPS.length - 1
+                ? (lang === "vi" ? "🚀 Vào Dashboard" : "🚀 Go to Dashboard")
+                : (lang === "vi" ? "Tiếp tục" : "Continue")}
+            {step < STEPS.length - 1 && <ChevronRight className="h-4 w-4" />}
+          </button>
         </div>
       </div>
     </div>

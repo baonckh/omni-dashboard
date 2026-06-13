@@ -15,36 +15,39 @@ export default function OnboardingProgress({ step, onSkip, onSkipAll }: Onboardi
   const { lang } = useLang();
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full">
       {/* Progress dots */}
-      <div className="flex items-center gap-0">
+      <div className="flex items-center gap-1 mb-2">
         {STEPS.map((s, i) => {
-          const active = i === step;
           const done = i < step;
+          const current = i === step;
           return (
-            <div key={s.id} className="flex items-center flex-1">
+            <div key={s.id} className="flex-1 flex items-center gap-1">
               <div
                 className={cn(
-                  "flex-1 h-1.5 rounded-full transition-all duration-300",
-                  done ? "bg-blue-600" : active ? "bg-blue-500" : "bg-zinc-800"
+                  "h-1 rounded-full flex-1 transition-all duration-300",
+                  done ? "bg-blue-600" : current ? "bg-blue-500/60" : "bg-zinc-800"
                 )}
               />
+              {i < STEPS.length - 1 && <div className="w-1" />}
             </div>
           );
         })}
       </div>
 
-      {/* Step labels + Skip buttons */}
+      {/* Step indicator + Skip buttons */}
       <div className="flex items-center justify-between">
-        <span className="text-xs text-zinc-500">
+        <span className="text-xs text-zinc-500 font-medium">
+          {lang === "vi" ? "Bước" : "Step"} {step + 1}/{STEPS.length}
+          <span className="text-zinc-600 mx-1.5">·</span>
           {STEPS[step] ? (lang === "vi" ? STEPS[step].titleVI : STEPS[step].titleEN) : ""}
         </span>
-        <div className="flex items-center gap-3">
-          {step < STEPS.length - 1 && (
+        <div className="flex items-center gap-2">
+          {step > 0 && step < STEPS.length - 1 && (
             <button
               type="button"
               onClick={onSkip}
-              className="flex items-center gap-1 text-xs text-zinc-600 hover:text-zinc-300 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-all"
             >
               <SkipForward className="h-3 w-3" />
               {lang === "vi" ? "Bỏ qua" : "Skip"}
@@ -54,10 +57,10 @@ export default function OnboardingProgress({ step, onSkip, onSkipAll }: Onboardi
             <button
               type="button"
               onClick={onSkipAll}
-              className="flex items-center gap-1 text-xs text-zinc-600 hover:text-zinc-300 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] text-zinc-500 hover:text-zinc-300 hover:bg-white/5 transition-all"
             >
               <LogOut className="h-3 w-3" />
-              {lang === "vi" ? "Bỏ qua tất cả" : "Skip All"} ▸
+              {lang === "vi" ? "Bỏ qua tất cả" : "Skip All"}
             </button>
           )}
         </div>

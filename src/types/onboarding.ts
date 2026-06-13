@@ -26,9 +26,8 @@ export interface OnboardingData {
   // Step 4: Channels
   channels: Record<ChannelKey, boolean>;
 
-  // Step 5: AI Key + Playground
+  // Step 5: AI Provider (configure in Settings after onboarding)
   aiProvider: AIProvider;
-  aiModel: string;
   aiKey: string;
 
   // Step 6: Deploy (read-only summary)
@@ -81,7 +80,6 @@ export function emptyOnboardingData(): OnboardingData {
     botRules: [...DEFAULT_RULES],
     channels: { facebook: false, tiktok: false, shopee: false, zalo: false, web: false },
     aiProvider: "",
-    aiModel: "",
     aiKey: "",
   };
 }

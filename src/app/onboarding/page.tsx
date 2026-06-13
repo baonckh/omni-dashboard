@@ -155,21 +155,30 @@ export default function OnboardingPage() {
               </button>
             )}
           </div>
-          <button onClick={handleNext} disabled={saving}
-            className={cn(
-              "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.97]",
-              saving
-                ? "bg-blue-600/50 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20"
+          <div className="flex items-center gap-2">
+            {step < STEPS.length - 1 && step > 0 && (
+              <button onClick={handleSkip}
+                className="px-4 py-2.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-medium"
+              >
+                {lang === "vi" ? "Bỏ qua" : "Skip"}
+              </button>
             )}
-          >
-            {saving
-              ? (lang === "vi" ? "Đang lưu..." : "Saving...")
-              : step >= STEPS.length - 1
-                ? (lang === "vi" ? "🚀 Vào Dashboard" : "🚀 Go to Dashboard")
-                : (lang === "vi" ? "Tiếp tục" : "Continue")}
-            {step < STEPS.length - 1 && <ChevronRight className="h-4 w-4" />}
-          </button>
+            <button onClick={handleNext} disabled={saving}
+              className={cn(
+                "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.97]",
+                saving
+                  ? "bg-blue-600/50 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20"
+              )}
+            >
+              {saving
+                ? (lang === "vi" ? "Đang lưu..." : "Saving...")
+                : step >= STEPS.length - 1
+                  ? (lang === "vi" ? "🚀 Vào Dashboard" : "🚀 Go to Dashboard")
+                  : (lang === "vi" ? "Tiếp tục" : "Continue")}
+              {step < STEPS.length - 1 && <ChevronRight className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
       </div>
     </div>

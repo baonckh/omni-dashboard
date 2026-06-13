@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -17,13 +17,15 @@ const OTHER_KEY = "Khác";
 
 export default function StepShop({ data, onUpdate }: StepProps) {
   const { lang } = useLang();
+  const [showCustom, setShowCustom] = useState(false);
   const isCustom = data.shopCategory && !CATEGORIES.includes(data.shopCategory);
 
   const handleCategoryClick = (cat: string) => {
     if (cat === OTHER_KEY) {
-      // Click "Khác" → show input, clear current selection
+      setShowCustom(true);
       onUpdate({ shopCategory: "" });
     } else {
+      setShowCustom(false);
       onUpdate({ shopCategory: cat });
     }
   };
@@ -86,7 +88,7 @@ export default function StepShop({ data, onUpdate }: StepProps) {
         </div>
 
         {/* Custom input — chỉ hiện khi bấm "Khác" */}
-        {(isCustom || data.shopCategory === "") && (
+        {showCustom && (
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}

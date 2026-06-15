@@ -70,14 +70,13 @@ export default function StepDeploy({ data, onUpdate }: StepProps) {
         />
       </div>
 
-      <button
-        type="button"
-        onClick={() => {}}
-        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-2xl text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all"
-      >
-        <Rocket className="w-4 h-4" />
-        {lang === "vi" ? "🚀 Vào Dashboard" : "🚀 Go to Dashboard"}
-      </button>
+      <div className="text-center">
+        <p className="text-xs text-zinc-500">
+          {lang === "vi" ? "Nhấn " : "Press "}
+          <span className="text-blue-400 font-medium">{lang === "vi" ? "Tiếp tục" : "Continue"}</span>
+          {lang === "vi" ? " ở dưới để vào Dashboard" : " below to enter Dashboard"}
+        </p>
+      </div>
     </motion.div>
   );
 }

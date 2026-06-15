@@ -60,9 +60,11 @@ export default function OnboardingPage() {
 
   const goToDashboard = useCallback(async () => {
     await saveToBackend();
-    await completeOnboarding();
-    router.push("/app/overview");
-  }, [data, router]);
+    const ok = await completeOnboarding();
+    console.log("[ONBOARDING] goToDashboard complete:", ok);
+    // Hard redirect để tránh loop
+    window.location.replace("/app/overview");
+  }, [data]);
 
   const handleNext = useCallback(async () => {
     if (step >= STEPS.length - 1) {
@@ -72,18 +74,19 @@ export default function OnboardingPage() {
     setStep(s => s + 1);
   }, [step, goToDashboard]);
 
-  const handleSkip = useCallback(() => {
+  const handleSkip = useCallback(async () => {
     if (step >= STEPS.length - 1) {
-      router.push("/app/overview");
+      await completeOnboarding();
+      window.location.replace("/app/overview");
       return;
     }
     setStep(s => s + 1);
-  }, [step, router]);
+  }, [step]);
 
   const handleSkipAll = useCallback(async () => {
     await completeOnboarding();
-    router.push("/app/overview");
-  }, [router]);
+    window.location.replace("/app/overview");
+  }, []);
 
   const handleBack = useCallback(() => {
     setStep(s => Math.max(0, s - 1));

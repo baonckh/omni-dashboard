@@ -3,29 +3,49 @@
 import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Sidebar } from "./Sidebar";
 import { NotificationBell } from "./NotificationBell";
-import { Store, ChevronDown, Check, Plus, Sparkles } from "lucide-react";
-import { getPlan } from "@/lib/plans";
+import { Store, ChevronDown, Check, Plus, Sparkles, BarChart3, ShoppingBag, Bot, ExternalLink } from "lucide-react";
+import { getPlan, PLANS } from "@/lib/plans";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+
+const PLAN_LABELS: Record<string, string> = {
+  beta: "Beta MVP",
+  free: "Free",
+  starter: "Starter",
+  pro: "Pro",
+  enterprise: "Enterprise",
+};
+
+const PLAN_COLORS: Record<string, string> = {
+  beta: "bg-purple-600/20 text-purple-300 border-purple-500/20",
+  pro: "bg-purple-600/20 text-purple-300 border-purple-500/20",
+  free: "bg-blue-600/15 text-blue-300 border-blue-500/15",
+  starter: "bg-amber-600/15 text-amber-300 border-amber-500/15",
+};
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, update } = useSession();
   const router = useRouter();
   const user = session?.user;
   const [shopOpen, setShopOpen] = useState(false);
+  const [planOpen, setPlanOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const shopRef = useRef<HTMLDivElement>(null);
+  const planRef = useRef<HTMLDivElement>(null);
   const shops = user?.shops || [];
   const currentShopId = user?.shopId || "";
   const userPlan = user?.plan || "free";
   const planLimits = getPlan(userPlan);
   const canCreateNewShop = shops.length < planLimits.maxShops;
+  const planLabel = PLAN_LABELS[userPlan] || userPlan;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (shopRef.current && !shopRef.current.contains(e.target as Node)) setShopOpen(false);
+      if (planRef.current && !planRef.current.contains(e.target as Node)) setPlanOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -126,10 +146,50 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <p className="text-xs font-medium text-white">{user?.name || user?.email || "User"}</p>
                 <p className="text-[10px] text-neutral-500">{user?.email || ""}</p>
               </div>
-              {/* Plan badge */}
-              <div className={`hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${userPlan === "pro" ? "bg-purple-600/20 text-purple-300 border border-purple-500/20" : "bg-blue-600/15 text-blue-300 border border-blue-500/15"}`}>
-                <Sparkles className="h-2.5 w-2.5" />
-                {userPlan}
+              {/* Plan badge + dropdown */}
+              <div className="hidden md:relative md:inline-block" ref={planRef}>
+                <button
+                  onClick={() => setPlanOpen(!planOpen)}
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border transition-all hover:opacity-80 ${PLAN_COLORS[userPlan] || PLAN_COLORS.free}`}
+                >
+                  <Sparkles className="h-2.5 w-2.5" />
+                  {planLabel}
+                  <ChevronDown className={`h-2.5 w-2.5 ml-0.5 transition-transform ${planOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {/* Dropdown */}
+                {planOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-white/10 bg-zinc-900/95 backdrop-blur-xl shadow-2xl shadow-black/50 p-4 z-50">
+                    <div className="flex items-center gap-2 mb-3 pb-3 border-b border-white/5">
+                      <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+                      <span className="text-xs font-bold text-white">{planLabel}</span>
+                    </div>
+
+                    <div className="space-y-2.5 mb-3">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-zinc-500 flex items-center gap-1.5"><ShoppingBag className="h-3 w-3" /> Shops</span>
+                        <span className="text-zinc-300 font-medium">{shops.length} / {planLimits.maxShops === 999 ? "∞" : planLimits.maxShops}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-zinc-500 flex items-center gap-1.5"><Bot className="h-3 w-3" /> Bots</span>
+                        <span className="text-zinc-300 font-medium">- / {planLimits.maxBots === 999 ? "∞" : planLimits.maxBots}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-zinc-500 flex items-center gap-1.5"><BarChart3 className="h-3 w-3" /> Conversations</span>
+                        <span className="text-zinc-300 font-medium">- / {planLimits.maxConversationsPerMonth === 999999 ? "∞" : planLimits.maxConversationsPerMonth.toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    <Link
+                      href="/pricing"
+                      onClick={() => setPlanOpen(false)}
+                      className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 transition-all"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      View Plans
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>

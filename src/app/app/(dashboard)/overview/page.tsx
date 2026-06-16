@@ -37,9 +37,9 @@ export default function DashboardPage() {
   };
 
   const cards = [
-    { name: "Total Leads", value: analytics?.totalLeads || 0, icon: Users, color: "text-blue-500", trend: "+12%" },
-    { name: "AI Conversations", value: analytics?.totalMessages || 0, icon: MessageSquare, color: "text-purple-500", trend: "+24%" },
-    { name: "AI Success Rate", value: (analytics?.successRate || 0) + "%", icon: Bot, color: "text-green-500", trend: "Stable" },
+    { name: "Total Leads", value: analytics?.totalLeads ?? 0, icon: Users, color: "text-blue-500", trend: analytics?.totalLeads > 0 ? `${((analytics?.leadGrowth?.[6]?.count || 0) > 0 ? "+" : "")}${analytics?.leadGrowth?.[6]?.count || 0}` : "0" },
+    { name: "Conversations", value: analytics?.totalConversations ?? 0, icon: MessageSquare, color: "text-purple-500", trend: analytics?.totalConversations > 0 ? "Active" : "None" },
+    { name: "Messages Today", value: analytics?.messagesToday ?? 0, icon: Bot, color: "text-green-500", trend: analytics?.messagesToday > 0 ? "Today" : "No data" },
     { name: "Active Channels", value: analytics?.activeChannels ?? 0, icon: Zap, color: "text-amber-500", trend: analytics?.activeChannels > 0 ? "Active" : "None" },
   ];
 

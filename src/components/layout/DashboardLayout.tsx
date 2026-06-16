@@ -33,6 +33,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [shopOpen, setShopOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [usage, setUsage] = useState<any>(null);
   const shopRef = useRef<HTMLDivElement>(null);
   const planRef = useRef<HTMLDivElement>(null);
   const shops = user?.shops || [];
@@ -50,6 +51,20 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  useEffect(() => {
+    if (!planOpen) return;
+    const fetchUsage = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/admin/billing/${user?.shopId}/usage`, {
+          headers: { Authorization: `Bearer ${user?.backendToken}` }
+        });
+        const data = await res.json();
+        setUsage(data);
+      } catch { /* ignore */ }
+    };
+    fetchUsage();
+  }, [planOpen, user?.shopId, user?.backendToken]);
 
   const switchShop = async (shopId: string) => {
     try {
@@ -168,15 +183,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     <div className="space-y-2.5 mb-3">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-zinc-500 flex items-center gap-1.5"><ShoppingBag className="h-3 w-3" /> Shops</span>
-                        <span className="text-zinc-300 font-medium">{shops.length} / {planLimits.maxShops === 999 ? "∞" : planLimits.maxShops}</span>
+                        <span className="text-zinc-300 font-medium">{usage?.shopCount ?? shops.length} / {planLimits.maxShops === 999 ? "∞" : planLimits.maxShops}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-zinc-500 flex items-center gap-1.5"><Bot className="h-3 w-3" /> Bots</span>
-                        <span className="text-zinc-300 font-medium">- / {planLimits.maxBots === 999 ? "∞" : planLimits.maxBots}</span>
+                        <span className="text-zinc-300 font-medium">{usage?.botCount ?? "-"} / {planLimits.maxBots === 999 ? "∞" : planLimits.maxBots}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-zinc-500 flex items-center gap-1.5"><BarChart3 className="h-3 w-3" /> Conversations</span>
-                        <span className="text-zinc-300 font-medium">- / {planLimits.maxConversationsPerMonth === 999999 ? "∞" : planLimits.maxConversationsPerMonth.toLocaleString()}</span>
+                        <span className="text-zinc-300 font-medium">{usage?.conversationCount ?? "-"} / {planLimits.maxConversationsPerMonth === 999999 ? "∞" : planLimits.maxConversationsPerMonth.toLocaleString()}</span>
                       </div>
                     </div>
 

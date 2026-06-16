@@ -40,7 +40,7 @@ export default function DashboardPage() {
     { name: "Total Leads", value: analytics?.totalLeads || 0, icon: Users, color: "text-blue-500", trend: "+12%" },
     { name: "AI Conversations", value: analytics?.totalMessages || 0, icon: MessageSquare, color: "text-purple-500", trend: "+24%" },
     { name: "AI Success Rate", value: (analytics?.successRate || 0) + "%", icon: Bot, color: "text-green-500", trend: "Stable" },
-    { name: "Active Channels", value: "3", icon: Zap, color: "text-amber-500", trend: "Max" },
+    { name: "Active Channels", value: analytics?.activeChannels ?? 0, icon: Zap, color: "text-amber-500", trend: analytics?.activeChannels > 0 ? "Active" : "None" },
   ];
 
   return (

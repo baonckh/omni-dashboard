@@ -20,6 +20,7 @@ import {
   Antenna
 } from "lucide-react";
 import { useShopId } from "@/lib/use-shop";
+import { useSession } from "next-auth/react";
 import { 
   fetchAlertConfig, 
   saveAlertConfig, 
@@ -34,10 +35,12 @@ import {
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 import { cn } from "@/lib/utils";
-import { Cpu } from "lucide-react";
+import { Cpu, Store } from "lucide-react";
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState("notifications");
+  const { data: session } = useSession();
+  const shops = session?.user?.shops || [];
+  const [activeTab, setActiveTab] = useState("shop");
   const [config, setConfig] = useState<any>(null);
   const [botSettings, setBotSettings] = useState<any>(null);
 
@@ -122,15 +125,24 @@ export default function SettingsPage() {
                <div className="h-1.5 w-1.5 rounded-full bg-purple-500 animate-ping" /> Synchronizing...
              </div>
            )}
-           <button 
-             onClick={() => setActiveTab("notifications")}
-             className={cn(
-               "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-xl transition-all",
-               activeTab === "notifications" ? "bg-white text-black shadow-lg" : "text-neutral-500 hover:text-white"
-             )}
-           >
-             Notifications
-           </button>
+            <button 
+              onClick={() => setActiveTab("shop")}
+              className={cn(
+                "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-xl transition-all",
+                activeTab === "shop" ? "bg-white text-black shadow-lg" : "text-neutral-500 hover:text-white"
+              )}
+            >
+              Shop
+            </button>
+            <button 
+              onClick={() => setActiveTab("notifications")}
+              className={cn(
+                "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-xl transition-all",
+                activeTab === "notifications" ? "bg-white text-black shadow-lg" : "text-neutral-500 hover:text-white"
+              )}
+            >
+              Notifications
+            </button>
            <button 
              onClick={() => setActiveTab("integrations")}
              className={cn(
@@ -153,7 +165,25 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {activeTab === "notifications" ? (
+      {activeTab === "shop" ? (
+        <div className="space-y-6 animate-in slide-in-from-left-4 duration-500">
+          <div className="rounded-[2rem] border border-white/[0.06] bg-white/[0.02] p-6 space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-blue-500/10 rounded-xl"><Store className="h-5 w-5 text-blue-500" /></div>
+              <h3 className="text-lg font-bold">Shop Info</h3>
+            </div>
+            {shops.length > 0 ? shops.map((s: any) => (
+              <div key={s.id} className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
+                <div>
+                  <p className="text-sm text-zinc-300">{s.name || s.id}</p>
+                  <p className="text-[10px] text-zinc-600">ID: {s.id}</p>
+                </div>
+                {s.id === shopId && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-600/20 text-blue-400 border border-blue-500/20 font-bold">Active</span>}
+              </div>
+            )) : <p className="text-sm text-zinc-500">No shops found</p>}
+          </div>
+        </div>
+      ) : activeTab === "notifications" ? (
         <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Telegram Alert Section */}

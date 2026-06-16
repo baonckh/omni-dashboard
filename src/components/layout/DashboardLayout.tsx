@@ -13,16 +13,16 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v
 
 const PLAN_LABELS: Record<string, string> = {
   beta: "Beta MVP",
-  free: "Free",
+  free: "Beta MVP",
   starter: "Starter",
   pro: "Pro",
   enterprise: "Enterprise",
 };
 
 const PLAN_COLORS: Record<string, string> = {
-  beta: "bg-purple-600/20 text-purple-300 border-purple-500/20",
-  pro: "bg-purple-600/20 text-purple-300 border-purple-500/20",
-  free: "bg-blue-600/15 text-blue-300 border-blue-500/15",
+  beta: "bg-purple-600/20 text-purple-300 border-purple-500/30 shadow-purple-500/10",
+  free: "bg-purple-600/20 text-purple-300 border-purple-500/30 shadow-purple-500/10",
+  pro: "bg-purple-600/20 text-purple-300 border-purple-500/30",
   starter: "bg-amber-600/15 text-amber-300 border-amber-500/15",
 };
 
@@ -32,7 +32,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = session?.user;
   const [shopOpen, setShopOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
-  const [creating, setCreating] = useState(false);
+              const [creating, setCreating] = useState(false);
   const [usage, setUsage] = useState<any>(null);
   const shopRef = useRef<HTMLDivElement>(null);
   const planRef = useRef<HTMLDivElement>(null);
@@ -42,6 +42,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const planLimits = getPlan(userPlan);
   const canCreateNewShop = shops.length < planLimits.maxShops;
   const planLabel = PLAN_LABELS[userPlan] || userPlan;
+
+  // Fetch real usage from API
+  useEffect(() => {
+    if (!user?.backendToken || !user?.shopId) return;
+    fetch(`${API_BASE}/admin/billing/${user.shopId}/usage`, {
+      headers: { Authorization: `Bearer ${user.backendToken}` },
+    }).then(r => r.json()).then(setUsage).catch(() => {});
+  }, [user?.shopId]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -165,11 +173,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <div className="hidden md:relative md:inline-block" ref={planRef}>
                 <button
                   onClick={() => setPlanOpen(!planOpen)}
-                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border transition-all hover:opacity-80 ${PLAN_COLORS[userPlan] || PLAN_COLORS.free}`}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider border-2 transition-all hover:opacity-80 shadow-lg ${PLAN_COLORS[userPlan] || PLAN_COLORS.free}`}
                 >
-                  <Sparkles className="h-2.5 w-2.5" />
+                  <Sparkles className="h-3 w-3" />
                   {planLabel}
-                  <ChevronDown className={`h-2.5 w-2.5 ml-0.5 transition-transform ${planOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown className={`h-3 w-3 ml-0.5 transition-transform ${planOpen ? "rotate-180" : ""}`} />
                 </button>
 
                 {/* Dropdown */}

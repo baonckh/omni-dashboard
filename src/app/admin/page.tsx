@@ -120,21 +120,19 @@ export default function AdminDashboard() {
                   </td>
                   <td className="px-5 py-4 text-zinc-300">{u.shopCount ?? "-"}</td>
                   <td className="px-5 py-4">
-                    <div className="flex gap-1">
-                      {["free", "starter", "pro", "enterprise"].map((p) => (
-                        <button key={p}
-                          onClick={() => handleChangePlan(u.id, p)}
-                          disabled={planChanging === u.id || u.plan === p}
-                          className={`text-[10px] px-2 py-1 rounded-lg border font-bold uppercase tracking-wider transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
-                            u.plan === p
-                              ? "bg-purple-600/20 text-purple-300 border-purple-500/20"
-                              : "bg-white/5 text-zinc-500 border-white/10 hover:text-white"
-                          }`}
-                        >
-                          {p === u.plan ? "✓" : p.charAt(0)}
-                        </button>
-                      ))}
-                    </div>
+                    <select
+                      value={u.plan}
+                      onChange={(e) => handleChangePlan(u.id, e.target.value)}
+                      disabled={planChanging === u.id}
+                      className="bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white outline-none focus:border-purple-500/50 disabled:opacity-50"
+                    >
+                      <option value="beta" className="bg-zinc-900">Beta MVP</option>
+                      <option value="free" className="bg-zinc-900">Free</option>
+                      <option value="starter" className="bg-zinc-900">Starter</option>
+                      <option value="pro" className="bg-zinc-900">Pro</option>
+                      <option value="enterprise" className="bg-zinc-900">Enterprise</option>
+                    </select>
+                    {planChanging === u.id && <span className="ml-1 text-[10px] text-purple-400">...</span>}
                   </td>
                 </tr>
               ))}

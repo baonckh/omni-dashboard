@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-const API_V1 = API_BASE + "/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -19,7 +18,7 @@ export default function AdminLoginPage() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch(`${API_V1}/panel-login`, {
+      const res = await fetch(`${API_BASE}/panel-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Save, Trash2, Plus, X } from "lucide-react";
+import { Save, Plus, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useShopId } from "@/lib/use-shop";
 import { api } from "@/lib/api";
-import { cn } from "@/lib/utils";
 import type { Product } from "@/types/product";
 
 const inputCls = "w-full bg-white/5 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50 transition-colors";
@@ -42,12 +40,7 @@ function generateAutoSku(productCode: string, attrs: Record<string, string>): st
   return suffix ? `${productCode}-${suffix}` : productCode;
 }
 
-export default function ProductDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id: productId } = React.use(params);
+export default function NewProductPage() {
   const router = useRouter();
   const shopId = useShopId();
 
@@ -64,37 +57,7 @@ export default function ProductDetailPage({
     variants: [],
     updated_at: "",
   });
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    fetchProduct();
-  }, [productId]);
-
-  const fetchProduct = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get(`/admin/products/${shopId}/${productId}`, { shop_id: shopId });
-      setProduct({
-        id: res.id || res._id || "",
-        product_code: res.product_code || "",
-        name: res.name || "",
-        price: res.price || 0,
-        original_price: res.original_price,
-        stock: res.stock ?? 0,
-        category: res.category || "",
-        description: res.description || "",
-        images: res.images || [],
-        variant_defs: res.variant_defs || [],
-        variants: res.variants || [],
-        updated_at: res.updated_at || "",
-      });
-    } catch (err) {
-      console.error("Failed to fetch product:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     if (!product.name.trim() || !product.product_code.trim()) {
@@ -115,38 +78,25 @@ export default function ProductDetailPage({
         variant_defs: product.variant_defs || [],
         variants: product.variants || [],
       };
-      await api.put(`/admin/products/${shopId}/${product.product_code}`, payload, { shop_id: shopId });
-      router.push("/app/products");
+      const res = await api.post(`/admin/products/${shopId}`, payload, { shop_id: shopId });
+      const newId = res.product_code || res.id;
+      router.push(`/app/products/${newId}`);
     } catch (err) {
-      alert("Save failed: " + (err as Error).message);
+      alert("Create failed: " + (err as Error).message);
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-    try {
-      await api.delete(`/admin/products/${shopId}/${product.product_code}`, { shop_id: shopId });
-      router.push("/app/products");
-    } catch (err) {
-      alert("Delete failed: " + (err as Error).message);
     }
   };
 
   // Variant logic
   const regenerateVariants = (defs: Product["variant_defs"]) => {
     const combos = cartesianProduct(defs || []);
-    const newVariants = combos.map((attrs) => {
-      const key = attrsToKey(attrs);
-      const existing = (product.variants || []).find((v) => attrsToKey(v.attributes) === key);
-      return existing || {
-        sku: generateAutoSku(product.product_code, attrs),
-        attributes: attrs,
-        price: product.price,
-        stock: 0,
-      };
-    });
+    const newVariants = combos.map((attrs) => ({
+      sku: generateAutoSku(product.product_code || "NEW", attrs),
+      attributes: attrs,
+      price: product.price,
+      stock: 0,
+    }));
     setProduct({ ...product, variant_defs: defs, variants: newVariants });
   };
 
@@ -159,33 +109,42 @@ export default function ProductDetailPage({
     regenerateVariants(defs);
   };
 
-  const updateVariantDef = (idx: number, field: "name" | "values", value: string | string[]) => {
+  const updateVariantDefName = (idx: number, name: string) => {
     const defs = (product.variant_defs || []).map((d, i) =>
-      i === idx ? { ...d, [field]: value } : d
+      i === idx ? { ...d, name } : d
     );
-    const combos = cartesianProduct(defs);
-    const newVariants = combos.map((attrs) => {
-      const key = attrsToKey(attrs);
-      const existing = (product.variants || []).find((v) => attrsToKey(v.attributes) === key);
-      return existing || {
-        sku: generateAutoSku(product.product_code, attrs),
-        attributes: attrs,
-        price: product.price,
-        stock: 0,
-      };
-    });
-    setProduct({ ...product, variant_defs: defs, variants: newVariants });
+    setProduct({ ...product, variant_defs: defs });
   };
 
   const addVariantValue = (defIdx: number, value: string) => {
     const def = (product.variant_defs || [])[defIdx];
     if (!value.trim() || def.values.includes(value.trim())) return;
-    updateVariantDef(defIdx, "values", [...def.values, value.trim()]);
+    const defs = (product.variant_defs || []).map((d, i) =>
+      i === defIdx ? { ...d, values: [...d.values, value.trim()] } : d
+    );
+    const combos = cartesianProduct(defs);
+    const newVariants = combos.map((attrs) => ({
+      sku: generateAutoSku(product.product_code || "NEW", attrs),
+      attributes: attrs,
+      price: product.price,
+      stock: 0,
+    }));
+    setProduct({ ...product, variant_defs: defs, variants: newVariants });
   };
 
   const removeVariantValue = (defIdx: number, valIdx: number) => {
     const def = (product.variant_defs || [])[defIdx];
-    updateVariantDef(defIdx, "values", def.values.filter((_, i) => i !== valIdx));
+    const defs = (product.variant_defs || []).map((d, i) =>
+      i === defIdx ? { ...d, values: d.values.filter((_, vi) => vi !== valIdx) } : d
+    );
+    const combos = cartesianProduct(defs);
+    const newVariants = combos.map((attrs) => ({
+      sku: generateAutoSku(product.product_code || "NEW", attrs),
+      attributes: attrs,
+      price: product.price,
+      stock: 0,
+    }));
+    setProduct({ ...product, variant_defs: defs, variants: newVariants });
   };
 
   const updateVariant = (idx: number, field: "sku" | "price" | "stock", val: any) => {
@@ -202,49 +161,24 @@ export default function ProductDetailPage({
 
   const hasVariants = (product.variant_defs || []).length > 0 && (product.variant_defs || []).some((d) => d.values.length > 0);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-neutral-500">Loading product...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6 pb-20">
-      {/* Back link */}
-      <Link
-        href="/app/products"
-        className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-white transition-colors"
-      >
-        ← Products
-      </Link>
-
+    <div className="space-y-6 max-w-5xl pb-20">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent">
-            {product.name || "Untitled Product"}
+            New Product
           </h1>
-          <p className="text-sm text-neutral-500 mt-0.5">SKU: {product.product_code}</p>
+          <p className="text-sm text-neutral-500 mt-0.5">Add a new product to your catalog</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleDelete}
-            className="px-4 py-2.5 bg-white/5 border border-white/[0.08] rounded-xl text-sm text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-2"
-          >
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 disabled:opacity-50"
-          >
-            <Save className="h-4 w-4" />
-            {saving ? "Saving..." : "Save"}
-          </button>
-        </div>
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 disabled:opacity-50"
+        >
+          <Save className="h-4 w-4" />
+          {saving ? "Creating..." : "Create Product"}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
@@ -331,7 +265,6 @@ export default function ProductDetailPage({
 
         {/* Right: Variants */}
         <div className="xl:col-span-2 space-y-6">
-          {/* Variant Defs */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -358,7 +291,7 @@ export default function ProductDetailPage({
                     <input
                       type="text"
                       value={def.name}
-                      onChange={(e) => updateVariantDef(di, "name", e.target.value)}
+                      onChange={(e) => updateVariantDefName(di, e.target.value)}
                       placeholder="e.g. Color, Size"
                       className="flex-1 bg-white/5 border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50 transition-colors"
                     />
@@ -412,7 +345,6 @@ export default function ProductDetailPage({
             </div>
           </motion.div>
 
-          {/* Variants Table */}
           {hasVariants && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}

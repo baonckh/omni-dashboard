@@ -19,9 +19,9 @@ export default function AdminDashboard() {
     const token = localStorage.getItem("admin_token");
     if (!token) { router.push("/admin/login"); return; }
     const headers = { Authorization: `Bearer ${token}` };
-    fetch(`${API_BASE}/admin/api/stats`, { headers }).then(r => r.json()).then(setStats).catch(() => {});
-    fetch(`${API_BASE}/admin/api/users`, { headers }).then(r => r.json()).then(setUsers).catch(() => {});
-    fetch(`${API_BASE}/admin/api/shops`, { headers }).then(r => r.json()).then(setShops).catch(() => {});
+    fetch(`${API_BASE}/admin-api/stats`, { headers }).then(r => r.json()).then(setStats).catch(() => {});
+    fetch(`${API_BASE}/admin-api/users`, { headers }).then(r => r.json()).then(setUsers).catch(() => {});
+    fetch(`${API_BASE}/admin-api/shops`, { headers }).then(r => r.json()).then(setShops).catch(() => {});
   }, [router]);
 
   const handleLogout = () => { localStorage.removeItem("admin_token"); router.push("/admin/login"); };
@@ -30,7 +30,7 @@ export default function AdminDashboard() {
     if (!token) return;
     setPlanChanging(userId);
     try {
-      const res = await fetch(`${API_BASE}/admin/api/users/${userId}/plan`, {
+      const res = await fetch(`${API_BASE}/admin-api/users/${userId}/plan`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ plan: newPlan }),

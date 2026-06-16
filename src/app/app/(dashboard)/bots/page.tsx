@@ -41,7 +41,7 @@ export default function BotsListPage() {
       });
       // Navigate or reload
       if (res?.data?.id) {
-        window.location.href = `/bots/${res.data.id}`;
+        window.location.href = `/app/bots/${res.data.id}`;
       } else {
         loadBots();
       }
@@ -80,7 +80,7 @@ export default function BotsListPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bots.map((bot, idx) => (
-            <Link key={bot.id || idx} href={`/bots/${bot.id}`}>
+            <Link key={bot.id || idx} href={`/app/bots/${bot.id}`}>
               <div className="bg-gradient-to-br from-white/5 to-transparent border border-white/5 p-6 rounded-3xl hover:border-indigo-500/30 transition-all group flex flex-col h-full cursor-pointer relative overflow-hidden">
                 {bot.isDefault && (
                   <div className="absolute top-0 right-0 bg-indigo-600 text-[9px] font-bold text-white px-3 py-1 rounded-bl-xl uppercase tracking-wider">

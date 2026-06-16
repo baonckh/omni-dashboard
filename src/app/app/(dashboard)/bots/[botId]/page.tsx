@@ -228,7 +228,7 @@ function PersonaSection({ botId }: { botId: string }) {
                 try {
                    const { deleteBot } = await import('@/lib/api');
                    await deleteBot(shopId, botId);
-                   window.location.href = '/bots';
+                   window.location.href = '/app/bots';
                 } catch(e) { console.error(e); }
              }
           }} className="w-full py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-2xl text-xs font-bold transition-all mt-4 border border-red-500/20">

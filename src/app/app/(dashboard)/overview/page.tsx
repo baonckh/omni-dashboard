@@ -144,13 +144,18 @@ export default function DashboardPage() {
               </div>
            </div>
            
-           <div className="pt-8 border-t border-white/5 space-y-3">
-              <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Optimization Tip</p>
-              <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex items-start gap-3">
-                 <Zap className="h-4 w-4 text-blue-400 shrink-0 mt-0.5" />
-                 <p className="text-[11px] text-neutral-400">Dữ liệu cho thấy **TikTok** đang có tỉ lệ chuyển đổi cao nhất. Hãy điều hướng AI ưu tiên chốt đơn tại đây.</p>
+            {analytics?.platformStats?.length > 0 && (
+              <div className="pt-8 border-t border-white/5 space-y-3">
+                 <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Channels</p>
+                 <div className="flex flex-wrap gap-2">
+                   {analytics.platformStats.map((ps: any, i: number) => (
+                     <div key={i} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-zinc-400">
+                       {ps.platform}: {ps.count} leads
+                     </div>
+                   ))}
+                 </div>
               </div>
-           </div>
+            )}
         </div>
       </div>
 

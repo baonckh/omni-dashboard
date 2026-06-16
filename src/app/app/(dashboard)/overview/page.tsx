@@ -103,7 +103,7 @@ export default function DashboardPage() {
                    <div className="w-full relative">
                       <div 
                         className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg transition-all duration-500 group-hover/bar:from-blue-500 group-hover/bar:to-blue-300 shadow-[0_0_20px_rgba(37,99,235,0.2)]" 
-                        style={{ height: `${(g.count / (Math.max(...analytics.leadGrowth.map((x:any)=>x.count)) || 1)) * 120 + 20}px` }}
+                        style={{ height: `${(g.count / (Math.max(...(analytics?.leadGrowth?.map((x:any)=>x.count) || [1]))) || 1) * 120 + 20}px` }}
                       >
                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity">
                             {g.count}

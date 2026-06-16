@@ -10,7 +10,11 @@ import {
   Facebook,
   MessageSquare,
   ShoppingBag,
-  Zap
+  MessageCircle,
+  Globe,
+  Zap,
+  Copy,
+  Check
 } from "lucide-react";
 import { useShopId } from "@/lib/use-shop";
 import { fetchChannels, getConnectUrl } from "@/lib/api";
@@ -28,14 +32,17 @@ type Channel = {
 };
 
 const PLATFORM_INFO: Record<string, any> = {
-  facebook: { name: "Messenger", icon: Facebook, color: "text-blue-500", bg: "bg-blue-500/10" },
-  tiktok: { name: "TikTok Shop", icon: MessageSquare, color: "text-pink-500", bg: "bg-pink-500/10" },
-  shopee: { name: "Shopee", icon: ShoppingBag, color: "text-orange-500", bg: "bg-orange-500/10" },
+  facebook: { name: "Messenger", icon: Facebook, color: "text-blue-500", bg: "bg-blue-500/10", desc: "Facebook Messenger & Fanpage" },
+  tiktok: { name: "TikTok Shop", icon: MessageSquare, color: "text-pink-500", bg: "bg-pink-500/10", desc: "TikTok Shop messages" },
+  shopee: { name: "Shopee", icon: ShoppingBag, color: "text-orange-500", bg: "bg-orange-500/10", desc: "Shopee chat" },
+  zalo: { name: "Zalo OA", icon: MessageCircle, color: "text-blue-500", bg: "bg-blue-500/10", desc: "Zalo Official Account" },
+  web: { name: "Web Widget", icon: Globe, color: "text-green-500", bg: "bg-green-500/10", desc: "Website chat widget" },
 };
 
 export default function ChannelsPage() {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const shopId = useShopId();
 
   useEffect(() => {
@@ -54,6 +61,22 @@ export default function ChannelsPage() {
   };
 
   const handleConnect = async (platform: string) => {
+    if (platform === "web") {
+      // Web Widget: auto-activate, no OAuth
+      try {
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+        const session = await import("next-auth/react").then(m => m.getSession());
+        await fetch(`${API_BASE}/admin/channels/callback/web`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${session?.user?.backendToken}` },
+          body: JSON.stringify({ shop_id: shopId }),
+        });
+        await loadChannels();
+      } catch (err) {
+        console.error(err);
+      }
+      return;
+    }
     try {
       const { url } = await getConnectUrl(platform, shopId);
       window.open(url, "_blank");
@@ -149,17 +172,31 @@ export default function ChannelsPage() {
                      </div>
 
                      <div className="flex items-center gap-4">
-                        {isExpiring && (
-                          <div className="flex items-center gap-1.5 text-yellow-500 text-xs font-medium px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
-                             <AlertTriangle className="h-3 w-3" />
-                             Expiring Soon
-                          </div>
-                        )}
-                        <button className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors">
-                           <ExternalLink className="h-4 w-4" />
-                           Configure
-                        </button>
-                     </div>
+                         {isExpiring && (
+                           <div className="flex items-center gap-1.5 text-yellow-500 text-xs font-medium px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
+                              <AlertTriangle className="h-3 w-3" />
+                              Expiring Soon
+                           </div>
+                         )}
+                         {ch.platform === "web" ? (
+                           <button
+                             onClick={() => {
+                               navigator.clipboard.writeText(`<script src="https://omni-deploy.onrender.com/embed.js" data-shop-id="${shopId}"></script>`);
+                               setCopiedId(ch.id);
+                               setTimeout(() => setCopiedId(null), 2000);
+                             }}
+                             className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors"
+                           >
+                              {copiedId === ch.id ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                              {copiedId === ch.id ? "Copied!" : "Embed Code"}
+                           </button>
+                         ) : (
+                           <button className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors">
+                              <ExternalLink className="h-4 w-4" />
+                              Configure
+                           </button>
+                         )}
+                      </div>
                   </div>
                 );
               })

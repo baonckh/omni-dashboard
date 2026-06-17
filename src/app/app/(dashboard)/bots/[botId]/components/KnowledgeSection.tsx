@@ -159,10 +159,72 @@ export function KnowledgeSection() {
           <ChevronDown className={cn("h-3 w-3 transition-transform", showAdvanced && "rotate-180")} />
         </button>
         {showAdvanced && (
-          <div className="mt-3 p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-3">
-            <p className="text-[10px] text-zinc-600">Embedding: Google Gemini · Model: text-embedding-005</p>
-            <p className="text-[10px] text-zinc-600">Storage: Vector DB (Qdrant) · Strategy: Basic RAG</p>
-            <p className="text-[10px] text-zinc-600">Configure in Settings → AI Providers to change.</p>
+          <div className="mt-3 p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-4">
+            {/* Processing Pipeline */}
+            <div>
+              <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Processing Pipeline</h5>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
+                  <span>1. Raw text ingestion → Document store (MongoDB)</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
+                  <span>2. Text chunking (sliding window, overlap 10%)</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
+                  <span>3. Embedding via configured provider → Vector DB (Qdrant)</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
+                  <span>4. Retrieval: Semantic search (cosine similarity, top-K)</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
+                  <span>5. RAG: Inject chunks as context → LLM generates response</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Current Config */}
+            <div>
+              <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Current Config</h5>
+              <div className="grid grid-cols-2 gap-2 text-[10px]">
+                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                  <span className="text-zinc-600">Embedding</span>
+                  <p className="text-zinc-300 font-medium">Gemini text-embedding-005</p>
+                </div>
+                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                  <span className="text-zinc-600">Vector DB</span>
+                  <p className="text-zinc-300 font-medium">Qdrant (Cloud)</p>
+                </div>
+                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                  <span className="text-zinc-600">Retrieval</span>
+                  <p className="text-zinc-300 font-medium">Basic RAG (Top-5)</p>
+                </div>
+                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                  <span className="text-zinc-600">Chunk Size</span>
+                  <p className="text-zinc-300 font-medium">~512 tokens</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Document stats */}
+            {docs.length > 0 && (
+              <div>
+                <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Document Stats</h5>
+                <div className="text-[10px] text-zinc-600 space-y-1">
+                  <p>Total documents: {docs.length}</p>
+                  <p>Indexed: {docs.filter((d: any) => d.status === "INDEXED").length}</p>
+                  <p>Pending: {docs.filter((d: any) => d.status !== "INDEXED").length}</p>
+                </div>
+              </div>
+            )}
+
+            <p className="text-[9px] text-zinc-700 italic">
+              Advanced config (chunk size, retrieval strategy, embedding model) can be customized in future updates.
+            </p>
           </div>
         )}
       </div>

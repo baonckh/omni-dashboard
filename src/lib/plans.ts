@@ -1,6 +1,6 @@
-// ── Plan definitions & permission framework ──
+// ── Plan definitions — sync fallback (API-driven optional) ──
 
-export type PlanTier = "free" | "starter" | "pro" | "enterprise";
+export type PlanTier = "beta" | "free" | "starter" | "pro" | "enterprise";
 
 export interface PlanLimits {
   maxShops: number;
@@ -11,93 +11,17 @@ export interface PlanLimits {
   features: string[];
 }
 
-export const PLANS: Record<PlanTier, PlanLimits> = {
-  free: {
-    maxShops: 2,
-    maxBots: 3,
-    maxProducts: 100,
-    maxConversationsPerMonth: 500,
-    analyticsDays: 7,
-    features: [
-      "multi_agent",
-      "inbox",
-      "product_import_csv",
-      "basic_insights",
-      "leads",
-    ],
-  },
-  starter: {
-    maxShops: 3,
-    maxBots: 10,
-    maxProducts: 500,
-    maxConversationsPerMonth: 3000,
-    analyticsDays: 90,
-    features: [
-      "multi_agent",
-      "inbox",
-      "product_import_csv",
-      "insights",
-      "leads",
-      "telegram_notifications",
-      "email_support",
-      "custom_persona",
-      "custom_rules",
-    ],
-  },
-  pro: {
-    maxShops: 999,
-    maxBots: 999,
-    maxProducts: 9999,
-    maxConversationsPerMonth: 999999,
-    analyticsDays: 999,
-    features: [
-      "multi_agent",
-      "inbox",
-      "product_import_csv",
-      "insights",
-      "leads",
-      "telegram_notifications",
-      "webhook",
-      "custom_persona",
-      "custom_rules",
-      "ai_provider_choice",
-      "product_sync",
-      "priority_support",
-      "unlimited_shops",
-      "unlimited_ai",
-    ],
-  },
-  enterprise: {
-    maxShops: 9999,
-    maxBots: 9999,
-    maxProducts: 99999,
-    maxConversationsPerMonth: 999999,
-    analyticsDays: 999,
-    features: [
-      "multi_agent",
-      "inbox",
-      "product_import_csv",
-      "insights",
-      "leads",
-      "telegram_notifications",
-      "webhook",
-      "custom_persona",
-      "custom_rules",
-      "ai_provider_choice",
-      "product_sync",
-      "priority_support",
-      "unlimited_shops",
-      "unlimited_ai",
-      "api_access",
-      "custom_integration",
-      "dedicated_support",
-      "sla",
-    ],
-  },
+const DEFAULT_PLANS: Record<string, PlanLimits> = {
+  beta: { maxShops: 2, maxBots: 3, maxProducts: 100, maxConversationsPerMonth: 500, analyticsDays: 7, features: ["multi_agent", "inbox", "product_import_csv", "basic_insights", "leads"] },
+  free: { maxShops: 2, maxBots: 3, maxProducts: 100, maxConversationsPerMonth: 500, analyticsDays: 7, features: ["multi_agent", "inbox", "product_import_csv", "basic_insights", "leads"] },
+  starter: { maxShops: 3, maxBots: 10, maxProducts: 500, maxConversationsPerMonth: 3000, analyticsDays: 90, features: ["multi_agent", "inbox", "product_import_csv", "insights", "leads", "telegram_notifications", "email_support", "custom_persona"] },
+  pro: { maxShops: 999, maxBots: 999, maxProducts: 9999, maxConversationsPerMonth: 999999, analyticsDays: 999, features: ["multi_agent", "inbox", "product_import_csv", "insights", "leads", "telegram_notifications", "webhook", "custom_persona", "ai_provider_choice", "priority_support"] },
+  enterprise: { maxShops: 9999, maxBots: 9999, maxProducts: 99999, maxConversationsPerMonth: 999999, analyticsDays: 999, features: ["multi_agent", "inbox", "product_import_csv", "insights", "leads", "telegram_notifications", "webhook", "custom_persona", "ai_provider_choice", "priority_support", "api_access", "dedicated_support"] },
 };
 
+// Sync fallback (used by components that need sync calls)
 export function getPlan(plan?: string): PlanLimits {
-  return PLANS[(plan as PlanTier) || "free"] || PLANS.free;
+  return DEFAULT_PLANS[plan || "free"] || DEFAULT_PLANS.free;
 }
 
 export function hasFeature(plan: string | undefined, feature: string): boolean {
@@ -108,6 +32,23 @@ export function canCreateShop(plan: string | undefined, currentShops: number): b
   return currentShops < getPlan(plan).maxShops;
 }
 
-export function canCreateProduct(plan: string | undefined, currentCount: number): boolean {
-  return currentCount < getPlan(plan).maxProducts;
+// Async version (fetches from DB via API, falls back to defaults)
+export async function fetchPlanLimits(plan?: string): Promise<PlanLimits> {
+  try {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+    const res = await fetch(`${API_BASE}/panel-api/plans`);
+    const data = await res.json();
+    if (data && Array.isArray(data.plans)) {
+      for (const p of data.plans) {
+        if (p.id === plan || p._id === plan || p.name?.toLowerCase() === plan) {
+          return {
+            maxShops: p.maxShops ?? 2, maxBots: p.maxBots ?? 3, maxProducts: p.maxProducts ?? 100,
+            maxConversationsPerMonth: p.maxConversations ?? 500, analyticsDays: p.analyticsDays ?? 7,
+            features: p.features ?? [],
+          };
+        }
+      }
+    }
+  } catch { /* fallback */ }
+  return getPlan(plan);
 }

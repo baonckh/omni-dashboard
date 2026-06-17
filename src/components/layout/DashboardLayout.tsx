@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Sidebar } from "./Sidebar";
 import { NotificationBell } from "./NotificationBell";
 import { Store, ChevronDown, Check, Plus, Sparkles, BarChart3, ShoppingBag, Bot, ExternalLink } from "lucide-react";
-import { getPlan, PLANS } from "@/lib/plans";
+import { getPlan } from "@/lib/plans";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 

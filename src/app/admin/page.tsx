@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 const SIDEBAR = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "chats", label: "Chats", icon: MessageSquare },
   { id: "users", label: "Users", icon: Users },
   { id: "shops", label: "Shops", icon: Store },
   { id: "bots", label: "Bots", icon: Bot },
@@ -52,9 +53,10 @@ export default function AdminDashboard() {
   const loadTabData = (tabId: string) => {
     if (tabId === "overview") return;
     setLoading(true);
-    fetch(`${API_BASE}/panel-api/${tabId}`, { headers: apiHeaders() })
+    const endpoint = tabId === "chats" ? "threads" : tabId;
+    fetch(`${API_BASE}/panel-api/${endpoint}`, { headers: apiHeaders() })
       .then(r => r.json())
-      .then(d => { if (d && Array.isArray(d[tabId])) setDataMap(prev => ({ ...prev, [tabId]: d[tabId] })); })
+      .then(d => { if (d && Array.isArray(d[endpoint])) setDataMap(prev => ({ ...prev, [tabId]: d[endpoint] })); })
       .catch(() => {})
       .finally(() => setLoading(false));
   };
@@ -67,12 +69,14 @@ export default function AdminDashboard() {
 
   const handleDelete = async (endpoint: string, id: string) => {
     if (!confirm("Delete?")) return;
-    await fetch(`${API_BASE}/panel-api/${endpoint}/${id}`, { method: "DELETE", headers: apiHeaders() });
+    const apiEndpoint = endpoint === "chats" ? "threads" : endpoint;
+    await fetch(`${API_BASE}/panel-api/${apiEndpoint}/${id}`, { method: "DELETE", headers: apiHeaders() });
     loadTabData(endpoint);
   };
 
   const handleLogout = () => { localStorage.removeItem("admin_token"); router.push("/admin/login"); };
 
+  const Spinner = () => <div className="flex items-center justify-center py-16"><div className="h-8 w-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" /></div>;
   const currentData = dataMap[tab] || [];
   const filtered = currentData.filter((row: any) =>
     Object.values(row).some((v: any) => String(v || "").toLowerCase().includes(search.toLowerCase()))
@@ -187,56 +191,135 @@ export default function AdminDashboard() {
             </>
           )}
 
-          {/* Data tabs */}
-          {tab !== "overview" && (
+          {/* Chats Tab — expanded view */}
+          {tab === "chats" && (
             <>
-              {/* Search bar */}
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold capitalize">{tab}</h2>
-                <div className="flex items-center gap-2">
-                  <Search className="h-3.5 w-3.5 text-zinc-500" />
-                  <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search..." className="bg-white/5 border border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 outline-none w-48" />
-                  <button onClick={() => loadTabData(tab)} className="p-1.5 hover:bg-white/5 rounded-lg">
-                    <RefreshCw className="h-3.5 w-3.5 text-zinc-500" />
-                  </button>
-                </div>
+                <h2 className="text-sm font-bold">All Conversations</h2>
+                <button onClick={() => loadTabData("chats")} className="p-1.5 hover:bg-white/5 rounded-lg">
+                  <RefreshCw className="h-3.5 w-3.5 text-zinc-500" />
+                </button>
               </div>
+              <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] divide-y divide-white/5">
+                {loading ? <Spinner /> : filtered.length === 0 ? <div className="py-12 text-center text-zinc-600 text-sm">No conversations</div> :
+                filtered.map((t: any) => (
+                  <div key={t._id} className="px-5 py-4 hover:bg-white/[0.02] transition-colors">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
+                          {(t.customerName || "?").charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-white">{t.customerName || "Anonymous"}</p>
+                          <p className="text-[10px] text-zinc-600">Shop: {(t.shop_id || "").slice(0, 20)} · Platform: {t.platform || "?"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium", t.status === "HUMAN_TAKEOVER" ? "bg-red-500/10 text-red-400" : "bg-green-500/10 text-green-400")}>
+                          {t.status || "ACTIVE"}
+                        </span>
+                        <span className="text-[10px] text-zinc-600">{t.updatedAt ? new Date(t.updatedAt).toLocaleString() : ""}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-[10px] text-zinc-600 mt-1 ml-11">
+                      {t.tags?.length > 0 && <span>Tags: {t.tags.join(", ")}</span>}
+                      {t.sentiment && <span>Sentiment: {t.sentiment}</span>}
+                    </div>
+                    <button onClick={() => handleDelete("chats", t._id)} className="mt-2 ml-11 text-[10px] text-zinc-600 hover:text-red-400 transition-colors">Delete</button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
 
-              {/* Table */}
+          {/* Users Tab — with Plan management */}
+          {tab === "users" && (
+            <>
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold">Users</h2>
+                <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search email..." className="bg-white/5 border border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 outline-none w-48" />
+              </div>
               <div className="rounded-2xl border border-white/[0.06] overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/5 bg-white/[0.02]">
-                      {filtered.length > 0 && Object.keys(filtered[0]).filter(k => k !== '_id').slice(0, 6).map((k) => (
+                      <th className="text-left px-4 py-3 text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Email</th>
+                      <th className="text-left px-4 py-3 text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Name</th>
+                      <th className="text-left px-4 py-3 text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Plan</th>
+                      <th className="text-left px-4 py-3 text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Shops</th>
+                      <th className="text-left px-4 py-3 w-24"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? <tr><td colSpan={5} className="px-4 py-16 text-center"><Spinner /></td></tr> :
+                    filtered.map((u: any) => (
+                      <tr key={u._id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                        <td className="px-4 py-3 text-xs text-white">{u.email}</td>
+                        <td className="px-4 py-3 text-xs text-zinc-300">{u.name || "-"}</td>
+                        <td className="px-4 py-3">
+                          <select value={u.plan || "free"} onChange={async (e) => {
+                            const newPlan = e.target.value;
+                            await fetch(`${API_BASE}/panel-api/users/${u._id}/plan`, { method: "PUT", headers: apiHeaders(), body: JSON.stringify({ plan: newPlan }) });
+                            loadTabData("users");
+                          }} className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-[10px] text-white outline-none focus:border-purple-500/50">
+                            <option value="beta" className="bg-zinc-900">Beta MVP</option>
+                            <option value="free" className="bg-zinc-900">Free</option>
+                            <option value="starter" className="bg-zinc-900">Starter</option>
+                            <option value="pro" className="bg-zinc-900">Pro</option>
+                            <option value="enterprise" className="bg-zinc-900">Enterprise</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-zinc-300">{u.shopCount ?? "-"}</td>
+                        <td className="px-4 py-3">
+                          <button onClick={() => handleDelete("users", u._id)} className="p-1 hover:bg-white/10 rounded-lg">
+                            <Trash2 className="h-3.5 w-3.5 text-zinc-600 hover:text-red-400" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          {/* Other data tabs (auto table) */}
+          {tab !== "overview" && tab !== "chats" && tab !== "users" && (
+            <>
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold capitalize">{tab}</h2>
+                <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search..." className="bg-white/5 border border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 outline-none w-48" />
+              </div>
+              <div className="rounded-2xl border border-white/[0.06] overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/5 bg-white/[0.02]">
+                      {filtered.length > 0 && Object.keys(filtered[0]).filter(k => k !== '_id' && k !== 'password').slice(0, 6).map((k) => (
                         <th key={k} className="text-left px-4 py-3 text-[10px] text-zinc-500 font-medium uppercase tracking-wider">{k}</th>
                       ))}
                       <th className="px-4 py-3 w-16"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {loading ? (
-                      <tr><td colSpan={7} className="px-4 py-16 text-center"><div className="h-8 w-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto" /></td></tr>
-                    ) : filtered.length === 0 ? (
-                      <tr><td colSpan={7} className="px-4 py-12 text-center text-zinc-600 text-sm">No data</td></tr>
-                    ) : (
-                      filtered.map((row: any, i: number) => (
-                        <tr key={row._id || i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                          {Object.entries(row).filter(([k]) => k !== '_id').slice(0, 6).map(([k, v]: [string, any]) => (
-                            <td key={k} className="px-4 py-3 text-xs text-zinc-300 max-w-[200px] truncate">
-                              {k === 'isActive' ? <span className={v ? "text-green-400" : "text-zinc-600"}>{v ? "Active" : "Inactive"}</span> :
-                               k === 'price' ? `$${v}` :
-                               String(v ?? "-")}
-                            </td>
-                          ))}
-                          <td className="px-4 py-3">
-                            <button onClick={() => handleDelete(tab, row._id)} className="p-1 hover:bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Trash2 className="h-3.5 w-3.5 text-zinc-600 hover:text-red-400" />
-                            </button>
+                    {loading ? <tr><td colSpan={7} className="px-4 py-16 text-center"><Spinner /></td></tr> :
+                    filtered.length === 0 ? <tr><td colSpan={7} className="px-4 py-12 text-center text-zinc-600 text-sm">No data</td></tr> :
+                    filtered.map((row: any, i: number) => (
+                      <tr key={row._id || i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                        {Object.entries(row).filter(([k]) => k !== '_id' && k !== 'password').slice(0, 6).map(([k, v]: [string, any]) => (
+                          <td key={k} className="px-4 py-3 text-xs text-zinc-300 max-w-[200px] truncate">
+                            {k === 'isActive' ? <span className={v ? "text-green-400" : "text-zinc-600"}>{v ? "Active" : "Inactive"}</span> :
+                             String(v ?? "-")}
                           </td>
-                        </tr>
-                      ))
-                    )}
+                        ))}
+                        <td className="px-4 py-3">
+                          <button onClick={() => handleDelete(tab, row._id)} className="p-1 hover:bg-white/10 rounded-lg">
+                            <Trash2 className="h-3.5 w-3.5 text-zinc-600 hover:text-red-400" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

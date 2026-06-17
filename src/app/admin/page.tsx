@@ -19,9 +19,9 @@ export default function AdminDashboard() {
     const token = localStorage.getItem("admin_token");
     if (!token) { router.push("/admin/login"); return; }
     const headers = { Authorization: `Bearer ${token}` };
-    fetch(`${API_BASE}/panel-api/stats`, { headers }).then(r => r.json()).then(setStats).catch(() => {});
-    fetch(`${API_BASE}/panel-api/users`, { headers }).then(r => r.json()).then(setUsers).catch(() => {});
-    fetch(`${API_BASE}/panel-api/shops`, { headers }).then(r => r.json()).then(setShops).catch(() => {});
+    fetch(`${API_BASE}/panel-api/stats`, { headers }).then(r => r.json()).then((d) => { if (d && typeof d === 'object' && !Array.isArray(d)) setStats(d); }).catch(() => {});
+    fetch(`${API_BASE}/panel-api/users`, { headers }).then(r => r.json()).then((d) => { if (Array.isArray(d)) setUsers(d); }).catch(() => {});
+    fetch(`${API_BASE}/panel-api/shops`, { headers }).then(r => r.json()).then((d) => { if (Array.isArray(d)) setShops(d); }).catch(() => {});
   }, [router]);
 
   const handleLogout = () => { localStorage.removeItem("admin_token"); router.push("/admin/login"); };

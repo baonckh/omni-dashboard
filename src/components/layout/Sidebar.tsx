@@ -18,19 +18,25 @@ import {
   Bot,
   Package,
   LogOut,
+  Key,
+  Bell,
+  Store,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { name: "Overview", href: "/app/overview", icon: LayoutDashboard },
   { name: "Inbox", href: "/app/inbox", icon: MessageSquareCode },
-  { name: "Products", href: "/app/products", icon: Package },
   { name: "Channels", href: "/app/channels", icon: Zap },
+  { name: "Products", href: "/app/products", icon: Package },
   { name: "Leads", href: "/app/leads", icon: Users },
   { name: "Insights", href: "/app/insights", icon: BrainCircuit },
   { name: "AI Bots", href: "/app/bots", icon: Bot },
+  { name: "API Keys", href: "/app/keys", icon: Key },
   { name: "Usage & Billing", href: "/app/billing", icon: CreditCard },
   { name: "Settings", href: "/app/settings", icon: Settings },
+  { name: "Notifications", href: "/app/notifications", icon: Bell },
+  { name: "Shops", href: "/app/shops", icon: Store },
 ];
 
 export function Sidebar() {

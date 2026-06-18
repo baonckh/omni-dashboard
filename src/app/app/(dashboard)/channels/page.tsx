@@ -14,7 +14,9 @@ import {
   Globe,
   Zap,
   Copy,
-  Check
+  Check,
+  Smartphone,
+  Code2,
 } from "lucide-react";
 import { useShopId } from "@/lib/use-shop";
 import { fetchChannels, getConnectUrl } from "@/lib/api";
@@ -207,6 +209,84 @@ export default function ChannelsPage() {
               </div>
             )}
          </div>
+      </div>
+
+      {/* Integration Guides — merged từ Settings cũ */}
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <Code2 className="h-5 w-5 text-blue-400" />
+          Integration Guides
+        </h2>
+
+        {/* Web Widget */}
+        <div className="rounded-[2.5rem] border border-blue-500/20 bg-gradient-to-br from-blue-600/10 to-transparent p-8 space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/20">
+              <Globe className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">Web Chat Widget</h3>
+              <p className="text-sm text-neutral-400">Nhúng AI vào Website hoặc Landing Page của bạn.</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <p className="text-sm text-neutral-300">Copy đoạn code này và dán vào cuối thẻ <code className="text-blue-400">&lt;body&gt;</code> của website:</p>
+            <div className="relative group">
+              <pre className="bg-black/60 p-6 rounded-2xl border border-white/10 text-blue-400 text-sm font-mono overflow-x-auto">
+                {`<script 
+  src="https://cdn.omni-ai.com/widget.js" 
+  data-shop-id="${shopId}"
+  async
+></script>`}
+              </pre>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`<script src="https://cdn.omni-ai.com/widget.js" data-shop-id="${shopId}" async></script>`);
+                  setCopiedId("embed");
+                  setTimeout(() => setCopiedId(null), 2000);
+                }}
+                className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white text-neutral-400 hover:text-black rounded-xl transition-all"
+              >
+                {copiedId === "embed" ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Platform Setup Guides */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[2rem] space-y-4">
+            <div className="flex items-center gap-3">
+              <Smartphone className="h-5 w-5 text-pink-500" />
+              <h4 className="font-bold">TikTok Shop Integration</h4>
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              1. Đăng nhập TikTok Seller Center.<br/>
+              2. Tìm mục <strong>App & Service Control</strong>.<br/>
+              3. Subscribe Webhook URL của hệ thống OmniAI.<br/>
+              4. Hoàn tất kết nối tại menu <strong>Channels</strong>.
+            </p>
+            <button className="flex items-center gap-2 text-[10px] font-bold text-blue-400 uppercase tracking-widest pt-2">
+              Xem hướng dẫn chi tiết <ExternalLink className="h-3 w-3" />
+            </button>
+          </div>
+
+          <div className="p-8 bg-white/[0.02] border border-white/10 rounded-[2rem] space-y-4">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="h-5 w-5 text-blue-400" />
+              <h4 className="font-bold">Shopee Integration</h4>
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              1. Truy cập Shopee Open Platform.<br/>
+              2. Kết nối Shop của bạn với App ID <code className="text-blue-400">OMNI-AI-PRO</code>.<br/>
+              3. Grant permission cho mục Chat & Webhook.<br/>
+              4. Token sẽ tự động được gia hạn mỗi 365 ngày.
+            </p>
+            <button className="flex items-center gap-2 text-[10px] font-bold text-blue-400 uppercase tracking-widest pt-2">
+              Xem hướng dẫn chi tiết <ExternalLink className="h-3 w-3" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

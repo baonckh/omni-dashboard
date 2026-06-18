@@ -48,9 +48,30 @@ export function KnowledgeSection() {
   const [retrievalMode, setRetrievalMode] = useState<string>("basic_rag");
   const [saving, setSaving] = useState(false);
   const [activeProvider, setActiveProvider] = useState<string>("gemini");
-  const [activeModel, setActiveModel] = useState<string>("text-embedding-005");
+  const [activeModel, setActiveModel] = useState<string>("gemini-embedding-001");
+  const [availableModels, setAvailableModels] = useState<string[]>(["gemini-embedding-001", "gemini-embedding-2", "gemini-embedding-2-preview"]);
+  const [chunkSize, setChunkSize] = useState<string>("1000");
+  const [chunkOverlap, setChunkOverlap] = useState<string>("150");
   const [usage, setUsage] = useState<any>(null);
   const [keyCount, setKeyCount] = useState(0);
+
+  // ponytail: names match each provider's GenerateEmbedding backend
+  // gemini API names: gemini-embedding-001 (20K ctx, unified), gemini-embedding-2 (8K, multimodal), gemini-embedding-2-preview
+  // openai default: text-embedding-3-small
+  const MODEL_MAP: Record<string, string[]> = {
+    openai: ["text-embedding-3-large", "text-embedding-3-small", "text-embedding-ada-002"],
+    gemini: ["gemini-embedding-001", "gemini-embedding-2", "gemini-embedding-2-preview"],
+    // ponytail: openrouter routes to any provider, include both OpenAI + Gemini
+    openrouter: ["text-embedding-3-small", "text-embedding-3-large", "text-embedding-ada-002", "gemini-embedding-001", "gemini-embedding-2", "gemini-embedding-2-preview"],
+    voyage: ["voyage-3", "voyage-3-lite", "voyage-code-3"],
+  };
+
+  const PROVIDER_LABELS: Record<string, string> = {
+    openai: "OpenAI",
+    gemini: "Google Gemini",
+    openrouter: "OpenRouter",
+    voyage: "Voyage AI",
+  };
 
   useEffect(() => {
     listKnowledgeDocs(shopId).then((d) => { if (Array.isArray(d)) setDocs(d); }).catch(() => {});
@@ -58,20 +79,27 @@ export function KnowledgeSection() {
       const cfg = s?.aiConfig as any;
       if (cfg?.searchMode) setSearchMode(cfg.searchMode);
       if (cfg?.retrievalMode) setRetrievalMode(cfg.retrievalMode);
-      // Read active provider key
+      // Read saved embedding config (if set) or fallback to active key
+      if (cfg?.embeddingProvider) setActiveProvider(cfg.embeddingProvider);
+      if (cfg?.embeddingModel) setActiveModel(cfg.embeddingModel);
+      if (cfg?.chunkSize) setChunkSize(String(cfg.chunkSize));
+      if (cfg?.chunkOverlap !== undefined) setChunkOverlap(String(cfg.chunkOverlap));
+      // Fallback: read from active key
       const keys: any[] = cfg?.keys || [];
       setKeyCount(keys.length);
-      const activeKey = keys.find((k: any) => k.isActive);
-      if (activeKey) {
-        setActiveProvider(activeKey.provider);
-        // Map provider to embedding model
-        const modelMap: Record<string, string> = {
-          openai: "text-embedding-3-large",
-          gemini: "text-embedding-005",
-          openrouter: "variable",
-          voyage: "voyage-3",
-        };
-        setActiveModel(modelMap[activeKey.provider] || "text-embedding-005");
+      if (!cfg?.embeddingProvider) {
+        const activeKey = keys.find((k: any) => k.isActive);
+        if (activeKey) {
+          setActiveProvider(activeKey.provider);
+          // ponytail: defaults match each provider's GenerateEmbedding
+          const defaultModels: Record<string, string> = {
+            openai: "text-embedding-3-small",
+            gemini: "gemini-embedding-001",
+            openrouter: "text-embedding-3-small",
+            voyage: "voyage-3",
+          };
+          setActiveModel(defaultModels[activeKey.provider] || "gemini-embedding-001");
+        }
       }
     }).catch(() => {});
     // Fetch usage from billing API
@@ -86,17 +114,13 @@ export function KnowledgeSection() {
     if (Array.isArray(d)) setDocs(d);
   };
 
-  const saveConfig = async (key: string, value: string) => {
+  // ponytail: saves individual aiConfig fields without clobbering existing keys
+  const saveConfig = async (key: string, value: any) => {
     setSaving(true);
     try {
-      const { getSession } = await import("next-auth/react");
-      const s = await getSession();
-      const token = s?.user?.backendToken;
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"}/admin/settings/${shopId}/bot`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify({ aiConfig: { [key]: value } }),
-      });
+      const existing = await fetchBotSettings(shopId);
+      const aiConfig = { ...((existing?.aiConfig as any) || {}), [key]: value };
+      await updateBotSettings(shopId, { ...existing, aiConfig } as any);
     } catch (e) { console.error(e); }
     setSaving(false);
   };
@@ -340,33 +364,66 @@ export function KnowledgeSection() {
                   </div>
                 </div>
 
-                {/* 4. Embedding Config (reads from active key) */}
+                {/* 4. Embedding Config — editable provider/model/chunk */}
                 <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
                   <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <Cpu className="h-3 w-3" /> Embedding
                   </h5>
                   <div className="grid grid-cols-2 gap-3 text-xs">
+                    {/* Provider select */}
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">Provider</span>
-                      <p className="text-zinc-300 font-medium capitalize">
-                        {activeProvider === "openai" && "OpenAI"}
-                        {activeProvider === "gemini" && "Google Gemini"}
-                        {activeProvider === "openrouter" && "OpenRouter"}
-                        {activeProvider === "voyage" && "Voyage AI"}
-                        {!["openai","gemini","openrouter","voyage"].includes(activeProvider) && activeProvider}
-                      </p>
+                      <select value={activeProvider} onChange={(e) => {
+                        const p = e.target.value;
+                        setActiveProvider(p);
+                        const models = MODEL_MAP[p] || ["gemini-embedding-001"];
+                        setActiveModel(models[0]);
+                        setAvailableModels(models);
+                        saveConfig("embeddingProvider", p);
+                        saveConfig("embeddingModel", models[0]);
+                      }}
+                        className="w-full bg-transparent text-zinc-300 font-medium outline-none mt-0.5 cursor-pointer">
+                        {Object.entries(PROVIDER_LABELS).map(([val, label]) => (
+                          <option key={val} value={val} className="bg-zinc-900">{label}</option>
+                        ))}
+                      </select>
                     </div>
+                    {/* Model select */}
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">Model</span>
-                      <p className="text-zinc-300 font-medium">{activeModel}</p>
+                      <select value={activeModel} onChange={(e) => {
+                        setActiveModel(e.target.value);
+                        saveConfig("embeddingModel", e.target.value);
+                      }}
+                        className="w-full bg-transparent text-zinc-300 font-medium outline-none mt-0.5 cursor-pointer">
+                        {(availableModels.length > 0 ? availableModels : MODEL_MAP[activeProvider] || []).map((m) => (
+                          <option key={m} value={m} className="bg-zinc-900">{m}</option>
+                        ))}
+                      </select>
                     </div>
+                    {/* Chunk Size */}
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">Chunk Size</span>
-                      <p className="text-zinc-300 font-medium">~1000 chars (150 overlap)</p>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <input type="number" value={chunkSize} onChange={(e) => {
+                          setChunkSize(e.target.value);
+                          saveConfig("chunkSize", e.target.value);
+                        }}
+                          className="w-full bg-transparent text-zinc-300 font-medium outline-none" />
+                        <span className="text-zinc-600 shrink-0">chars</span>
+                      </div>
                     </div>
+                    {/* Chunk Overlap */}
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
-                      <span className="text-zinc-600">Vector DB</span>
-                      <p className="text-zinc-300 font-medium">Qdrant Cloud</p>
+                      <span className="text-zinc-600">Chunk Overlap</span>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <input type="number" value={chunkOverlap} onChange={(e) => {
+                          setChunkOverlap(e.target.value);
+                          saveConfig("chunkOverlap", e.target.value);
+                        }}
+                          className="w-full bg-transparent text-zinc-300 font-medium outline-none" />
+                        <span className="text-zinc-600 shrink-0">chars</span>
+                      </div>
                     </div>
                   </div>
                   <div className="mt-3 text-[11px] text-zinc-600 bg-white/[0.02] border border-white/[0.04] rounded-lg px-3 py-2">

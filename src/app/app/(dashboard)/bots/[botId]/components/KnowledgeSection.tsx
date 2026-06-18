@@ -11,12 +11,10 @@ import { useSession } from "next-auth/react";
 import { getPlanSync } from "@/lib/plans";
 import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings, updateBotSettings } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import UpgradePrompt from "@/components/UpgradePrompt";
 
 const SEARCH_OPTIONS = [
-  { id: "mongodb", label: "MongoDB", desc: "Exact match on structured data", icon: Database, tier: "free" },
-  { id: "qdrant", label: "Qdrant", desc: "Vector/semantic search", icon: Search, tier: "free" },
-  { id: "hybrid", label: "Hybrid", desc: "MongoDB + Qdrant + reranking", icon: Layers, tier: "starter" },
+  { id: "mongodb", label: "MongoDB", desc: "Exact match on structured data", icon: Database },
+  { id: "qdrant", label: "Qdrant", desc: "Vector/semantic search", icon: Search },
 ];
 
 const STORAGE_ENGINES = [
@@ -80,10 +78,24 @@ export function KnowledgeSection() {
   };
 
   const handleSearchMode = (mode: string) => {
-    if (mode === "hybrid" && isFree) return; // Free only gets mongodb or qdrant
-    setSearchMode(mode);
-    saveConfig("searchMode", mode);
+    // If both currently active, clicking one turns the other off
+    // If neither currently active, turn on the clicked one
+    // If clicking the already active one, turn it off
+    const currentModes = searchMode.split(",").filter(Boolean);
+    if (currentModes.includes(mode)) {
+      // Remove it
+      const next = currentModes.filter(m => m !== mode).join(",");
+      setSearchMode(next || "");
+      saveConfig("searchMode", next || "");
+    } else {
+      // Add it
+      const next = [...currentModes, mode].sort().join(",");
+      setSearchMode(next);
+      saveConfig("searchMode", next);
+    }
   };
+
+  const isSearchActive = (mode: string) => searchMode.split(",").includes(mode);
 
   const handleRetrieval = (mode: string) => {
     setRetrievalMode(mode);
@@ -208,34 +220,37 @@ export function KnowledgeSection() {
               <div className="pt-4 space-y-5">
                 
                 {/* 1. Search Strategy */}
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <Search className="h-3 w-3" /> Search Strategy
-                    {isFree && <span className="text-[8px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400">Free: choose 1</span>}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+                  <h5 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Search className="h-4 w-4" /> Search Strategy
                   </h5>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="flex gap-3">
                     {SEARCH_OPTIONS.map((opt) => {
-                      const locked = opt.tier !== "free" && isFree;
-                      const active = searchMode === opt.id;
+                      const active = isSearchActive(opt.id);
                       return (
-                        <button key={opt.id} onClick={() => !locked && handleSearchMode(opt.id)}
+                        <button key={opt.id} onClick={() => handleSearchMode(opt.id)}
                           className={cn(
-                            "flex flex-col items-center gap-1 p-3 rounded-xl border text-xs transition-all relative",
-                            active ? "bg-blue-600/20 border-blue-500/40 text-blue-300" : locked ? "bg-white/[0.01] border-white/[0.04] text-zinc-700 cursor-not-allowed" : "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:text-zinc-300"
+                            "flex items-center gap-3 px-4 py-3 rounded-xl border text-sm transition-all flex-1",
+                            active
+                              ? "bg-blue-600/20 border-blue-500/40 text-blue-300 shadow-sm shadow-blue-500/10"
+                              : "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:border-white/20 hover:text-zinc-300"
                           )}>
-                          {locked && <Lock className="h-3 w-3 text-zinc-700 absolute top-1.5 right-1.5" />}
-                          <opt.icon className="h-4 w-4" />
-                          <span className="font-medium">{opt.label}</span>
-                          <span className="text-[9px] text-center opacity-70">{opt.desc}</span>
+                          <opt.icon className="h-5 w-5" />
+                          <div className="text-left">
+                            <p className="font-semibold">{opt.label}</p>
+                            <p className="text-[10px] opacity-60">{opt.desc}</p>
+                          </div>
+                          {active && <span className="ml-auto text-lg">✓</span>}
                         </button>
                       );
                     })}
                   </div>
-                  {isFree && searchMode === "hybrid" && (
-                    <div className="mt-2">
-                      <UpgradePrompt feature="Hybrid Search (MongoDB + Qdrant)" />
-                    </div>
-                  )}
+                  <div className="mt-3 flex items-center gap-2 text-xs text-zinc-500 bg-blue-500/5 border border-blue-500/10 rounded-lg px-3 py-2">
+                    <Layers className="h-3.5 w-3.5 text-blue-400" />
+                    {searchMode.split(",").filter(Boolean).length === 0 && <span>Select at least one strategy. Both = Hybrid.</span>}
+                    {searchMode.split(",").filter(Boolean).length === 1 && <span>Currently using <strong className="text-zinc-300">{searchMode}</strong> only.</span>}
+                    {searchMode.split(",").filter(Boolean).length === 2 && <span>✅ <strong className="text-zinc-300">Both</strong> — MongoDB + Qdrant = Hybrid Search with dedup &amp; reranking.</span>}
+                  </div>
                 </div>
 
                 {/* 2. Storage Engine */}
@@ -264,40 +279,39 @@ export function KnowledgeSection() {
                 </div>
 
                 {/* 3. Retrieval Strategy */}
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <Zap className="h-3 w-3" /> Retrieval Strategy
-                    {isFree && <span className="text-[8px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400">Basic RAG only</span>}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+                  <h5 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Zap className="h-4 w-4" /> Retrieval Strategy
+                    <span className="text-[9px] font-normal text-zinc-600">— Beta MVP: all unlocked</span>
                   </h5>
-                  <div className="grid grid-cols-2 gap-2">
-                    {filteredRetrieval.map((strat) => {
-                      const locked = strat.tier !== "free" && isFree && strat.id !== "basic_rag";
+                  <div className="grid grid-cols-2 gap-3">
+                    {RETRIEVAL_STRATEGIES.map((strat) => {
                       const active = retrievalMode === strat.id;
                       return (
-                        <button key={strat.id} onClick={() => !locked && handleRetrieval(strat.id)}
+                        <button key={strat.id} onClick={() => handleRetrieval(strat.id)}
                           className={cn(
-                            "flex items-center gap-3 p-3 rounded-xl border text-xs transition-all",
-                            active ? "bg-purple-600/20 border-purple-500/40 text-purple-300" :
-                            locked ? "bg-white/[0.01] border-white/[0.04] text-zinc-700 cursor-not-allowed" :
-                            "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:text-zinc-300"
+                            "flex items-center gap-3 p-4 rounded-xl border text-sm transition-all",
+                            active
+                              ? "bg-purple-600/20 border-purple-500/40 text-purple-300 shadow-sm shadow-purple-500/10"
+                              : "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:border-white/20 hover:text-zinc-300"
                           )}>
-                          <strat.icon className="h-4 w-4 shrink-0" />
-                          <div className="text-left">
-                            <p className="font-medium">{strat.name}</p>
-                            <p className="text-[9px] opacity-70">{strat.desc}</p>
+                          <div className={`p-1.5 rounded-lg ${active ? "bg-purple-600/20" : "bg-white/5"}`}>
+                            <strat.icon className="h-4 w-4" />
                           </div>
-                          {locked && <Lock className="h-3 w-3 text-zinc-700 shrink-0 ml-auto" />}
-                          {active && <span className="text-[9px] text-purple-400 shrink-0 ml-auto">Active</span>}
+                          <div className="text-left">
+                            <p className="font-semibold">{strat.name}</p>
+                            <p className="text-[10px] opacity-60">{strat.desc}</p>
+                          </div>
+                          <span className={cn("text-[9px] shrink-0 ml-auto", active ? "text-purple-400 font-bold" : "text-zinc-700")}>
+                            {strat.status === "active" ? (active ? "✅" : "Available") : strat.status === "available" ? "🔌" : "📅"}
+                          </span>
                         </button>
                       );
                     })}
                   </div>
-                  {isFree && (
-                    <div className="mt-3 flex items-center gap-2 text-[10px] text-zinc-600 bg-amber-500/5 border border-amber-500/10 rounded-lg px-3 py-2">
-                      <Lock className="h-3 w-3 text-amber-500 shrink-0" />
-                      <span>Free plan: Naive RAG only. Upgrade to Starter+ for GraphRAG, LightRAG, Advanced RAG.</span>
-                    </div>
-                  )}
+                  <div className="mt-3 text-[11px] text-zinc-600 bg-white/[0.02] border border-white/[0.04] rounded-lg px-3 py-2">
+                    <strong>After Beta:</strong> Free = Basic RAG only. Starter+ = GraphRAG, LightRAG. Pro+ = Advanced RAG.
+                  </div>
                 </div>
 
                 {/* 4. Embedding Config (read-only for now) */}

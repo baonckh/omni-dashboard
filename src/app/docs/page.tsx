@@ -19,10 +19,10 @@ const DOCS_SECTIONS = [
     bg: "bg-blue-500/10",
     border: "border-blue-500/20",
     articles: [
-      { key: "register", href: "/register" },
-      { key: "connect-fb", href: "/app/channels" },
-      { key: "connect-zalo", href: "/app/channels" },
-      { key: "basic-ai", href: "/app/settings" },
+      { key: "register" },
+      { key: "connect-fb" },
+      { key: "connect-zalo" },
+      { key: "basic-ai" },
     ],
   },
   {
@@ -32,10 +32,10 @@ const DOCS_SECTIONS = [
     bg: "bg-purple-500/10",
     border: "border-purple-500/20",
     articles: [
-      { key: "create-persona", href: "/app/bots" },
-      { key: "upload-products", href: "/app/products" },
-      { key: "set-rules", href: "/app/bots" },
-      { key: "test-bot", href: "/app/bots" },
+      { key: "create-persona" },
+      { key: "upload-products" },
+      { key: "set-rules" },
+      { key: "test-bot" },
     ],
   },
   {
@@ -45,11 +45,11 @@ const DOCS_SECTIONS = [
     bg: "bg-emerald-500/10",
     border: "border-emerald-500/20",
     articles: [
-      { key: "fb-messenger", href: "/app/channels" },
-      { key: "zalo-oa", href: "/app/channels" },
-      { key: "tiktok-shop", href: "/app/channels" },
-      { key: "shopee", href: "/app/channels" },
-      { key: "web-widget", href: "/app/settings" },
+      { key: "fb-messenger" },
+      { key: "zalo-oa" },
+      { key: "tiktok-shop" },
+      { key: "shopee" },
+      { key: "web-widget" },
     ],
   },
   {
@@ -72,10 +72,10 @@ const DOCS_SECTIONS = [
     bg: "bg-rose-500/10",
     border: "border-rose-500/20",
     articles: [
-      { key: "ai-vietnamese", href: "#" },
-      { key: "data-security", href: "/privacy" },
-      { key: "free-trial", href: "/pricing" },
-      { key: "cancel", href: "#" },
+      { key: "ai-vietnamese" },
+      { key: "data-security" },
+      { key: "free-trial" },
+      { key: "cancel" },
     ],
   },
 ];
@@ -233,7 +233,7 @@ export default function DocsPage() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
               {section.articles.map((article, ai) => (
-                <Link key={article.key} href={article.href}
+                <Link key={article.key} href={`/docs/${article.key}`}
                   className="group relative p-4 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10 transition-all active:scale-[0.98]"
                 >
                   <h3 className="text-sm font-bold text-white mb-1.5 group-hover:text-blue-300 transition-colors">

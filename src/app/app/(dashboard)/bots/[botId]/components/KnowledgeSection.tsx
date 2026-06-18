@@ -219,6 +219,31 @@ export function KnowledgeSection() {
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
               <div className="pt-4 space-y-5">
                 
+                {/* 2. Storage Engine — UI framework cho backend integration */}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+                  <h5 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Database className="h-4 w-4" /> Storage Engine
+                  </h5>
+                  <div className="grid grid-cols-3 gap-3">
+                    {STORAGE_ENGINES.map((eng) => (
+                      <div key={eng.id} className={cn(
+                        "flex flex-col items-center gap-2 p-4 rounded-xl border text-sm transition-all",
+                        eng.status === "active" ? "bg-green-600/10 border-green-500/20 text-green-400" :
+                        eng.status === "available" ? "bg-white/[0.03] border-white/[0.06] text-zinc-500" :
+                        "bg-white/[0.01] border-white/[0.04] text-zinc-700"
+                      )}>
+                        <eng.icon className="h-5 w-5" />
+                        <p className="font-semibold">{eng.name}</p>
+                        <p className="text-[10px] text-center opacity-70">{eng.desc}</p>
+                        <span className={cn("text-[9px] font-bold mt-1",
+                          eng.status === "active" ? "text-green-500" : eng.status === "available" ? "text-blue-400" : "text-zinc-600")}>
+                          {eng.status === "active" ? "✅ Active" : eng.status === "available" ? "🔌 Available" : "📅 Planned"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* 1. Search Strategy */}
                 <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
                   <h5 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -253,30 +278,7 @@ export function KnowledgeSection() {
                   </div>
                 </div>
 
-                {/* 2. Storage Engine */}
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <Database className="h-3 w-3" /> Storage Engine
-                  </h5>
-                  <div className="grid grid-cols-3 gap-2">
-                    {STORAGE_ENGINES.map((eng) => (
-                      <div key={eng.id} className={cn(
-                        "flex flex-col items-center gap-1 p-3 rounded-xl border text-xs",
-                        eng.status === "active" ? "bg-green-600/10 border-green-500/20 text-green-400" :
-                        eng.status === "available" ? "bg-white/[0.03] border-white/[0.06] text-zinc-500" :
-                        "bg-white/[0.01] border-white/[0.04] text-zinc-700"
-                      )}>
-                        <eng.icon className="h-4 w-4" />
-                        <span className="font-medium">{eng.name}</span>
-                        <span className="text-[9px] text-center opacity-70">{eng.desc}</span>
-                        <span className={cn("text-[8px] font-bold mt-0.5",
-                          eng.status === "active" ? "text-green-500" : eng.status === "available" ? "text-blue-400" : "text-zinc-600")}>
-                          {eng.status === "active" ? "✅ Active" : eng.status === "available" ? "🔌 Available" : "📅 Planned"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+
 
                 {/* 3. Retrieval Strategy */}
                 <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">

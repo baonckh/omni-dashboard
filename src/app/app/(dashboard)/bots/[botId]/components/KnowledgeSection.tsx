@@ -47,6 +47,10 @@ export function KnowledgeSection() {
   const [searchMode, setSearchMode] = useState<string>("mongodb");
   const [retrievalMode, setRetrievalMode] = useState<string>("basic_rag");
   const [saving, setSaving] = useState(false);
+  const [activeProvider, setActiveProvider] = useState<string>("gemini");
+  const [activeModel, setActiveModel] = useState<string>("text-embedding-005");
+  const [usage, setUsage] = useState<any>(null);
+  const [keyCount, setKeyCount] = useState(0);
 
   useEffect(() => {
     listKnowledgeDocs(shopId).then((d) => { if (Array.isArray(d)) setDocs(d); }).catch(() => {});
@@ -54,7 +58,27 @@ export function KnowledgeSection() {
       const cfg = s?.aiConfig as any;
       if (cfg?.searchMode) setSearchMode(cfg.searchMode);
       if (cfg?.retrievalMode) setRetrievalMode(cfg.retrievalMode);
+      // Read active provider key
+      const keys: any[] = cfg?.keys || [];
+      setKeyCount(keys.length);
+      const activeKey = keys.find((k: any) => k.isActive);
+      if (activeKey) {
+        setActiveProvider(activeKey.provider);
+        // Map provider to embedding model
+        const modelMap: Record<string, string> = {
+          openai: "text-embedding-3-large",
+          gemini: "text-embedding-005",
+          openrouter: "variable",
+          voyage: "voyage-3",
+        };
+        setActiveModel(modelMap[activeKey.provider] || "text-embedding-005");
+      }
     }).catch(() => {});
+    // Fetch usage from billing API
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+    fetch(`${apiBase}/admin/billing/${shopId}/usage`, {
+      headers: session?.user?.backendToken ? { Authorization: `Bearer ${session.user.backendToken}` } : {},
+    }).then(r => r.json()).then(setUsage).catch(() => {});
   }, []);
 
   const reload = async () => {
@@ -316,7 +340,7 @@ export function KnowledgeSection() {
                   </div>
                 </div>
 
-                {/* 4. Embedding Config (read-only for now) */}
+                {/* 4. Embedding Config (reads from active key) */}
                 <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
                   <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <Cpu className="h-3 w-3" /> Embedding
@@ -324,11 +348,17 @@ export function KnowledgeSection() {
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">Provider</span>
-                      <p className="text-zinc-300 font-medium">Google Gemini</p>
+                      <p className="text-zinc-300 font-medium capitalize">
+                        {activeProvider === "openai" && "OpenAI"}
+                        {activeProvider === "gemini" && "Google Gemini"}
+                        {activeProvider === "openrouter" && "OpenRouter"}
+                        {activeProvider === "voyage" && "Voyage AI"}
+                        {!["openai","gemini","openrouter","voyage"].includes(activeProvider) && activeProvider}
+                      </p>
                     </div>
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">Model</span>
-                      <p className="text-zinc-300 font-medium">text-embedding-005</p>
+                      <p className="text-zinc-300 font-medium">{activeModel}</p>
                     </div>
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">Chunk Size</span>
@@ -339,9 +369,15 @@ export function KnowledgeSection() {
                       <p className="text-zinc-300 font-medium">Qdrant Cloud</p>
                     </div>
                   </div>
+                  <div className="mt-3 text-[11px] text-zinc-600 bg-white/[0.02] border border-white/[0.04] rounded-lg px-3 py-2">
+                    Active key: <strong className="text-zinc-400">{keyCount}</strong> configured ·{" "}
+                    <a href="/app/settings" className="text-blue-400 hover:text-blue-300 underline underline-offset-2">
+                      Manage keys →
+                    </a>
+                  </div>
                 </div>
 
-                {/* 5. Usage Stats */}
+                {/* 5. Usage Stats — reads from billing API */}
                 <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
                   <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <BarChart3 className="h-3 w-3" /> Today's Usage
@@ -350,15 +386,18 @@ export function KnowledgeSection() {
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">DB Queries</span>
                       <p className="text-zinc-300 font-medium">
-                        - / {isFree ? "100" : "∞"}
+                        {(usage?.dbQueries ?? usage?.queryCount ?? usage?.queries) ?? 0} / {isFree ? "100" : "∞"}
                         {isFree && <span className="text-[9px] text-amber-500 ml-1">(free limit)</span>}
                       </p>
                     </div>
                     <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                       <span className="text-zinc-600">Vector Searches</span>
-                      <p className="text-zinc-300 font-medium">- / ∞</p>
+                      <p className="text-zinc-300 font-medium">
+                        {(usage?.vectorSearches ?? usage?.vectorCount ?? 0)} / ∞
+                      </p>
                     </div>
                   </div>
+                  {!usage && <p className="text-[10px] text-zinc-600 mt-2">Loading usage data...</p>}
                   {saving && <p className="text-[10px] text-blue-400 mt-2 animate-pulse">Saving config...</p>}
                 </div>
 

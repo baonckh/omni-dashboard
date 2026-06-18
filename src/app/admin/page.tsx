@@ -35,6 +35,9 @@ export default function AdminDashboard() {
   const [dataMap, setDataMap] = useState<Record<string, any[]>>({});
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+  const [selectedThread, setSelectedThread] = useState<any>(null);
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
@@ -73,6 +76,21 @@ export default function AdminDashboard() {
     const apiEndpoint = endpoint === "chats" ? "threads" : endpoint;
     await fetch(`${API_BASE}/panel-api/${apiEndpoint}/${id}`, { method: "DELETE", headers: apiHeaders() });
     loadTabData(endpoint);
+  };
+
+  const viewThread = async (id: string) => {
+    setSelectedThreadId(id);
+    setSelectedThread(null);
+    setLoadingMessages(true);
+    const res = await fetch(`${API_BASE}/panel-api/threads/${id}`, { headers: apiHeaders() });
+    const data = await res.json();
+    setSelectedThread(data);
+    setLoadingMessages(false);
+  };
+
+  const closeThreadViewer = () => {
+    setSelectedThreadId(null);
+    setSelectedThread(null);
   };
 
   const handleLogout = () => { localStorage.removeItem("admin_token"); router.push("/admin/login"); };
@@ -167,26 +185,27 @@ export default function AdminDashboard() {
                 <div className="divide-y divide-white/5 max-h-96 overflow-y-auto">
                   {threads.length === 0 ? (
                     <div className="py-12 text-center text-zinc-600 text-sm">No conversations yet</div>
-                  ) : (
-                    threads.slice(0, 30).map((t: any) => (
-                      <div key={t._id} className="px-5 py-3 hover:bg-white/[0.02] transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-400 shrink-0">
-                              {(t.customerName || "?").charAt(0)}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-white truncate">{t.customerName || "Anonymous"}</p>
-                              <p className="text-[10px] text-zinc-600">Shop: {(t.shop_id || "").slice(0, 16)} · {t.platform || "?"}</p>
-                            </div>
+                  ) : threads.slice(0, 30).map((t: any) => (
+                    <div key={t._id} onClick={() => viewThread(t._id)} className="px-5 py-3 hover:bg-white/[0.02] transition-colors cursor-pointer">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-400 shrink-0">
+                            {(t.customerName || "?").charAt(0)}
                           </div>
-                          <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0", t.status === "HUMAN_TAKEOVER" ? "bg-red-500/10 text-red-400" : "bg-green-500/10 text-green-400")}>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{t.customerName || "Anonymous"}</p>
+                            <p className="text-[10px] text-zinc-600">Shop: {(t.shopId || t.shop_id || "").slice(0, 16)} · {t.platform || "?"}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          {t.messageCount > 0 && <span className="text-[10px] text-zinc-500">{t.messageCount} msgs</span>}
+                          <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium", t.status === "HUMAN_TAKEOVER" ? "bg-red-500/10 text-red-400" : "bg-green-500/10 text-green-400")}>
                             {t.status || "ACTIVE"}
                           </span>
                         </div>
                       </div>
-                    ))
-                  )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </>
@@ -197,19 +216,18 @@ export default function AdminDashboard() {
             <PlanManager apiHeaders={apiHeaders} API_BASE={API_BASE} />
           )}
 
-          {/* Chats Tab — expanded view */}
+          {/* Chats Tab — all conversations with message viewer */}
           {tab === "chats" && (
             <>
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-bold">All Conversations</h2>
-                <button onClick={() => loadTabData("chats")} className="p-1.5 hover:bg-white/5 rounded-lg">
-                  <RefreshCw className="h-3.5 w-3.5 text-zinc-500" />
-                </button>
+                <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search..." className="bg-white/5 border border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-white placeholder-zinc-600 outline-none w-48" />
               </div>
               <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] divide-y divide-white/5">
                 {loading ? <Spinner /> : filtered.length === 0 ? <div className="py-12 text-center text-zinc-600 text-sm">No conversations</div> :
                 filtered.map((t: any) => (
-                  <div key={t._id} className="px-5 py-4 hover:bg-white/[0.02] transition-colors">
+                  <div key={t._id} onClick={() => viewThread(t._id)} className="px-5 py-4 hover:bg-white/[0.02] transition-colors cursor-pointer">
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
@@ -217,10 +235,11 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                           <p className="text-sm font-medium text-white">{t.customerName || "Anonymous"}</p>
-                          <p className="text-[10px] text-zinc-600">Shop: {(t.shop_id || "").slice(0, 20)} · Platform: {t.platform || "?"}</p>
+                          <p className="text-[10px] text-zinc-600">Shop: {(t.shopId || t.shop_id || "").slice(0, 20)} · Platform: {t.platform || "?"}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
+                        {t.messageCount > 0 && <span className="text-[10px] text-zinc-500">{t.messageCount} msgs</span>}
                         <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-medium", t.status === "HUMAN_TAKEOVER" ? "bg-red-500/10 text-red-400" : "bg-green-500/10 text-green-400")}>
                           {t.status || "ACTIVE"}
                         </span>
@@ -231,7 +250,6 @@ export default function AdminDashboard() {
                       {t.tags?.length > 0 && <span>Tags: {t.tags.join(", ")}</span>}
                       {t.sentiment && <span>Sentiment: {t.sentiment}</span>}
                     </div>
-                    <button onClick={() => handleDelete("chats", t._id)} className="mt-2 ml-11 text-[10px] text-zinc-600 hover:text-red-400 transition-colors">Delete</button>
                   </div>
                 ))}
               </div>
@@ -332,6 +350,74 @@ export default function AdminDashboard() {
             </>
           )}
         </div>
+
+        {/* Thread Message Viewer Modal */}
+        {selectedThreadId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={closeThreadViewer}>
+            <div className="w-full max-w-2xl max-h-[80vh] bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                <div>
+                  <h3 className="text-sm font-bold text-white">
+                    {selectedThread?.customerName || "Anonymous"}
+                    <span className="text-zinc-500 font-normal ml-2">· {selectedThread?.platform || "?"}</span>
+                  </h3>
+                  <p className="text-[10px] text-zinc-600">
+                    Shop: {(selectedThread?.shopId || selectedThread?.shop_id || "").slice(0, 24)}
+                    {selectedThread?.status === "HUMAN_TAKEOVER" && <span className="text-red-400 ml-2">● HUMAN TAKEOVER</span>}
+                  </p>
+                </div>
+                <button onClick={closeThreadViewer} className="p-1.5 hover:bg-white/10 rounded-lg text-zinc-500 hover:text-zinc-300">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Messages */}
+              <div className="overflow-y-auto p-5 space-y-3 max-h-[60vh]">
+                {loadingMessages ? (
+                  <div className="flex items-center justify-center py-16"><Spinner /></div>
+                ) : !selectedThread?.messages || selectedThread.messages.length === 0 ? (
+                  <div className="py-12 text-center text-zinc-600 text-sm">No messages in this conversation</div>
+                ) : (
+                  (selectedThread.messages as any[]).map((msg: any, i: number) => (
+                    <div key={i} className={cn(
+                      "flex gap-3",
+                      msg.senderType === "CUSTOMER" ? "justify-start" : "justify-end"
+                    )}>
+                      <div className={cn(
+                        "max-w-[80%] rounded-xl px-4 py-2.5",
+                        msg.senderType === "CUSTOMER"
+                          ? "bg-zinc-800 border border-white/5 text-zinc-200"
+                          : msg.senderType === "HUMAN_OWNER"
+                          ? "bg-amber-600/20 border border-amber-500/20 text-amber-200"
+                          : "bg-blue-600/20 border border-blue-500/20 text-blue-200"
+                      )}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className={cn("text-[9px] font-bold uppercase tracking-wider",
+                            msg.senderType === "CUSTOMER" ? "text-zinc-500" :
+                            msg.senderType === "HUMAN_OWNER" ? "text-amber-400" : "text-blue-400"
+                          )}>
+                            {msg.senderType === "CUSTOMER" ? "Customer" :
+                             msg.senderType === "HUMAN_OWNER" ? "Staff" : "AI Bot"}
+                          </span>
+                          <span className="text-[8px] text-zinc-700">{msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}</span>
+                        </div>
+                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                        {msg.tags?.length > 0 && (
+                          <div className="flex gap-1 mt-1.5">
+                            {msg.tags.map((tag: string, ti: number) => (
+                              <span key={ti} className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-zinc-500">{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

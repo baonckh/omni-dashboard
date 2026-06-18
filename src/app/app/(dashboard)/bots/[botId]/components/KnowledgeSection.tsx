@@ -1,12 +1,44 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { BookOpen, Upload, Globe, Trash2, FileText, ChevronDown, Settings, Database, Search, Layers } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  BookOpen, Upload, Globe, Trash2, FileText, ChevronDown, Settings,
+  Database, Search, Layers, Zap, Cpu, GitBranch, Server, BarChart3,
+  Lock
+} from "lucide-react";
 import { useShopId } from "@/lib/use-shop";
+import { useSession } from "next-auth/react";
+import { getPlanSync } from "@/lib/plans";
 import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings, updateBotSettings } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import UpgradePrompt from "@/components/UpgradePrompt";
+
+const SEARCH_OPTIONS = [
+  { id: "mongodb", label: "MongoDB", desc: "Exact match on structured data", icon: Database, tier: "free" },
+  { id: "qdrant", label: "Qdrant", desc: "Vector/semantic search", icon: Search, tier: "free" },
+  { id: "hybrid", label: "Hybrid", desc: "MongoDB + Qdrant + reranking", icon: Layers, tier: "starter" },
+];
+
+const STORAGE_ENGINES = [
+  { id: "vector_db", name: "Vector DB", desc: "Embedding → cosine/dot similarity (Qdrant)", status: "active", icon: Database },
+  { id: "graph_db", name: "Graph DB", desc: "Entity-Relationship graph (Neo4j)", status: "available", icon: GitBranch },
+  { id: "hybrid_store", name: "Hybrid Store", desc: "Vector + Graph combined", status: "planned", icon: Layers },
+];
+
+const RETRIEVAL_STRATEGIES = [
+  { id: "basic_rag", name: "Basic RAG", desc: "Query → Embed → Top-K → Inject", status: "active", tier: "free", icon: Zap },
+  { id: "graph_rag", name: "GraphRAG", desc: "Multi-hop entity graph reasoning", status: "available", tier: "starter", icon: GitBranch },
+  { id: "light_rag", name: "LightRAG", desc: "Lightweight graph+vector hybrid", status: "available", tier: "starter", icon: Zap },
+  { id: "advanced_rag", name: "Advanced RAG", desc: "HyDE + reranking + multi-step", status: "planned", tier: "pro", icon: Cpu },
+];
 
 export function KnowledgeSection() {
+  const { data: session } = useSession();
   const shopId = useShopId();
+  const userPlan = session?.user?.plan || "free";
+  const planLimits = getPlanSync(userPlan);
+  const isFree = userPlan === "free" || userPlan === "beta";
+
   const [docs, setDocs] = useState<any[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -14,14 +46,16 @@ export function KnowledgeSection() {
   const [ingesting, setIngesting] = useState(false);
   const [ingestMode, setIngestMode] = useState<"text" | "web" | "file">("text");
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [searchMode, setSearchMode] = useState<string>("hybrid");
-  const [savingMode, setSavingMode] = useState(false);
+  const [searchMode, setSearchMode] = useState<string>("mongodb");
+  const [retrievalMode, setRetrievalMode] = useState<string>("basic_rag");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     listKnowledgeDocs(shopId).then((d) => { if (Array.isArray(d)) setDocs(d); }).catch(() => {});
     fetchBotSettings(shopId).then((s) => {
-      const aiConfig = s?.aiConfig as any;
-      if (aiConfig?.searchMode) setSearchMode(aiConfig.searchMode);
+      const cfg = s?.aiConfig as any;
+      if (cfg?.searchMode) setSearchMode(cfg.searchMode);
+      if (cfg?.retrievalMode) setRetrievalMode(cfg.retrievalMode);
     }).catch(() => {});
   }, []);
 
@@ -30,23 +64,45 @@ export function KnowledgeSection() {
     if (Array.isArray(d)) setDocs(d);
   };
 
+  const saveConfig = async (key: string, value: string) => {
+    setSaving(true);
+    try {
+      const { getSession } = await import("next-auth/react");
+      const s = await getSession();
+      const token = s?.user?.backendToken;
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"}/admin/settings/${shopId}/bot`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ aiConfig: { [key]: value } }),
+      });
+    } catch (e) { console.error(e); }
+    setSaving(false);
+  };
+
+  const handleSearchMode = (mode: string) => {
+    if (mode === "hybrid" && isFree) return; // Free only gets mongodb or qdrant
+    setSearchMode(mode);
+    saveConfig("searchMode", mode);
+  };
+
+  const handleRetrieval = (mode: string) => {
+    setRetrievalMode(mode);
+    saveConfig("retrievalMode", mode);
+  };
+
   const handleIngest = async () => {
     if (!content.trim()) return;
     setIngesting(true);
-    try {
-      await ingestKnowledge(shopId, { title: title || "Untitled", content, source: "manual_text" });
-      setTitle(""); setContent(""); await reload();
-    } catch (e) { console.error(e); }
+    try { await ingestKnowledge(shopId, { title: title || "Untitled", content, source: "manual_text" }); setTitle(""); setContent(""); await reload(); }
+    catch (e) { console.error(e); }
     setIngesting(false);
   };
 
   const handleIngestWeb = async () => {
     if (!webUrl.trim()) return;
     setIngesting(true);
-    try {
-      await ingestWebKnowledge(shopId, { url: webUrl, recursive: false });
-      setWebUrl(""); await reload();
-    } catch (e) { console.error(e); }
+    try { await ingestWebKnowledge(shopId, { url: webUrl, recursive: false }); setWebUrl(""); await reload(); }
+    catch (e) { console.error(e); }
     setIngesting(false);
   };
 
@@ -54,33 +110,27 @@ export function KnowledgeSection() {
     const file = e.target.files?.[0];
     if (!file) return;
     setIngesting(true);
-    try {
-      const text = await file.text();
-      await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload" });
-      await reload();
-    } catch (e) { console.error(e); }
+    try { const text = await file.text(); await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload" }); await reload(); }
+    catch (e) { console.error(e); }
     setIngesting(false);
   };
 
+  const filteredRetrieval = RETRIEVAL_STRATEGIES.filter(r => isFree ? r.tier === "free" : true);
+
   return (
     <div className="space-y-5">
-      {/* Simple Upload */}
+      {/* Upload Card */}
       <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
         <div className="flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-blue-400" />
           <h3 className="text-sm font-bold text-white">Documents & Policies</h3>
-          <span className="text-[10px] text-zinc-600">— AI uses these to answer policy questions</span>
+          {isFree && <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500">Naive RAG</span>}
         </div>
 
-        {/* Tab: Text | Web | File */}
         <div className="flex gap-1 p-0.5 bg-white/[0.03] border border-white/[0.06] rounded-xl w-fit">
           {(["text", "web", "file"] as const).map((mode) => (
             <button key={mode} onClick={() => setIngestMode(mode)}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
-                ingestMode === mode ? "bg-blue-600 text-white" : "text-zinc-500 hover:text-white"
-              )}
-            >
+              className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-all", ingestMode === mode ? "bg-blue-600 text-white" : "text-zinc-500 hover:text-white")}>
               {mode === "text" ? "Text" : mode === "web" ? "Web" : "File"}
             </button>
           ))}
@@ -89,36 +139,26 @@ export function KnowledgeSection() {
         {ingestMode === "text" && (
           <div className="space-y-3">
             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title (e.g., Price List 2026)"
-              className="w-full bg-white/5 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50 transition-colors"
-            />
+              placeholder="Title..." className="w-full bg-white/5 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50" />
             <textarea value={content} onChange={(e) => setContent(e.target.value)}
-              placeholder="Paste document content here..."
-              rows={5}
-              className="w-full bg-white/5 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50 transition-colors resize-none"
-            />
+              placeholder="Paste document content..." rows={5}
+              className="w-full bg-white/5 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50 resize-none" />
             <button onClick={handleIngest} disabled={ingesting || !content.trim()}
-              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-xl text-sm font-bold transition-all"
-            >
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-xl text-sm font-bold transition-all">
               <Upload className="h-4 w-4" /> {ingesting ? "Processing..." : "Upload"}
             </button>
           </div>
         )}
-
         {ingestMode === "web" && (
           <div className="flex gap-2">
             <input type="url" value={webUrl} onChange={(e) => setWebUrl(e.target.value)}
-              placeholder="https://example.com/page"
-              className="flex-1 bg-white/5 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50 transition-colors"
-            />
+              placeholder="https://..." className="flex-1 bg-white/5 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-blue-500/50" />
             <button onClick={handleIngestWeb} disabled={ingesting || !webUrl.trim()}
-              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-xl text-sm font-bold transition-all"
-            >
+              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-xl text-sm font-bold">
               <Globe className="h-4 w-4" />
             </button>
           </div>
         )}
-
         {ingestMode === "file" && (
           <label className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-white/[0.08] rounded-xl cursor-pointer hover:border-blue-500/30 transition-colors">
             <FileText className="h-8 w-8 text-zinc-600 mb-2" />
@@ -130,9 +170,7 @@ export function KnowledgeSection() {
 
       {/* Document List */}
       <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-        <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">
-          Documents ({docs.length})
-        </h4>
+        <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Documents ({docs.length})</h4>
         {docs.length === 0 ? (
           <div className="text-center py-8 text-zinc-600">
             <FileText className="h-8 w-8 mx-auto mb-2 opacity-30" />
@@ -155,125 +193,163 @@ export function KnowledgeSection() {
         )}
       </div>
 
-      {/* Search Strategy */}
-      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-        <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Search Strategy</h4>
-        <p className="text-[10px] text-zinc-600 mb-3">How AI searches for products when answering customer questions.</p>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { id: "mongodb", label: "MongoDB", desc: "Exact match on structured data", icon: Database },
-            { id: "qdrant", label: "Qdrant", desc: "Vector/semantic search", icon: Search },
-            { id: "hybrid", label: "Hybrid", desc: "MongoDB + Qdrant combined", icon: Layers },
-          ].map((opt) => (
-            <button key={opt.id} onClick={async () => {
-              setSearchMode(opt.id);
-              setSavingMode(true);
-              try {
-                const { getSession } = await import("next-auth/react");
-                const session = await getSession();
-                const token = session?.user?.backendToken;
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"}/admin/settings/${shopId}/bot`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-                  body: JSON.stringify({ aiConfig: { searchMode: opt.id } }),
-                });
-              } catch (e) { console.error(e); }
-              setSavingMode(false);
-            }}
-              className={cn(
-                "flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs transition-all",
-                searchMode === opt.id
-                  ? "bg-blue-600/20 border-blue-500/40 text-blue-300"
-                  : "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06]"
-              )}
-            >
-              <opt.icon className="h-4 w-4" />
-              <span className="font-medium">{opt.label}</span>
-              <span className="text-[9px] text-center leading-tight opacity-70">{opt.desc}</span>
-              {savingMode && searchMode === opt.id && <span className="text-[9px] text-blue-400 animate-pulse">Saving...</span>}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Advanced Config */}
-      <div className="border-t border-white/[0.04] pt-4">
+      {/* ── Advanced Config ── */}
+      <div className="border-t border-white/[0.04] pt-3">
         <button onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center gap-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
-        >
+          className="flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-300 transition-colors w-full py-2">
           <Settings className="h-3.5 w-3.5" />
-          Advanced Config
-          <ChevronDown className={cn("h-3 w-3 transition-transform", showAdvanced && "rotate-180")} />
+          <span className="font-medium">Advanced Config</span>
+          <ChevronDown className={cn("h-3 w-3 ml-auto transition-transform", showAdvanced && "rotate-180")} />
         </button>
-        {showAdvanced && (
-          <div className="mt-3 p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] space-y-4">
-            {/* Processing Pipeline */}
-            <div>
-              <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Processing Pipeline</h5>
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-blue-500/60" />
-                  <span>1. User message → Intent Detection (product/policy/greeting)</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-blue-500/60" />
-                  <span>2. Filter Extractor → Parse category, price, attributes từ câu hỏi</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-purple-500/60" />
-                  <span>3. Hybrid Search: MongoDB trước (exact match) → Qdrant sau (vector fallback)</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-purple-500/60" />
-                  <span>4. Dedup + Combine results từ cả 2 nguồn</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
-                  <span>5. Inject context + Query → LLM generates response</span>
-                </div>
-              </div>
-            </div>
 
-            {/* Current Config */}
-            <div>
-              <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Current Config</h5>
-              <div className="grid grid-cols-2 gap-2 text-[10px]">
-                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
-                  <span className="text-zinc-600">Embedding</span>
-                  <p className="text-zinc-300 font-medium">Gemini text-embedding-005</p>
+        <AnimatePresence>
+          {showAdvanced && (
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+              <div className="pt-4 space-y-5">
+                
+                {/* 1. Search Strategy */}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <Search className="h-3 w-3" /> Search Strategy
+                    {isFree && <span className="text-[8px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400">Free: choose 1</span>}
+                  </h5>
+                  <div className="grid grid-cols-3 gap-2">
+                    {SEARCH_OPTIONS.map((opt) => {
+                      const locked = opt.tier !== "free" && isFree;
+                      const active = searchMode === opt.id;
+                      return (
+                        <button key={opt.id} onClick={() => !locked && handleSearchMode(opt.id)}
+                          className={cn(
+                            "flex flex-col items-center gap-1 p-3 rounded-xl border text-xs transition-all relative",
+                            active ? "bg-blue-600/20 border-blue-500/40 text-blue-300" : locked ? "bg-white/[0.01] border-white/[0.04] text-zinc-700 cursor-not-allowed" : "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:text-zinc-300"
+                          )}>
+                          {locked && <Lock className="h-3 w-3 text-zinc-700 absolute top-1.5 right-1.5" />}
+                          <opt.icon className="h-4 w-4" />
+                          <span className="font-medium">{opt.label}</span>
+                          <span className="text-[9px] text-center opacity-70">{opt.desc}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {isFree && searchMode === "hybrid" && (
+                    <div className="mt-2">
+                      <UpgradePrompt feature="Hybrid Search (MongoDB + Qdrant)" />
+                    </div>
+                  )}
                 </div>
-                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
-                  <span className="text-zinc-600">Vector DB</span>
-                  <p className="text-zinc-300 font-medium">Qdrant (Cloud)</p>
-                </div>
-                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
-                  <span className="text-zinc-600">Retrieval</span>
-                  <p className="text-zinc-300 font-medium">Hybrid (MongoDB + Qdrant)</p>
-                </div>
-                <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
-                  <span className="text-zinc-600">Chunk Size</span>
-                  <p className="text-zinc-300 font-medium">~1000 chars (150 overlap)</p>
-                </div>
-              </div>
-            </div>
 
-            {/* Document stats */}
-            {docs.length > 0 && (
-              <div>
-                <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Document Stats</h5>
-                <div className="text-[10px] text-zinc-600 space-y-1">
-                  <p>Total documents: {docs.length}</p>
-                  <p>Indexed: {docs.filter((d: any) => d.status === "INDEXED").length}</p>
-                  <p>Pending: {docs.filter((d: any) => d.status !== "INDEXED").length}</p>
+                {/* 2. Storage Engine */}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <Database className="h-3 w-3" /> Storage Engine
+                  </h5>
+                  <div className="grid grid-cols-3 gap-2">
+                    {STORAGE_ENGINES.map((eng) => (
+                      <div key={eng.id} className={cn(
+                        "flex flex-col items-center gap-1 p-3 rounded-xl border text-xs",
+                        eng.status === "active" ? "bg-green-600/10 border-green-500/20 text-green-400" :
+                        eng.status === "available" ? "bg-white/[0.03] border-white/[0.06] text-zinc-500" :
+                        "bg-white/[0.01] border-white/[0.04] text-zinc-700"
+                      )}>
+                        <eng.icon className="h-4 w-4" />
+                        <span className="font-medium">{eng.name}</span>
+                        <span className="text-[9px] text-center opacity-70">{eng.desc}</span>
+                        <span className={cn("text-[8px] font-bold mt-0.5",
+                          eng.status === "active" ? "text-green-500" : eng.status === "available" ? "text-blue-400" : "text-zinc-600")}>
+                          {eng.status === "active" ? "✅ Active" : eng.status === "available" ? "🔌 Available" : "📅 Planned"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
 
-            <p className="text-[9px] text-zinc-700 italic">
-              Advanced config (chunk size, retrieval strategy, embedding model) can be customized in future updates.
-            </p>
-          </div>
-        )}
+                {/* 3. Retrieval Strategy */}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <Zap className="h-3 w-3" /> Retrieval Strategy
+                    {isFree && <span className="text-[8px] px-1 py-0.5 rounded bg-amber-600/20 text-amber-400">Basic RAG only</span>}
+                  </h5>
+                  <div className="grid grid-cols-2 gap-2">
+                    {filteredRetrieval.map((strat) => {
+                      const locked = strat.tier !== "free" && isFree && strat.id !== "basic_rag";
+                      const active = retrievalMode === strat.id;
+                      return (
+                        <button key={strat.id} onClick={() => !locked && handleRetrieval(strat.id)}
+                          className={cn(
+                            "flex items-center gap-3 p-3 rounded-xl border text-xs transition-all",
+                            active ? "bg-purple-600/20 border-purple-500/40 text-purple-300" :
+                            locked ? "bg-white/[0.01] border-white/[0.04] text-zinc-700 cursor-not-allowed" :
+                            "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:text-zinc-300"
+                          )}>
+                          <strat.icon className="h-4 w-4 shrink-0" />
+                          <div className="text-left">
+                            <p className="font-medium">{strat.name}</p>
+                            <p className="text-[9px] opacity-70">{strat.desc}</p>
+                          </div>
+                          {locked && <Lock className="h-3 w-3 text-zinc-700 shrink-0 ml-auto" />}
+                          {active && <span className="text-[9px] text-purple-400 shrink-0 ml-auto">Active</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {isFree && (
+                    <div className="mt-3 flex items-center gap-2 text-[10px] text-zinc-600 bg-amber-500/5 border border-amber-500/10 rounded-lg px-3 py-2">
+                      <Lock className="h-3 w-3 text-amber-500 shrink-0" />
+                      <span>Free plan: Naive RAG only. Upgrade to Starter+ for GraphRAG, LightRAG, Advanced RAG.</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* 4. Embedding Config (read-only for now) */}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <Cpu className="h-3 w-3" /> Embedding
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                      <span className="text-zinc-600">Provider</span>
+                      <p className="text-zinc-300 font-medium">Google Gemini</p>
+                    </div>
+                    <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                      <span className="text-zinc-600">Model</span>
+                      <p className="text-zinc-300 font-medium">text-embedding-005</p>
+                    </div>
+                    <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                      <span className="text-zinc-600">Chunk Size</span>
+                      <p className="text-zinc-300 font-medium">~1000 chars (150 overlap)</p>
+                    </div>
+                    <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                      <span className="text-zinc-600">Vector DB</span>
+                      <p className="text-zinc-300 font-medium">Qdrant Cloud</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5. Usage Stats */}
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+                  <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <BarChart3 className="h-3 w-3" /> Today's Usage
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                      <span className="text-zinc-600">DB Queries</span>
+                      <p className="text-zinc-300 font-medium">
+                        - / {isFree ? "100" : "∞"}
+                        {isFree && <span className="text-[9px] text-amber-500 ml-1">(free limit)</span>}
+                      </p>
+                    </div>
+                    <div className="px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.04]">
+                      <span className="text-zinc-600">Vector Searches</span>
+                      <p className="text-zinc-300 font-medium">- / ∞</p>
+                    </div>
+                  </div>
+                  {saving && <p className="text-[10px] text-blue-400 mt-2 animate-pulse">Saving config...</p>}
+                </div>
+
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

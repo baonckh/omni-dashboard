@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Package, Plus, Search, Folder, ChevronRight } from "lucide-react";
+import { Package, Plus, Search, Folder, ChevronRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useShopId } from "@/lib/use-shop";
 import { api } from "@/lib/api";
@@ -57,6 +57,14 @@ export default function ProductsPage() {
   useEffect(() => {
     if (shopId) fetchProducts();
   }, [shopId, fetchProducts]);
+
+  const toggleAiEnabled = async (product: Product) => {
+    const newVal = product.aiEnabled !== false ? false : true;
+    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, aiEnabled: newVal } : p));
+    try {
+      await api.put(`/admin/products/${shopId}/${product.product_code}`, { aiEnabled: newVal }, { shop_id: shopId });
+    } catch { setProducts(prev => prev.map(p => p.id === product.id ? { ...p, aiEnabled: !newVal } : p)); }
+  };
 
   const categories = useMemo(() => {
     const map = new Map<string, number>();
@@ -205,6 +213,16 @@ export default function ProductsPage() {
                   <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-white/[0.04] text-neutral-400 border border-white/[0.06]">
                     {product.category || "Uncategorized"}
                   </span>
+                  <button onClick={(e) => { e.stopPropagation(); toggleAiEnabled(product); }}
+                    className={cn(
+                      "ml-auto flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold transition-all",
+                      product.aiEnabled !== false
+                        ? "bg-blue-600/15 text-blue-400 border border-blue-500/20"
+                        : "bg-zinc-800/50 text-zinc-600 border border-zinc-800"
+                    )}>
+                    <Sparkles className="h-2.5 w-2.5" />
+                    AI {product.aiEnabled !== false ? "ON" : "OFF"}
+                  </button>
                 </div>
 
                 <div className="mt-3 flex items-end justify-between">

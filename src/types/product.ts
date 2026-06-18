@@ -25,6 +25,7 @@ export interface Product {
   images?: string[];
   variant_defs?: VariantDef[];
   variants?: Variant[];
+  aiEnabled?: boolean; // Whether this product is searchable by AI
   updated_at: string;
 }
 

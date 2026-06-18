@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Save, Trash2, Plus, X } from "lucide-react";
+import { Save, Trash2, Plus, X, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useShopId } from "@/lib/use-shop";
 import { api } from "@/lib/api";
@@ -62,6 +62,7 @@ export default function ProductDetailPage({
     images: [],
     variant_defs: [],
     variants: [],
+    aiEnabled: true,
     updated_at: "",
   });
   const [loading, setLoading] = useState(true);
@@ -85,6 +86,7 @@ export default function ProductDetailPage({
         category: res.category || "",
         description: res.description || "",
         images: res.images || [],
+        aiEnabled: res.aiEnabled !== false,
         variant_defs: res.variant_defs || [],
         variants: res.variants || [],
         updated_at: res.updated_at || "",
@@ -112,6 +114,7 @@ export default function ProductDetailPage({
         category: product.category,
         description: product.description,
         images: product.images || [],
+        aiEnabled: product.aiEnabled,
         variant_defs: product.variant_defs || [],
         variants: product.variants || [],
       };
@@ -286,6 +289,25 @@ export default function ProductDetailPage({
                   placeholder="e.g. T-shirts, Electronics"
                   className={inputCls}
                 />
+              </div>
+              {/* AI Toggle */}
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-blue-400" />
+                  <div>
+                    <p className="text-xs font-medium text-white">AI Searchable</p>
+                    <p className="text-[10px] text-zinc-600">Product appears in AI search results</p>
+                  </div>
+                </div>
+                <button onClick={() => setProduct({ ...product, aiEnabled: product.aiEnabled !== false ? false : true })}
+                  className={cn(
+                    "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
+                    product.aiEnabled !== false
+                      ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
+                      : "bg-zinc-800/50 text-zinc-600 border border-zinc-800"
+                  )}>
+                  {product.aiEnabled !== false ? "🟢 ON" : "⚪ OFF"}
+                </button>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

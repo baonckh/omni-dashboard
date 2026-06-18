@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { BookOpen, Upload, Globe, Trash2, FileText, ChevronDown, Settings } from "lucide-react";
+import { BookOpen, Upload, Globe, Trash2, FileText, ChevronDown, Settings, Database, Search, Layers } from "lucide-react";
 import { useShopId } from "@/lib/use-shop";
-import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings } from "@/lib/api";
+import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings, updateBotSettings } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export function KnowledgeSection() {
@@ -14,9 +14,15 @@ export function KnowledgeSection() {
   const [ingesting, setIngesting] = useState(false);
   const [ingestMode, setIngestMode] = useState<"text" | "web" | "file">("text");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [searchMode, setSearchMode] = useState<string>("hybrid");
+  const [savingMode, setSavingMode] = useState(false);
 
   useEffect(() => {
     listKnowledgeDocs(shopId).then((d) => { if (Array.isArray(d)) setDocs(d); }).catch(() => {});
+    fetchBotSettings(shopId).then((s) => {
+      const aiConfig = s?.aiConfig as any;
+      if (aiConfig?.searchMode) setSearchMode(aiConfig.searchMode);
+    }).catch(() => {});
   }, []);
 
   const reload = async () => {
@@ -62,8 +68,8 @@ export function KnowledgeSection() {
       <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
         <div className="flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-blue-400" />
-          <h3 className="text-sm font-bold text-white">Knowledge</h3>
-          <span className="text-[10px] text-zinc-600">— AI tự động xử lý tài liệu</span>
+          <h3 className="text-sm font-bold text-white">Documents & Policies</h3>
+          <span className="text-[10px] text-zinc-600">— AI uses these to answer policy questions</span>
         </div>
 
         {/* Tab: Text | Web | File */}
@@ -149,7 +155,48 @@ export function KnowledgeSection() {
         )}
       </div>
 
-      {/* Advanced toggle — collapsed by default */}
+      {/* Search Strategy */}
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+        <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Search Strategy</h4>
+        <p className="text-[10px] text-zinc-600 mb-3">How AI searches for products when answering customer questions.</p>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: "mongodb", label: "MongoDB", desc: "Exact match on structured data", icon: Database },
+            { id: "qdrant", label: "Qdrant", desc: "Vector/semantic search", icon: Search },
+            { id: "hybrid", label: "Hybrid", desc: "MongoDB + Qdrant combined", icon: Layers },
+          ].map((opt) => (
+            <button key={opt.id} onClick={async () => {
+              setSearchMode(opt.id);
+              setSavingMode(true);
+              try {
+                const { getSession } = await import("next-auth/react");
+                const session = await getSession();
+                const token = session?.user?.backendToken;
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"}/admin/settings/${shopId}/bot`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                  body: JSON.stringify({ aiConfig: { searchMode: opt.id } }),
+                });
+              } catch (e) { console.error(e); }
+              setSavingMode(false);
+            }}
+              className={cn(
+                "flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs transition-all",
+                searchMode === opt.id
+                  ? "bg-blue-600/20 border-blue-500/40 text-blue-300"
+                  : "bg-white/[0.03] border-white/[0.06] text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06]"
+              )}
+            >
+              <opt.icon className="h-4 w-4" />
+              <span className="font-medium">{opt.label}</span>
+              <span className="text-[9px] text-center leading-tight opacity-70">{opt.desc}</span>
+              {savingMode && searchMode === opt.id && <span className="text-[9px] text-blue-400 animate-pulse">Saving...</span>}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Advanced Config */}
       <div className="border-t border-white/[0.04] pt-4">
         <button onClick={() => setShowAdvanced(!showAdvanced)}
           className="flex items-center gap-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
@@ -165,24 +212,24 @@ export function KnowledgeSection() {
               <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Processing Pipeline</h5>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
-                  <span>1. Raw text ingestion → Document store (MongoDB)</span>
+                  <span className="w-2 h-2 rounded-full bg-blue-500/60" />
+                  <span>1. User message → Intent Detection (product/policy/greeting)</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-blue-500/60" />
+                  <span>2. Filter Extractor → Parse category, price, attributes từ câu hỏi</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-purple-500/60" />
+                  <span>3. Hybrid Search: MongoDB trước (exact match) → Qdrant sau (vector fallback)</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
+                  <span className="w-2 h-2 rounded-full bg-purple-500/60" />
+                  <span>4. Dedup + Combine results từ cả 2 nguồn</span>
                 </div>
                 <div className="flex items-center gap-2 text-[10px] text-zinc-600">
                   <span className="w-2 h-2 rounded-full bg-green-500/60" />
-                  <span>2. Text chunking (sliding window, overlap 10%)</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
-                  <span>3. Embedding via configured provider → Vector DB (Qdrant)</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
-                  <span>4. Retrieval: Semantic search (cosine similarity, top-K)</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-                  <span className="w-2 h-2 rounded-full bg-green-500/60" />
-                  <span>5. RAG: Inject chunks as context → LLM generates response</span>
+                  <span>5. Inject context + Query → LLM generates response</span>
                 </div>
               </div>
             </div>
@@ -201,11 +248,11 @@ export function KnowledgeSection() {
                 </div>
                 <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                   <span className="text-zinc-600">Retrieval</span>
-                  <p className="text-zinc-300 font-medium">Basic RAG (Top-5)</p>
+                  <p className="text-zinc-300 font-medium">Hybrid (MongoDB + Qdrant)</p>
                 </div>
                 <div className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.04]">
                   <span className="text-zinc-600">Chunk Size</span>
-                  <p className="text-zinc-300 font-medium">~512 tokens</p>
+                  <p className="text-zinc-300 font-medium">~1000 chars (150 overlap)</p>
                 </div>
               </div>
             </div>

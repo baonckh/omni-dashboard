@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Sidebar } from "./Sidebar";
 import { NotificationBell } from "./NotificationBell";
 import { Store, ChevronDown, Check, Plus, Sparkles, BarChart3, ShoppingBag, Bot, ExternalLink } from "lucide-react";
-import { getPlan } from "@/lib/plans";
+import { fetchPlans, type PlanLimits } from "@/lib/plans";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
@@ -39,8 +39,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const shops = user?.shops || [];
   const currentShopId = user?.shopId || "";
   const userPlan = user?.plan || "free";
-  const planLimits = getPlan(userPlan);
+  const [planLimits, setPlanLimits] = useState<PlanLimits>({ maxShops: 0, maxBots: 0, maxProducts: 0, maxConversationsPerMonth: 0, analyticsDays: 0, features: [] });
   const canCreateNewShop = shops.length < planLimits.maxShops;
+  useEffect(() => { fetchPlans().then(plans => { const p = plans[userPlan]; if (p) setPlanLimits(p); }); }, [userPlan]);
   const planLabel = PLAN_LABELS[userPlan] || userPlan;
 
   // Fetch real usage from API

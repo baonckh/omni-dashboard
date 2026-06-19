@@ -9,7 +9,7 @@ import {
 import { useShopId } from "@/lib/use-shop";
 import { useSession } from "next-auth/react";
 import { getPlanSync } from "@/lib/plans";
-import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings, updateBotSettings, confirmProducts } from "@/lib/api";
+import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings, updateBotSettings, confirmProducts, createPolicy } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const SEARCH_OPTIONS = [
@@ -43,7 +43,7 @@ export function KnowledgeSection() {
   const [webUrl, setWebUrl] = useState("");
   const [ingesting, setIngesting] = useState(false);
   const [ingestMode, setIngestMode] = useState<"text" | "web" | "file">("text");
-  const [docType, setDocType] = useState<"products" | "policies" | "knowledge">("knowledge");
+  const [docType, setDocType] = useState<"products" | "policies">("products");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [searchMode, setSearchMode] = useState<string>("mongodb");
   const [retrievalMode, setRetrievalMode] = useState<string>("basic_rag");
@@ -186,9 +186,25 @@ export function KnowledgeSection() {
           await confirmProducts(shopId, parsed.products, false);
         }
       } else if (docType === "policies") {
-        // Policies: parse CSV → create policies (future)
+        // Policies: parse CSV → create each policy
         const text = await file.text();
-        await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload" });
+        const lines = text.split("\n").filter(l => l.trim());
+        if (lines.length > 1) {
+          const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
+          const titleIdx = headers.findIndex(h => h.includes("tiêu") || h.includes("title") || h.includes("tên") || h.includes("name"));
+          const contentIdx = headers.findIndex(h => h.includes("nội") || h.includes("content") || h.includes("mô") || h.includes("desc"));
+          const tagsIdx = headers.findIndex(h => h.includes("tag") || h.includes("từ khóa") || h.includes("keyword") || h.includes("label"));
+          for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ""));
+            const title = cols[titleIdx] || `Policy ${i}`;
+            const content = cols[contentIdx] || cols[titleIdx] || "";
+            const tags = tagsIdx >= 0 ? cols[tagsIdx]?.split(/[;,|]/).map(t => t.trim()).filter(Boolean) : [];
+            if (content) await createPolicy(shopId, title, content, tags);
+          }
+        } else {
+          // Single text → create one policy
+          await createPolicy(shopId, file.name, text);
+        }
       } else {
         // Knowledge: existing behavior
         const text = await file.text();
@@ -247,18 +263,18 @@ export function KnowledgeSection() {
           <div className="space-y-3">
             {/* Document type selector */}
             <div className="flex gap-1 p-0.5 bg-white/[0.03] border border-white/[0.06] rounded-xl w-fit">
-              {(["knowledge", "products", "policies"] as const).map((type) => (
+              {(["products", "policies"] as const).map((type) => (
                 <button key={type} onClick={() => setDocType(type)}
                   className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
                     docType === type ? "bg-emerald-600 text-white" : "text-zinc-500 hover:text-white")}>
-                  {type === "knowledge" ? "📄 Kiến thức" : type === "products" ? "📦 Sản phẩm" : "📋 Chính sách"}
+                  {type === "products" ? "📦 Sản phẩm" : "📋 Chính sách"}
                 </button>
               ))}
             </div>
             <label className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-white/[0.08] rounded-xl cursor-pointer hover:border-blue-500/30 transition-colors">
               <FileText className="h-8 w-8 text-zinc-600 mb-2" />
-              <p className="text-sm text-zinc-500">{docType === "products" ? "Upload CSV/JSON sản phẩm" : docType === "policies" ? "Upload CSV/TXT chính sách" : "Upload CSV, TXT, PDF"}</p>
-              <input type="file" accept={docType === "products" ? ".csv,.json" : ".csv,.txt,.pdf,.json"} className="hidden" onChange={handleFile} />
+              <p className="text-sm text-zinc-500">{docType === "products" ? "Upload CSV/JSON sản phẩm" : "Upload CSV/TXT chính sách"}</p>
+              <input type="file" accept={docType === "products" ? ".csv,.json" : ".csv,.json,.txt"} className="hidden" onChange={handleFile} />
             </label>
           </div>
         )}

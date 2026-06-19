@@ -205,12 +205,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </div>
 
                     <Link
-                      href="/pricing"
+                      href="/app/billing"
                       onClick={() => setPlanOpen(false)}
                       className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 transition-all"
                     >
                       <ExternalLink className="h-3 w-3" />
-                      View Plans
+                      Usage & Billing
                     </Link>
                   </div>
                 )}

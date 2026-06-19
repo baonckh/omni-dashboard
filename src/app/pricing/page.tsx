@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Bot, Zap, Mail, Check } from "lucide-react";
+import { Bot, Zap, Mail, Check, Crown } from "lucide-react";
 import { useLang } from "@/lib/i18n";
+import { useSession } from "next-auth/react";
 import BorderBeam from "@/components/BorderBeam";
 import LangToggle from "@/components/LangToggle";
 
@@ -13,11 +14,16 @@ const proFeats = ["pricing.pro_feat1", "pricing.pro_feat2", "pricing.pro_feat3",
 
 export default function PricingPage() {
   const { t, lang } = useLang();
+  const { data: session } = useSession();
+  const currentPlan = session?.user?.plan || null;
+
+  // ponytail: map plan IDs to which pricing card index
+  const currentPlanIndex = currentPlan === "beta" ? 0 : currentPlan === "free" ? 0 : currentPlan === "starter" ? 1 : currentPlan === "pro" ? 2 : -1;
 
   const plans = [
-    { nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "hero.cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },
-    { nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-white/5" },
-    { nameKey: "pricing.pro_name", price: lang === "vi" ? "0đ" : "$0", periodKey: "pricing.pro_period", originalPrice: lang === "vi" ? "499k" : "$20", originalPeriod: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "/register", highlight: true, disabled: false, color: "border-purple-500" },
+    { id: "free", nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "hero.cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },
+    { id: "starter", nameKey: "pricing.starter_name", price: lang === "vi" ? "199k" : "$8", period: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.starter_badge", descKey: "pricing.starter_desc", featKeys: starterFeats, ctaKey: "pricing.starter_cta", ctaLink: "mailto:giabao991199@gmail.com", highlight: false, disabled: true, color: "border-white/5" },
+    { id: "pro", nameKey: "pricing.pro_name", price: lang === "vi" ? "0đ" : "$0", periodKey: "pricing.pro_period", originalPrice: lang === "vi" ? "499k" : "$20", originalPeriod: lang === "vi" ? "/tháng" : "/mo", badgeKey: "pricing.pro_badge", descKey: "pricing.pro_desc", featKeys: proFeats, ctaKey: "pricing.pro_cta", ctaLink: "/register", highlight: true, disabled: false, color: "border-purple-500" },
   ];
 
   return (
@@ -69,6 +75,12 @@ export default function PricingPage() {
               {!plan.highlight && <div className="inline-flex self-start px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium text-zinc-400 mb-2">{t(plan.badgeKey)}</div>}
 
               {plan.highlight && <BorderBeam size={80} duration={4} colorFrom="#A855F7" colorTo="#3B82F6" borderWidth={1.5} />}
+
+              {currentPlanIndex > -1 && plans[currentPlanIndex].id === plan.id && (
+                <div className="absolute top-12 right-4 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[9px] font-bold uppercase tracking-wider">
+                  <Crown className="h-3 w-3" /> Current Plan
+                </div>
+              )}
 
               <h3 className="text-lg font-extrabold text-white mt-2">{t(plan.nameKey)}</h3>
               <div className="mt-3 mb-2">

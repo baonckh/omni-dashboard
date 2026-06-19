@@ -44,18 +44,19 @@ export default function SettingsPage() {
             </p>
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Plan</label>
+            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Current Plan</label>
             <div className="flex items-center gap-2">
               <Crown className="h-4 w-4 text-amber-400" />
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded-full font-bold uppercase",
                 user?.plan === "pro" ? "bg-amber-500/20 text-amber-400 border border-amber-500/20" :
                 user?.plan === "starter" ? "bg-blue-500/20 text-blue-400 border border-blue-500/20" :
-                "bg-green-500/20 text-green-400 border border-green-500/20"
+                user?.plan === "beta" ? "bg-green-500/20 text-green-400 border border-green-500/20" :
+                "bg-zinc-500/20 text-zinc-400 border border-zinc-500/20"
               )}>
-                {user?.plan || "free"}
+                {user?.plan === "beta" ? "Beta MVP" : user?.plan === "pro" ? "Pro" : user?.plan === "starter" ? "Starter" : user?.plan || "Free"}
               </span>
-              <a href="/pricing" className="text-[10px] text-blue-400 hover:underline ml-2">View Plans →</a>
+              <a href="/app/billing" className="text-[10px] text-blue-400 hover:underline ml-2">Usage & Billing →</a>
             </div>
           </div>
         </div>

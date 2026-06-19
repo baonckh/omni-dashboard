@@ -28,7 +28,7 @@ export default function UpgradePrompt({
         Tính năng này yêu cầu gói Pro. Miễn phí trong thời gian Beta — đăng ký ngay!
       </p>
       <Link
-        href="/pricing"
+        href="/app/billing"
         className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg shadow-purple-600/20"
       >
         {t("pricing.pro_cta")} <ArrowRight className="h-3 w-3" />

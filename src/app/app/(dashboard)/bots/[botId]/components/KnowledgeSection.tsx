@@ -221,10 +221,15 @@ export function KnowledgeSection() {
     <div className="space-y-5">
       {/* Upload Card */}
       <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-4">
-        <div className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-blue-400" />
-          <h3 className="text-sm font-bold text-white">Documents & Policies</h3>
-          {isFree && <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500">Naive RAG</span>}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-blue-400" />
+            <h3 className="text-sm font-bold text-white">Documents & Policies</h3>
+            {isFree && <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500">Naive RAG</span>}
+          </div>
+          <a href="/docs/import-guide" target="_blank" className="text-[10px] text-blue-400 hover:underline flex items-center gap-1">
+            Mẫu file chuẩn →
+          </a>
         </div>
 
         <div className="flex gap-1 p-0.5 bg-white/[0.03] border border-white/[0.06] rounded-xl w-fit">
@@ -274,9 +279,6 @@ export function KnowledgeSection() {
             <label className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-white/[0.08] rounded-xl cursor-pointer hover:border-blue-500/30 transition-colors">
               <FileText className="h-8 w-8 text-zinc-600 mb-2" />
               <p className="text-sm text-zinc-500">{docType === "products" ? "Upload CSV/JSON sản phẩm" : "Upload CSV/TXT chính sách"}</p>
-              <p className="text-[10px] text-zinc-600 mt-1">
-                <a href="/docs/import-guide" target="_blank" className="text-blue-400 hover:underline">Xem mẫu file chuẩn →</a>
-              </p>
               <input type="file" accept={docType === "products" ? ".csv,.json" : ".csv,.json,.txt"} className="hidden" onChange={handleFile} />
             </label>
           </div>

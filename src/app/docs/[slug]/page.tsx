@@ -134,7 +134,11 @@ export default function DocDetailPage({ params }: { params: Promise<{ slug: stri
           {content.sections.map((s, i) => (
             <div key={i}>
               <h2 className="text-lg font-bold text-white mb-2">{s.h}</h2>
-              <p className="text-sm text-zinc-400 leading-relaxed">{s.p}</p>
+              {s.p.includes("\n") || s.p.includes("SP00") || s.p.startsWith("[") ? (
+                <pre className="text-sm text-zinc-300 leading-relaxed bg-white/[0.03] border border-white/10 rounded-xl p-4 overflow-x-auto font-mono whitespace-pre-wrap">{s.p}</pre>
+              ) : (
+                <p className="text-sm text-zinc-400 leading-relaxed">{s.p}</p>
+              )}
             </div>
           ))}
         </div>

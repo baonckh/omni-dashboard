@@ -20,7 +20,7 @@ export async function fetchPlans(): Promise<Record<string, PlanLimits>> {
   if (cachePromise) return cachePromise;
 
   cachePromise = (async () => {
-    const res = await fetch(`${API_BASE}/panel-api/plans`);
+    const res = await fetch(`${API_BASE}/plans`);
     const data = await res.json();
     const plans: Record<string, PlanLimits> = {};
     if (data && Array.isArray(data.plans)) {

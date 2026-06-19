@@ -265,6 +265,10 @@ export async function testKey(shopId: string, provider: string, key: string) {
   return api.post(`/admin/knowledge/${shopId}/test-key`, { provider, key });
 }
 
+export async function confirmProducts(shopId: string, products: any[], replace?: boolean) {
+  return api.post(`/admin/products/confirm`, { shop_id: shopId, products, replace });
+}
+
 export async function getUsageStats(shopId: string, from?: string, to?: string) {
   const params: Record<string, string> = {};
   if (from) params.from = from;

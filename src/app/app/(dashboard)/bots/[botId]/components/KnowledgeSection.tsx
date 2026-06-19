@@ -9,7 +9,7 @@ import {
 import { useShopId } from "@/lib/use-shop";
 import { useSession } from "next-auth/react";
 import { getPlanSync } from "@/lib/plans";
-import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings, updateBotSettings } from "@/lib/api";
+import { ingestKnowledge, ingestWebKnowledge, listKnowledgeDocs, deleteKnowledgeDoc, fetchBotSettings, updateBotSettings, confirmProducts } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const SEARCH_OPTIONS = [
@@ -43,6 +43,7 @@ export function KnowledgeSection() {
   const [webUrl, setWebUrl] = useState("");
   const [ingesting, setIngesting] = useState(false);
   const [ingestMode, setIngestMode] = useState<"text" | "web" | "file">("text");
+  const [docType, setDocType] = useState<"products" | "policies" | "knowledge">("knowledge");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [searchMode, setSearchMode] = useState<string>("mongodb");
   const [retrievalMode, setRetrievalMode] = useState<string>("basic_rag");
@@ -170,8 +171,31 @@ export function KnowledgeSection() {
     const file = e.target.files?.[0];
     if (!file) return;
     setIngesting(true);
-    try { const text = await file.text(); await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload" }); await reload(); }
-    catch (e) { console.error(e); }
+    try {
+      if (docType === "products") {
+        // Products: parse via /parse → confirm via /confirm
+        const formData = new FormData();
+        formData.append("file", file);
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+        const parseRes = await fetch(`${apiBase}/admin/knowledge/parse?shop_id=${shopId}`, {
+          method: "POST",
+          body: formData,
+        });
+        const parsed = await parseRes.json();
+        if (parsed?.products?.length > 0 && confirm(`Parsed ${parsed.valid_count} products. Import now?`)) {
+          await confirmProducts(shopId, parsed.products, false);
+        }
+      } else if (docType === "policies") {
+        // Policies: parse CSV → create policies (future)
+        const text = await file.text();
+        await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload" });
+      } else {
+        // Knowledge: existing behavior
+        const text = await file.text();
+        await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload" });
+      }
+      await reload();
+    } catch (e) { console.error(e); }
     setIngesting(false);
   };
 
@@ -220,11 +244,23 @@ export function KnowledgeSection() {
           </div>
         )}
         {ingestMode === "file" && (
-          <label className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-white/[0.08] rounded-xl cursor-pointer hover:border-blue-500/30 transition-colors">
-            <FileText className="h-8 w-8 text-zinc-600 mb-2" />
-            <p className="text-sm text-zinc-500">Click to upload CSV, TXT, PDF</p>
-            <input type="file" accept=".csv,.txt,.pdf" className="hidden" onChange={handleFile} />
-          </label>
+          <div className="space-y-3">
+            {/* Document type selector */}
+            <div className="flex gap-1 p-0.5 bg-white/[0.03] border border-white/[0.06] rounded-xl w-fit">
+              {(["knowledge", "products", "policies"] as const).map((type) => (
+                <button key={type} onClick={() => setDocType(type)}
+                  className={cn("px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                    docType === type ? "bg-emerald-600 text-white" : "text-zinc-500 hover:text-white")}>
+                  {type === "knowledge" ? "📄 Kiến thức" : type === "products" ? "📦 Sản phẩm" : "📋 Chính sách"}
+                </button>
+              ))}
+            </div>
+            <label className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-white/[0.08] rounded-xl cursor-pointer hover:border-blue-500/30 transition-colors">
+              <FileText className="h-8 w-8 text-zinc-600 mb-2" />
+              <p className="text-sm text-zinc-500">{docType === "products" ? "Upload CSV/JSON sản phẩm" : docType === "policies" ? "Upload CSV/TXT chính sách" : "Upload CSV, TXT, PDF"}</p>
+              <input type="file" accept={docType === "products" ? ".csv,.json" : ".csv,.txt,.pdf,.json"} className="hidden" onChange={handleFile} />
+            </label>
+          </div>
         )}
       </div>
 

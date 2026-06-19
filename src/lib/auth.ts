@@ -66,7 +66,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.backendToken) session.user.backendToken = token.backendToken as string;
       if (token.shopId) session.user.shopId = token.shopId as string;
       if (token.id) session.user.id = token.id as string;
-      session.user.plan = (token.plan as string) || "";
+      // ponytail: Beta MVP = Pro. Remove free→pro mapping after Beta ends.
+      const rawPlan = (token.plan as string) || "";
+      session.user.plan = (rawPlan === "free" || rawPlan === "beta" || rawPlan === "") ? "pro" : rawPlan;
       session.user.onboardingComplete = token.onboardingComplete as boolean | undefined;
       return session;
     },

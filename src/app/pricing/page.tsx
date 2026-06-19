@@ -20,8 +20,9 @@ const enterpriseFeats = [
 export default function PricingPage() {
   const { t, lang } = useLang();
   const { data: session } = useSession();
-  // ponytail: Beta MVP = everyone is on Pro
-  const currentPlanId = "pro";
+  // ponytail: Beta MVP = everything except "starter" → Pro. Remove after Beta.
+  const raw = session?.user?.plan;
+  const currentPlanId = (raw === "pro" || raw === "free" || raw === "beta" || !raw) ? "pro" : raw === "starter" ? "starter" : null;
 
   const plans = [
     {

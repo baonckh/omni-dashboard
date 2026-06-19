@@ -17,7 +17,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         name: { label: "Name", type: "hidden" },
       },
       async authorize(credentials) {
-        // ── Google flow: backendToken has been pre-obtained ──
         if (credentials?.password === "__GOOGLE__" && credentials?.backendToken) {
           return {
             id: credentials.userId as string,
@@ -25,11 +24,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: credentials.email as string,
             shopId: credentials.shopId as string,
             backendToken: credentials.backendToken as string,
-            plan: "pro", // Beta MVP = Pro access
+            plan: "", // plan comes from backend only
           };
         }
-
-        // ── Email/Password flow: call backend ──
         if (!credentials?.email || !credentials?.password) return null;
         try {
           const res = await fetch(`${API_BASE}/auth/login`, {
@@ -45,7 +42,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: credentials.email as string,
             shopId: data.shop_id,
             backendToken: data.token,
-            plan: data.plan || data.tier || "pro",
+            plan: data.plan || data.tier || "",
           };
         } catch { return null; }
       },
@@ -60,7 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.backendToken = user.backendToken;
         token.shopId = user.shopId;
         token.id = user.id;
-        token.plan = user.plan || "pro";
+        token.plan = user.plan || "";
         token.onboardingComplete = user.onboardingComplete;
       }
       return token;
@@ -69,7 +66,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.backendToken) session.user.backendToken = token.backendToken as string;
       if (token.shopId) session.user.shopId = token.shopId as string;
       if (token.id) session.user.id = token.id as string;
-      session.user.plan = (token.plan as string) || "pro";
+      session.user.plan = (token.plan as string) || "";
       session.user.onboardingComplete = token.onboardingComplete as boolean | undefined;
       return session;
     },

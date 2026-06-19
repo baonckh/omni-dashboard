@@ -38,7 +38,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const planRef = useRef<HTMLDivElement>(null);
   const shops = user?.shops || [];
   const currentShopId = user?.shopId || "";
-  const userPlan = user?.plan || "free";
+  const userPlan = user?.plan || "";
   const [planLimits, setPlanLimits] = useState<PlanLimits>({ maxShops: 0, maxBots: 0, maxProducts: 0, maxConversationsPerMonth: 0, analyticsDays: 0, features: [] });
   const canCreateNewShop = shops.length < planLimits.maxShops;
   useEffect(() => { fetchPlans().then(plans => { const p = plans[userPlan]; if (p) setPlanLimits(p); }); }, [userPlan]);

@@ -53,7 +53,7 @@ export default function SettingsPage() {
                 user?.plan === "starter" ? "bg-blue-500/20 text-blue-400 border border-blue-500/20" :
                 "bg-zinc-500/20 text-zinc-400 border border-zinc-500/20"
               )}>
-                {user?.plan === "pro" ? "Pro (Beta MVP)" : user?.plan === "starter" ? "Starter" : user?.plan || "Free"}
+                {user?.plan === "pro" ? "Pro (Beta MVP)" : user?.plan === "starter" ? "Starter" : user?.plan || "—"}
               </span>
               <a href="/app/billing" className="text-[10px] text-blue-400 hover:underline ml-2">Usage & Billing →</a>
             </div>

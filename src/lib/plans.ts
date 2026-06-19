@@ -47,7 +47,7 @@ export async function fetchPlans(): Promise<Record<string, PlanLimits>> {
 
 export async function getPlan(plan?: string): Promise<PlanLimits> {
   const plans = await fetchPlans();
-  return plans[plan || "free"] || { maxShops: 0, maxBots: 0, maxProducts: 0, maxConversationsPerMonth: 0, analyticsDays: 0, features: [] };
+  return plans[plan || ""] || { maxShops: 0, maxBots: 0, maxProducts: 0, maxConversationsPerMonth: 0, analyticsDays: 0, features: [] };
 }
 
 // ponytail: no fallback — limits come from backend admin panel only

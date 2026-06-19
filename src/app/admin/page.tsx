@@ -282,7 +282,7 @@ export default function AdminDashboard() {
                         <td className="px-4 py-3 text-xs text-white">{u.email}</td>
                         <td className="px-4 py-3 text-xs text-zinc-300">{u.name || "-"}</td>
                         <td className="px-4 py-3">
-                          <select value={u.plan || "free"} onChange={async (e) => {
+                          <select value={u.plan || ""} onChange={async (e) => {
                             const newPlan = e.target.value;
                             await fetch(`${API_BASE}/panel-api/users/${u._id}/plan`, { method: "PUT", headers: apiHeaders(), body: JSON.stringify({ plan: newPlan }) });
                             loadTabData("users");
@@ -423,13 +423,6 @@ export default function AdminDashboard() {
   );
 }
 
-const DEFAULT_PLANS = [
-  { id: "free", name: "Free", price: 0, period: "forever", maxShops: 2, maxBots: 3, maxProducts: 100, maxConversations: 500, analyticsDays: 7, features: ["multi_agent", "inbox", "product_import_csv", "basic_insights", "leads"] },
-  { id: "starter", name: "Starter", price: 8, period: "/mo", maxShops: 3, maxBots: 10, maxProducts: 500, maxConversations: 3000, analyticsDays: 90, features: ["multi_agent", "inbox", "product_import_csv", "insights", "leads", "telegram_notifications", "email_support", "custom_persona"] },
-  { id: "pro", name: "Pro", price: 20, period: "/mo", maxShops: 999, maxBots: 999, maxProducts: 9999, maxConversations: 999999, analyticsDays: 999, features: ["multi_agent", "inbox", "product_import_csv", "insights", "leads", "telegram_notifications", "webhook", "custom_persona", "ai_provider_choice", "priority_support"] },
-  { id: "enterprise", name: "Enterprise", price: 0, period: "custom", maxShops: 9999, maxBots: 9999, maxProducts: 99999, maxConversations: 999999, analyticsDays: 999, features: ["multi_agent", "inbox", "product_import_csv", "insights", "leads", "telegram_notifications", "webhook", "custom_persona", "ai_provider_choice", "priority_support", "api_access", "dedicated_support"] },
-];
-
 const ALL_FEATURES = [
   { id: "multi_agent", label: "Multi-agent AI" }, { id: "inbox", label: "Unified Inbox" },
   { id: "product_import_csv", label: "Product Import" }, { id: "insights", label: "AI Insights" },
@@ -442,13 +435,13 @@ const ALL_FEATURES = [
 ];
 
 function PlanManager({ apiHeaders, API_BASE }: { apiHeaders: () => Record<string, string>; API_BASE: string }) {
-  const [plans, setPlans] = useState<any[]>(DEFAULT_PLANS);
+  const [plans, setPlans] = useState<any[]>([]);
   const [editing, setEditing] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetch(`${API_BASE}/panel-api/plans`, { headers: apiHeaders() })
-      .then(r => r.json()).then(d => { if (d && Array.isArray(d.plans) && d.plans.length > 0) setPlans(d.plans); }).catch(() => {});
+      .then(r => r.json()).then(d => { if (d && Array.isArray(d.plans)) setPlans(d.plans); }).catch(() => {});
   }, []);
 
   const updatePlan = (id: string, field: string, value: any) => setPlans(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));

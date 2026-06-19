@@ -33,9 +33,9 @@ const RETRIEVAL_STRATEGIES = [
 export function KnowledgeSection() {
   const { data: session } = useSession();
   const shopId = useShopId();
-  const userPlan = session?.user?.plan || "free";
+  const userPlan = session?.user?.plan || "";
   const planLimits = getPlanSync(userPlan);
-  const isFree = userPlan === "free" || userPlan === "beta";
+  const isFree = userPlan === "free";
 
   const [docs, setDocs] = useState<any[]>([]);
   const [title, setTitle] = useState("");

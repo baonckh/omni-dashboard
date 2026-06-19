@@ -57,8 +57,18 @@ export default function PricingPage() {
             <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600"><Zap className="h-3.5 w-3.5 text-white" /></div>
             <span className="font-bold text-base tracking-tight text-white">Omni<span className="text-zinc-500">AI</span></span>
           </Link>
-          <div className="flex items-center gap-2">
-            <Link href="/login" className="text-xs text-zinc-400 hover:text-white transition-colors">{t("hero.login")}</Link>
+          <div className="flex items-center gap-3">
+            {session ? (
+              <Link href="/app/overview"
+                className="flex items-center gap-2 text-xs text-zinc-300 hover:text-white transition-colors">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-[9px] font-bold text-white shrink-0">
+                  {(session.user?.name || "?").charAt(0)}
+                </div>
+                <span className="hidden sm:inline">{session.user?.name || session.user?.email}</span>
+              </Link>
+            ) : (
+              <Link href="/login" className="text-xs text-zinc-400 hover:text-white transition-colors">{t("hero.login")}</Link>
+            )}
             <LangToggle />
           </div>
         </div>

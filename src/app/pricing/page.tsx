@@ -17,8 +17,8 @@ export default function PricingPage() {
   const { data: session } = useSession();
   const currentPlan = session?.user?.plan || null;
 
-  // ponytail: map plan IDs to which pricing card index
-  const currentPlanIndex = currentPlan === "beta" ? 0 : currentPlan === "free" ? 0 : currentPlan === "starter" ? 1 : currentPlan === "pro" ? 2 : -1;
+  // ponytail: beta = Beta MVP = Pro access during MVP
+  const currentPlanIndex = currentPlan === "pro" || currentPlan === "beta" ? 2 : currentPlan === "free" ? 0 : currentPlan === "starter" ? 1 : -1;
 
   const plans = [
     { id: "free", nameKey: "pricing.free_name", price: "0", periodKey: "pricing.free_period", badgeKey: "pricing.free_badge", descKey: "pricing.free_desc", featKeys: freeFeats, ctaKey: "hero.cta", ctaLink: "/register", highlight: false, disabled: false, color: "border-zinc-700" },

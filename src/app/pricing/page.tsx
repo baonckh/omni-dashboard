@@ -44,10 +44,11 @@ const proFeats = [
   "Hỗ trợ ưu tiên",
 ];
 
-function getPlanId(plan?: string): string {
+function getPlanId(plan?: string): string | null {
   if (plan === "pro" || plan === "beta") return "pro";
   if (plan === "starter") return "starter";
-  return "free";
+  if (plan === "free") return "free";
+  return null; // no plan → no badge
 }
 
 export default function PricingPage() {
@@ -137,8 +138,8 @@ export default function PricingPage() {
       </section>
 
       {/* Plans */}
-      <section className="max-w-5xl mx-auto px-5 pb-24">
-        <div className="grid md:grid-cols-4 gap-4">
+      <section className="max-w-7xl mx-auto px-5 pb-24">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           {plans.map((plan, i) => {
             const isCurrent = plan.id === currentPlanId && !!session;
             return (

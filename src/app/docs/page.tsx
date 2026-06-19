@@ -97,6 +97,10 @@ const ARTICLE_CONTENT: Record<string, { vi: { title: string; desc: string }; en:
     vi: { title: "Cấu hình AI cơ bản", desc: "Thiết lập AI Provider (OpenAI, Gemini) trong Settings → AI Providers. Bot sẽ dùng key này để trả lời." },
     en: { title: "Basic AI Setup", desc: "Configure AI Provider (OpenAI, Gemini) in Settings → AI Providers. The bot uses this key to reply." },
   },
+  "import-guide": {
+    vi: { title: "Hướng dẫn chuẩn bị file nhập liệu", desc: "Mẫu CSV/JSON chuẩn cho sản phẩm và chính sách. Tên cột linh hoạt, parser tự động nhận diện." },
+    en: { title: "File Import Guide", desc: "Standard CSV/JSON templates for products and policies. Flexible column naming, auto-detected by parser." },
+  },
   "create-persona": {
     vi: { title: "Tạo AI Persona", desc: "Tạo bot với tính cách riêng: chọn giọng điệu (chuyên nghiệp/thân thiện), thiết lập rules, greeting." },
     en: { title: "Create AI Persona", desc: "Create a bot with custom personality: choose tone (professional/friendly), set rules, greeting." },

@@ -52,6 +52,30 @@ const DOCS_CONTENT: Record<string, {
       { h: "Where to get API Keys?", p: "OpenAI: platform.openai.com/api-keys | Gemini: aistudio.google.com/apikey | OpenRouter: openrouter.ai/keys" },
     ], cta: { label: "Go to Settings", href: "/app/settings" } },
   },
+  "import-guide": {
+    vi: { title: "Hướng dẫn chuẩn bị file nhập liệu", sections: [
+      { h: "Tổng quan", p: "Hệ thống hỗ trợ nhập SẢN PHẨM và CHÍNH SÁCH qua file CSV hoặc JSON. Parser được thiết kế linh hoạt, tự động nhận diện tên cột tiếng Việt/Anh, delimiter (dấu phẩy, chấm phẩy, tab), và định dạng số (có dấu phẩy, ký tự tiền tệ)." },
+      { h: "📦 File sản phẩm mẫu", p: "Tối thiểu 3 cột bắt buộc: Mã sản phẩm, Tên sản phẩm, Giá. Tên cột có thể đặt linh hoạt — parser tự hiểu." },
+      { h: "CSV sản phẩm (dấu phẩy)", p: 'Mã sản phẩm,Tên sản phẩm,Giá,Danh mục,Tồn kho,Mô tả\nSP001,Áo thun nam cotton,250000,Thời trang,100,"Chất liệu cotton 100%"\nSP002,Quần jean nữ,350000,Thời trang,50,Quần jean skinny\nSP003,Túi xách da,890000,Phụ kiện,30,"Túi xách da cao cấp, màu đen"' },
+      { h: "CSV sản phẩm (chấm phẩy — Excel Việt Nam)", p: 'Mã sp;Tên sản phẩm;Giá;Loại;Kho\nSP001;Áo thun;250.000;Thời trang;100\nSP002;Quần jean;350.000;Thời trang;50' },
+      { h: "JSON sản phẩm", p: '[\n  {"product_code": "SP001", "name": "Áo thun nam", "price": 250000, "category": "Thời trang", "stock": 100},\n  {"product_code": "SP002", "name": "Quần jean", "price": 350000, "category": "Thời trang", "stock": 50}\n]' },
+      { h: "📋 File chính sách mẫu", p: "Tối thiểu 2 cột: Tiêu đề (title), Nội dung (content). Cột Tags là tuỳ chọn." },
+      { h: "CSV chính sách", p: 'Tiêu đề,Nội dung,Tags\nChính sách đổi trả,"Khách hàng được đổi hàng trong 30 ngày, kèm hóa đơn gốc.",đổi trả;hoàn tiền\nChính sách vận chuyển,"Free ship cho đơn hàng trên 500,000₫ trong nội thành.",vận chuyển;giao hàng\nChính sách bảo hành,"Sản phẩm được bảo hành 12 tháng lỗi nhà sản xuất.",bảo hành;sửa chữa' },
+      { h: "Mẹo", p: "• Dùng UTF-8 (có BOM) để Excel mở được tiếng Việt\n• Nếu có dấu phẩy trong nội dung, bọc cột trong dấu \"...\"\n• File tối đa 10MB, tối đa 1000 sản phẩm/lần\n• Ảnh sản phẩm có thể đặt URL, nhiều ảnh cách nhau bằng dấu |" },
+      { h: "Tên cột được hỗ trợ", p: 'Parser tự nhận diện các tên cột sau (không phân biệt hoa/thường, không dấu):\n\n📦 Sản phẩm:\n- Mã SP: mã, sku, product_code, code, masp, product_id\n- Tên: tên, name, title, ten_sp, product_name\n- Giá: giá, price, gia, dongia\n- Danh mục: danh mục, category, loại, type\n- Tồn kho: tồn kho, stock, quantity, ton_kho\n- Mô tả: mô tả, description, mota, detail\n- Ảnh: hình ảnh, images, image, hinhanh\n\n📋 Chính sách:\n- Tiêu đề: tiêu đề, title, tên, name\n- Nội dung: nội dung, content, mô tả, desc\n- Tags: tags, từ khóa, keyword, label' },
+    ], cta: { label: "Bắt đầu nhập liệu", href: "/app/bots" } },
+    en: { title: "File Import Guide", sections: [
+      { h: "Overview", p: "The system supports importing PRODUCTS and POLICIES via CSV or JSON files. The parser is flexible — it auto-detects Vietnamese/English column names, delimiters (comma, semicolon, tab), and number formats (with commas, currency symbols)." },
+      { h: "📦 Sample Products File", p: "Minimum 3 required columns: Product Code, Name, Price. Column names are flexible — the parser understands them all." },
+      { h: "CSV products (comma)", p: 'Product Code,Name,Price,Category,Stock,Description\nSP001,Cotton T-shirt,250000,Fashion,100,"100% premium cotton"\nSP002,Skinny Jeans,350000,Fashion,50,Skinny fit jeans\nSP003,Leather Bag,890000,Accessories,30,"High-quality leather bag, black"' },
+      { h: "CSV products (semicolon — for Excel)", p: 'Code;Name;Price;Category;Stock\nSP001;T-shirt;250000;Fashion;100\nSP002;Jeans;350000;Fashion;50' },
+      { h: "JSON products", p: '[\n  {"product_code": "SP001", "name": "Cotton T-shirt", "price": 250000, "category": "Fashion", "stock": 100},\n  {"product_code": "SP002", "name": "Jeans", "price": 350000, "category": "Fashion", "stock": 50}\n]' },
+      { h: "📋 Sample Policies File", p: "Minimum 2 columns: Title, Content. Tags column is optional." },
+      { h: "CSV policies", p: 'Title,Content,Tags\nReturn Policy,"Customers can return items within 30 days with original receipt.",return;refund\nShipping Policy,"Free shipping for orders over $50 within the city.",shipping;delivery\nWarranty Policy,"Products are warranted for 12 months against manufacturing defects.",warranty;repair' },
+      { h: "Tips", p: "• Use UTF-8 (with BOM) for Excel compatibility\n• If content contains commas, wrap the column in \"...\"\n• Max file size: 10MB, max 1000 products per batch\n• Product image URLs can be separated by |" },
+      { h: "Supported Column Names", p: 'The parser auto-detects these column names (case-insensitive, diacritic-insensitive):\n\n📦 Products:\n- Code: mã, sku, product_code, code, masp\n- Name: tên, name, title, ten_sp\n- Price: giá, price, gia, dongia\n- Category: danh mục, category, loại\n- Stock: tồn kho, stock, quantity\n- Description: mô tả, description, detail\n- Images: hình ảnh, images, image\n\n📋 Policies:\n- Title: tiêu đề, title, name\n- Content: nội dung, content, description\n- Tags: tags, keyword, label' },
+    ], cta: { label: "Start Importing", href: "/app/bots" } },
+  },
   "create-persona": {
     vi: { title: "Tạo AI Persona", sections: [
       { h: "Vào Bot Config", p: "Vào AI Bots → chọn bot hoặc tạo bot mới." },

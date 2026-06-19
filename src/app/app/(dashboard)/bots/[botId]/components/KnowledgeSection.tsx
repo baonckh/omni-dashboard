@@ -274,6 +274,9 @@ export function KnowledgeSection() {
             <label className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-white/[0.08] rounded-xl cursor-pointer hover:border-blue-500/30 transition-colors">
               <FileText className="h-8 w-8 text-zinc-600 mb-2" />
               <p className="text-sm text-zinc-500">{docType === "products" ? "Upload CSV/JSON sản phẩm" : "Upload CSV/TXT chính sách"}</p>
+              <p className="text-[10px] text-zinc-600 mt-1">
+                <a href="/docs/import-guide" target="_blank" className="text-blue-400 hover:underline">Xem mẫu file chuẩn →</a>
+              </p>
               <input type="file" accept={docType === "products" ? ".csv,.json" : ".csv,.json,.txt"} className="hidden" onChange={handleFile} />
             </label>
           </div>

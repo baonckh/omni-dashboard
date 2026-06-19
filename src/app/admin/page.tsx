@@ -287,7 +287,7 @@ export default function AdminDashboard() {
                             await fetch(`${API_BASE}/panel-api/users/${u._id}/plan`, { method: "PUT", headers: apiHeaders(), body: JSON.stringify({ plan: newPlan }) });
                             loadTabData("users");
                           }} className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-[10px] text-white outline-none focus:border-purple-500/50">
-                            <option value="beta" className="bg-zinc-900">Beta MVP</option>
+                            <option value="pro" className="bg-zinc-900">Pro (Beta MVP)</option>
                             <option value="free" className="bg-zinc-900">Free</option>
                             <option value="starter" className="bg-zinc-900">Starter</option>
                             <option value="pro" className="bg-zinc-900">Pro</option>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Bot, Zap, Mail, Check, Crown } from "lucide-react";
+import { Bot, Zap, Mail, Check, Crown, Building2, ArrowRight } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useSession } from "next-auth/react";
 import BorderBeam from "@/components/BorderBeam";
@@ -118,17 +118,26 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Contact */}
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="mt-12 p-8 rounded-2xl border border-white/5 bg-white/[0.02] text-center"
+        {/* Enterprise Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-6 p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-800/20 to-transparent flex flex-col md:flex-row items-center justify-between gap-6"
         >
-          <h3 className="text-lg font-extrabold text-white mb-2">{t("pricing.contact_title")}</h3>
-          <p className="text-sm text-zinc-500 mb-4">{t("pricing.contact_desc")}</p>
-          <a href="mailto:giabao991199@gmail.com"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-white hover:bg-white/10 transition-all hover:-translate-y-0.5"
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-zinc-700 rounded-2xl">
+              <Building2 className="h-6 w-6 text-zinc-300" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Enterprise</h3>
+              <p className="text-sm text-zinc-500 max-w-md">Giải pháp tùy chỉnh cho doanh nghiệp lớn. Deal giá riêng theo nhu cầu, SLA cam kết, support dedicated.</p>
+            </div>
+          </div>
+          <a href="mailto:giabao991199@gmail.com?subject=Enterprise%20Plan"
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-zinc-200 transition-all hover:-translate-y-0.5"
           >
-            <Mail className="h-4 w-4" />
-            {t("pricing.contact_btn")}
+            Contact Sales <ArrowRight className="h-4 w-4" />
           </a>
         </motion.div>
       </section>

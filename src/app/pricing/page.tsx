@@ -17,17 +17,11 @@ const enterpriseFeats = [
   "enterprise_feat4", "enterprise_feat5", "enterprise_feat6",
 ];
 
-// ponytail: Beta MVP = Pro for everyone. Remove "free" and "" after Beta.
-function getPlanId(plan?: string): string | null {
-  if (plan === "pro" || plan === "beta" || plan === "free" || !plan) return "pro";
-  if (plan === "starter") return "starter";
-  return null;
-}
-
 export default function PricingPage() {
   const { t, lang } = useLang();
   const { data: session } = useSession();
-  const currentPlanId = getPlanId(session?.user?.plan);
+  // ponytail: Beta MVP = everyone is on Pro
+  const currentPlanId = "pro";
 
   const plans = [
     {

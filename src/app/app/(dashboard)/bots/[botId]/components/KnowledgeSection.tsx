@@ -227,8 +227,9 @@ export function KnowledgeSection() {
             <h3 className="text-sm font-bold text-white">Documents & Policies</h3>
             {isFree && <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-500">Naive RAG</span>}
           </div>
-          <a href="/docs/import-guide" target="_blank" className="text-[10px] text-blue-400 hover:underline flex items-center gap-1">
-            Mẫu file chuẩn →
+          <a href="/docs/import-guide" target="_blank"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/15 border border-blue-500/25 text-xs font-bold text-blue-300 hover:bg-blue-600/25 hover:text-blue-200 transition-all">
+            📄 Mẫu file chuẩn
           </a>
         </div>
 

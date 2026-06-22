@@ -2,9 +2,20 @@ import { getSession } from "next-auth/react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
-/** Gets auth headers with backend JWT token */
+/** Generate a unique request ID for tracing */
+function generateRequestId(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return `fe_${crypto.randomUUID().slice(0, 8)}_${Date.now()}`;
+  }
+  return `fe_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
+}
+
+/** Gets auth headers with backend JWT token + request tracing */
 async function getAuthHeaders(): Promise<Record<string, string>> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "X-Request-ID": generateRequestId(),
+  };
 
   try {
     const session = await getSession();

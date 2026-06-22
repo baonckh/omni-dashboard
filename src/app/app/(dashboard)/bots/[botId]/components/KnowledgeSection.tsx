@@ -205,6 +205,14 @@ export function KnowledgeSection() {
           if (updated > 0) msg += `, cập nhật ${updated}`;
           if (failed > 0) msg += `, ${failed} lỗi`;
           msg += ` từ ${file.name}`;
+          // Save a reference document so it shows in the Documents list
+          if (imported > 0 || updated > 0) {
+            await ingestKnowledge(shopId, {
+              title: `📦 ${file.name} (${imported} sp)`,
+              content: `Import từ ${file.name}: ${imported} mới, ${updated} cập nhật`,
+              source: "product_import",
+            });
+          }
           setImportResult({
             type: imported > 0 || updated > 0 ? "success" : "warning",
             message: msg + ` — <a href="/app/products" class="text-blue-400 underline">Xem trong Products →</a>`,
@@ -340,10 +348,29 @@ export function KnowledgeSection() {
           <div className="space-y-1.5">
             {docs.map((doc: any) => (
               <div key={doc.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/[0.02] border border-white/[0.04] group">
-                <FileText className="h-4 w-4 text-zinc-500 shrink-0" />
+                {doc.source === "product_import" ? <span className="text-base shrink-0">📦</span> : <FileText className="h-4 w-4 text-zinc-500 shrink-0" />}
                 <span className="flex-1 text-sm text-zinc-300 truncate">{doc.title}</span>
+                {doc.source === "product_import" && <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-600/10 text-blue-400 border border-blue-500/20">Products</span>}
                 <span className="text-[10px] text-zinc-600">{doc.status === "INDEXED" ? "✅" : "⏳"}</span>
-                <button onClick={() => deleteKnowledgeDoc(shopId, doc.id).then(reload)}
+                <button onClick={async () => {
+                  const isProductImport = doc.source === "product_import";
+                  const delProducts = isProductImport && window.confirm("Xoá luôn sản phẩm đã import? Bấm OK để xoá cả sản phẩm, Cancel để chỉ xoá reference này.");
+                  if (delProducts) {
+                    // Delete all products that came from this file (matched by title)
+                    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+                    const res = await fetch(`${apiBase}/admin/products/${shopId}?limit=9999`, {
+                      headers: session?.user?.backendToken ? { Authorization: `Bearer ${session.user.backendToken}` } : {},
+                    }).then(r => r.json());
+                    for (const p of (res.products || [])) {
+                      await fetch(`${apiBase}/admin/products/${shopId}/${p.product_code}`, {
+                        method: "DELETE",
+                        headers: session?.user?.backendToken ? { Authorization: `Bearer ${session.user.backendToken}` } : {},
+                      }).catch(() => {});
+                    }
+                  }
+                  await deleteKnowledgeDoc(shopId, doc.id);
+                  await reload();
+                }}
                   className="opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 transition-all">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>

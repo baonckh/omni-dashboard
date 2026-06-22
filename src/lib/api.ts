@@ -208,9 +208,9 @@ export async function deleteBot(shopId: string, botId: string) {
 // === PLAYGROUND CHAT ===
 
 export async function playgroundChat(data: {
-  shopId: string;
-  botId?: string;
-  senderId: string;
+  shop_id: string;
+  bot_id?: string;
+  sender_id: string;
   message: string;
   platform?: string;
   provider?: string;

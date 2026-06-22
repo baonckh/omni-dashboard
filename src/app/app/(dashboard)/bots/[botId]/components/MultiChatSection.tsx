@@ -185,9 +185,9 @@ const pendingRef = useRef<string[]>([]);
 
     try {
       const resp = await playgroundChat({ 
-        shopId: shopId, 
-        botId,
-        senderId: session.senderId, 
+        shop_id: shopId, 
+        bot_id: botId,
+        sender_id: session.senderId, 
         message: input, 
         platform: session.platform,
         provider: chatProvider,

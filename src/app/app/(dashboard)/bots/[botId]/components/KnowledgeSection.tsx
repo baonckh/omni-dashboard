@@ -54,6 +54,7 @@ export function KnowledgeSection() {
   const [chunkSize, setChunkSize] = useState<string>("1000");
   const [chunkOverlap, setChunkOverlap] = useState<string>("150");
   const [usage, setUsage] = useState<any>(null);
+  const [importResult, setImportResult] = useState<{ type: string; message: string; ok: boolean } | null>(null);
   const [keyCount, setKeyCount] = useState(0);
 
   // ponytail: names match each provider's GenerateEmbedding backend
@@ -171,48 +172,69 @@ export function KnowledgeSection() {
     const file = e.target.files?.[0];
     if (!file) return;
     setIngesting(true);
+    setImportResult(null);
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
     try {
       if (docType === "products") {
-        // Products: parse via /parse → confirm via /confirm
+        // Agent: parse → auto-import → report
         const formData = new FormData();
         formData.append("file", file);
-        const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
         const parseRes = await fetch(`${apiBase}/admin/knowledge/parse?shop_id=${shopId}`, {
-          method: "POST",
-          body: formData,
+          method: "POST", body: formData,
         });
         const parsed = await parseRes.json();
-        if (parsed?.products?.length > 0 && confirm(`Parsed ${parsed.valid_count} products. Import now?`)) {
-          await confirmProducts(shopId, parsed.products, false);
+        if (!parsed?.products || parsed.products.length === 0) {
+          setImportResult({ type: "error", message: `❌ Không tìm thấy sản phẩm nào trong file.${parsed.errors?.length ? ` (${parsed.errors.length} lỗi)` : ''}`, ok: false });
+        } else {
+          const confirmRes = await confirmProducts(shopId, parsed.products, false);
+          const imported = confirmRes?.inserted ?? 0;
+          const failed = confirmRes?.failed ?? 0;
+          setImportResult({
+            type: imported > 0 ? "success" : "warning",
+            message: imported > 0
+              ? `✅ Agent đã import ${imported} sản phẩm${failed > 0 ? `, ${failed} lỗi` : ''} từ ${file.name}`
+              : `⚠️ Import thất bại. ${failed} sản phẩm lỗi. Xem log để biết chi tiết.`,
+            ok: imported > 0,
+          });
         }
       } else if (docType === "policies") {
-        // Policies: parse CSV → create each policy
+        // Agent: parse CSV → auto-create policies → report
         const text = await file.text();
-        const lines = text.split("\n").filter(l => l.trim());
-        if (lines.length > 1) {
-          const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
-          const titleIdx = headers.findIndex(h => h.includes("tiêu") || h.includes("title") || h.includes("tên") || h.includes("name"));
-          const contentIdx = headers.findIndex(h => h.includes("nội") || h.includes("content") || h.includes("mô") || h.includes("desc"));
-          const tagsIdx = headers.findIndex(h => h.includes("tag") || h.includes("từ khóa") || h.includes("keyword") || h.includes("label"));
-          for (let i = 1; i < lines.length; i++) {
-            const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ""));
-            const title = cols[titleIdx] || `Policy ${i}`;
-            const content = cols[contentIdx] || cols[titleIdx] || "";
-            const tags = tagsIdx >= 0 ? cols[tagsIdx]?.split(/[;,|]/).map(t => t.trim()).filter(Boolean) : [];
-            if (content) await createPolicy(shopId, title, content, tags);
+        const rows = text.split("\n").filter(l => l.trim());
+        let imported = 0, failed = 0;
+        if (rows.length > 1) {
+          const headers = rows[0].split(",").map(h => h.trim().toLowerCase());
+          const ti = headers.findIndex(h => /tiêu|title|tên|name/.test(h));
+          const ci = headers.findIndex(h => /nội|content|mô|desc/.test(h));
+          const tgi = headers.findIndex(h => /tag|từ khóa|keyword|label/.test(h));
+          for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i].split(",").map(c => c.trim().replace(/^"|"$/g, ""));
+            try {
+              await createPolicy(shopId, cols[ti] || `Policy ${i}`, cols[ci] || cols[ti] || "", tgi >= 0 ? cols[tgi]?.split(/[;,|]/).map(t => t.trim()).filter(Boolean) : []);
+              imported++;
+            } catch { failed++; }
           }
         } else {
-          // Single text → create one policy
           await createPolicy(shopId, file.name, text);
+          imported = 1;
         }
+        setImportResult({
+          type: imported > 0 ? "success" : "error",
+          message: `✅ Agent đã import ${imported} chính sách${failed > 0 ? `, ${failed} lỗi` : ''} từ ${file.name}`,
+          ok: imported > 0,
+        });
       } else {
-        // Knowledge: existing behavior
         const text = await file.text();
         await ingestKnowledge(shopId, { title: file.name, content: text, source: "file_upload" });
+        setImportResult({ type: "success", message: `✅ Đã nhập tài liệu: ${file.name}`, ok: true });
       }
       await reload();
-    } catch (e) { console.error(e); }
+    } catch (e: any) {
+      setImportResult({ type: "error", message: `❌ Lỗi: ${e.message || 'Không thể xử lý file'}`, ok: false });
+    }
     setIngesting(false);
+    // Reset file input
+    e.target.value = "";
   };
 
   const filteredRetrieval = RETRIEVAL_STRATEGIES.filter(r => isFree ? r.tier === "free" : true);
@@ -282,6 +304,12 @@ export function KnowledgeSection() {
               <p className="text-sm text-zinc-500">{docType === "products" ? "Upload CSV/JSON sản phẩm" : "Upload CSV/TXT chính sách"}</p>
               <input type="file" accept={docType === "products" ? ".csv,.json" : ".csv,.json,.txt"} className="hidden" onChange={handleFile} />
             </label>
+            {ingesting && <p className="text-xs text-blue-400 animate-pulse text-center">⏳ Agent đang xử lý...</p>}
+            {importResult && (
+              <div className={cn("text-xs px-4 py-2.5 rounded-xl border", importResult.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300" : importResult.type === "warning" ? "bg-amber-500/10 border-amber-500/20 text-amber-300" : "bg-red-500/10 border-red-500/20 text-red-300")}>
+                {importResult.message}
+              </div>
+            )}
           </div>
         )}
       </div>

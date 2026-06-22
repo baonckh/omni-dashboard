@@ -302,7 +302,7 @@ export function KnowledgeSection() {
             <label className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-white/[0.08] rounded-xl cursor-pointer hover:border-blue-500/30 transition-colors">
               <FileText className="h-8 w-8 text-zinc-600 mb-2" />
               <p className="text-sm text-zinc-500">{docType === "products" ? "Upload CSV/JSON sản phẩm" : "Upload CSV/TXT chính sách"}</p>
-              <input type="file" accept={docType === "products" ? ".csv,.json" : ".csv,.json,.txt"} className="hidden" onChange={handleFile} />
+              <input type="file" accept={docType === "products" ? ".csv,.json,.xlsx,.xls" : ".csv,.json,.txt"} className="hidden" onChange={handleFile} />
             </label>
             {ingesting && <p className="text-xs text-blue-400 animate-pulse text-center">⏳ Agent đang xử lý...</p>}
             {importResult && (

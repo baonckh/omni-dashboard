@@ -88,7 +88,7 @@ export default function PricingPage() {
 
       {/* Plans */}
       <section className="max-w-7xl mx-auto px-5 pb-24">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {plans.map((plan, i) => {
             const isCurrent = plan.id === currentPlanId && !!session;
             return (
@@ -102,9 +102,53 @@ export default function PricingPage() {
                 style={{ backgroundColor: "rgba(255,255,255,0.02)", borderColor: plan.highlight ? "rgba(168,85,247,0.4)" : undefined }}
               >
                 {plan.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-[10px] font-bold text-white shadow-lg z-10 whitespace-nowrap">
-                    {t(plan.badgeKey)}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-[9px] md:text-[10px] font-bold text-white shadow-lg z-10 whitespace-nowrap">
+                    {plan.badge}
                   </div>
+                )}
+                {!plan.highlight && (
+                  <div className="inline-flex self-start px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] md:text-[10px] font-medium text-zinc-400 mb-2">{plan.badge}</div>
+                )}
+
+                {plan.highlight && <BorderBeam size={80} duration={4} colorFrom="#A855F7" colorTo="#3B82F6" borderWidth={1.5} />}
+
+                {isCurrent && (
+                  <div className="absolute top-10 md:top-12 right-2 md:right-4 flex items-center gap-1 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[8px] md:text-[9px] font-bold uppercase tracking-wider z-20">
+                    <Crown className="h-2.5 w-2.5 md:h-3 md:w-3" /> {t("pricing.current_badge") || "Current Plan"}
+                  </div>
+                )}
+
+                <h3 className="text-base md:text-lg font-extrabold text-white mt-2">{plan.name}</h3>
+                <div className="mt-2 md:mt-3 mb-2">
+                  {plan.originalPrice && (
+                    <span className="text-sm md:text-lg font-bold text-zinc-600 line-through mr-1 md:mr-2">{plan.originalPrice}<span className="text-xs md:text-sm">{plan.originalPeriod}</span></span>
+                  )}
+                  <span className="text-2xl md:text-3xl font-extrabold text-white">{plan.price}</span>
+                  <span className="text-xs md:text-sm text-zinc-500 ml-1">{plan.period}</span>
+                </div>
+                <p className="text-[11px] md:text-xs text-zinc-500 mb-4 md:mb-6">{plan.desc}</p>
+
+                <ul className="space-y-2 md:space-y-3 mb-6 md:mb-8 flex-1">
+                  {plan.feats.map((feat, fi) => (
+                    <li key={fi} className="flex items-start gap-2 text-sm">
+                      <Check className="h-3.5 w-3.5 md:h-4 md:w-4 text-blue-500 shrink-0 mt-0.5" />
+                      <span className="text-xs md:text-sm text-zinc-300">{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {plan.disabled ? (
+                  <a href={plan.ctaLink} className="block w-full text-center py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold border border-white/10 text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/5 transition-all">
+                    {plan.cta} →
+                  </a>
+                ) : plan.highlight ? (
+                  <Link href={plan.ctaLink} className="block w-full text-center py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg shadow-purple-600/25 active:scale-[0.98]">
+                    {plan.cta}
+                  </Link>
+                ) : (
+                  <Link href={plan.ctaLink} className="block w-full text-center py-2.5 md:py-3 rounded-xl text-xs md:text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all active:scale-[0.98]">
+                    {plan.cta}
+                  </Link>
                 )}
                 {!plan.highlight && (
                   <div className="inline-flex self-start px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium text-zinc-400 mb-2">{t(plan.badgeKey)}</div>

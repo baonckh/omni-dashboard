@@ -219,7 +219,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <div className="p-8">{children}</div>
+        <div className="p-4 md:p-8 pt-16 md:pt-8">{children}</div>
       </main>
     </div>
   );

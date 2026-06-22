@@ -175,14 +175,13 @@ export function KnowledgeSection() {
     setImportResult(null);
     const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
     const token = session?.user?.backendToken;
-    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
     try {
       if (docType === "products") {
         // Agent: parse → auto-import → report
         const formData = new FormData();
         formData.append("file", file);
         const parseRes = await fetch(`${apiBase}/admin/knowledge/parse?shop_id=${shopId}`, {
-          method: "POST", body: formData, headers: authHeaders,
+          method: "POST", body: formData, headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         });
         const parsed = await parseRes.json();
         if (!parsed?.products || parsed.products.length === 0) {

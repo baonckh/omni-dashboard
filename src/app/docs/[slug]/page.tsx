@@ -143,6 +143,20 @@ export default function DocDetailPage({ params }: { params: Promise<{ slug: stri
           ))}
         </div>
 
+        {/* Download sample file if import-guide */}
+        {slug === "import-guide" && (
+          <div className="mt-8 p-4 rounded-xl border border-blue-500/20 bg-blue-600/5 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-bold text-white">{isVI ? "📥 Tải file mẫu" : "📥 Download Sample"}</p>
+              <p className="text-[11px] text-zinc-500">{isVI ? "12 sản phẩm, đa danh mục, format Shopee" : "12 products, multi-category, Shopee format"}</p>
+            </div>
+            <a href="/docs/sample_products_shopee.csv" download
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs font-bold text-white transition-all shrink-0">
+              {isVI ? "Tải CSV" : "Download CSV"}
+            </a>
+          </div>
+        )}
+
         {content.cta && (
           <div className="mt-10 pt-8 border-t border-white/10">
             <Link href={content.cta.href}

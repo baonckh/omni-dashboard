@@ -172,11 +172,11 @@ export default function ProductsPage() {
           <select
             value={selectedCategory || ""}
             onChange={(e) => setSelectedCategory(e.target.value || null)}
-            className="bg-white/5 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-blue-500/50 transition-colors"
+            className="bg-zinc-800 border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-blue-500/50 transition-colors"
           >
-            <option value="">All categories</option>
+            <option value="" className="bg-zinc-900 text-white">All categories</option>
             {categories.map(([cat]) => (
-              <option key={cat} value={cat}>
+              <option key={cat} value={cat} className="bg-zinc-900 text-white">
                 {cat}
               </option>
             ))}

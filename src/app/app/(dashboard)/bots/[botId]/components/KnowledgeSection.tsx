@@ -207,7 +207,7 @@ export function KnowledgeSection() {
           msg += ` từ ${file.name}`;
           setImportResult({
             type: imported > 0 || updated > 0 ? "success" : "warning",
-            message: msg,
+            message: msg + ` — <a href="/app/products" class="text-blue-400 underline">Xem trong Products →</a>`,
             ok: imported > 0 || updated > 0,
           });
         }
@@ -321,7 +321,7 @@ export function KnowledgeSection() {
             {ingesting && <p className="text-xs text-blue-400 animate-pulse text-center">⏳ Agent đang xử lý...</p>}
             {importResult && (
               <div className={cn("text-xs px-4 py-2.5 rounded-xl border", importResult.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-300" : importResult.type === "warning" ? "bg-amber-500/10 border-amber-500/20 text-amber-300" : "bg-red-500/10 border-red-500/20 text-red-300")}>
-                {importResult.message}
+                <span dangerouslySetInnerHTML={{ __html: importResult.message }} />
               </div>
             )}
           </div>

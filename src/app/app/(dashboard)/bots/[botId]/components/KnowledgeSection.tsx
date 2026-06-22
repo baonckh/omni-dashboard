@@ -187,15 +187,28 @@ export function KnowledgeSection() {
         if (!parsed?.products || parsed.products.length === 0) {
           setImportResult({ type: "error", message: `❌ Không tìm thấy sản phẩm nào trong file.${parsed.errors?.length ? ` (${parsed.errors.length} lỗi)` : ''}`, ok: false });
         } else {
-          const confirmRes = await confirmProducts(shopId, parsed.products, false);
+          // First pass: try without overwrite — detect duplicates
+          let confirmRes = await confirmProducts(shopId, parsed.products, { overwrite: false });
+          const hasDups = confirmRes?.duplicates?.length > 0;
+          if (hasDups) {
+            const overwrite = window.confirm(
+              `⚠️ Phát hiện ${confirmRes.duplicates.length} mã sản phẩm đã tồn tại.\nBấm OK để ghi đè (update).\nBấm Cancel để thêm mới (sản phẩm trùng sẽ tự đổi mã).`
+            );
+            // Re-import with user's choice
+            confirmRes = await confirmProducts(shopId, parsed.products, { overwrite });
+          }
           const imported = confirmRes?.inserted ?? 0;
+          const updated = confirmRes?.updated ?? 0;
           const failed = confirmRes?.failed ?? 0;
+          let msg = imported > 0 || updated > 0 ? `✅ Agent đã xử lý` : `⚠️ `;
+          if (imported > 0) msg += ` ${imported} mới`;
+          if (updated > 0) msg += `, cập nhật ${updated}`;
+          if (failed > 0) msg += `, ${failed} lỗi`;
+          msg += ` từ ${file.name}`;
           setImportResult({
-            type: imported > 0 ? "success" : "warning",
-            message: imported > 0
-              ? `✅ Agent đã import ${imported} sản phẩm${failed > 0 ? `, ${failed} lỗi` : ''} từ ${file.name}`
-              : `⚠️ Import thất bại. ${failed} sản phẩm lỗi. Xem log để biết chi tiết.`,
-            ok: imported > 0,
+            type: imported > 0 || updated > 0 ? "success" : "warning",
+            message: msg,
+            ok: imported > 0 || updated > 0,
           });
         }
       } else if (docType === "policies") {

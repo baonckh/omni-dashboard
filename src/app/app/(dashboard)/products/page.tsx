@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Package, Plus, Search, Folder, ChevronRight, Sparkles } from "lucide-react";
+import { Package, Plus, Search, Folder, ChevronRight, Sparkles, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useShopId } from "@/lib/use-shop";
 import { api } from "@/lib/api";
@@ -40,6 +40,15 @@ export default function ProductsPage() {
     }),
     [debouncedSearch, selectedCategory, limit, offset]
   );
+
+  const handleDelete = async (productCode: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("Xoá sản phẩm này?")) return;
+    try {
+      await api.delete(`/admin/products/${shopId}/${productCode}`);
+      fetchProducts();
+    } catch { alert("Xoá thất bại"); }
+  };
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -197,8 +206,12 @@ export default function ProductsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03, duration: 0.25 }}
                 onClick={() => router.push(`/app/products/${product.product_code}`)}
-                className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 text-left hover:bg-white/[0.04] hover:border-white/[0.12] transition-all group"
+                className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 text-left hover:bg-white/[0.04] hover:border-white/[0.12] transition-all group relative"
               >
+                <button onClick={(e) => handleDelete(product.product_code, e)}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/0 hover:bg-red-500/10 text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <h3 className="text-sm font-semibold text-white truncate">

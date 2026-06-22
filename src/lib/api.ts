@@ -276,8 +276,8 @@ export async function testKey(shopId: string, provider: string, key: string) {
   return api.post(`/admin/knowledge/${shopId}/test-key`, { provider, key });
 }
 
-export async function confirmProducts(shopId: string, products: any[], replace?: boolean) {
-  return api.post(`/admin/products/confirm`, { shop_id: shopId, products, replace });
+export async function confirmProducts(shopId: string, products: any[], opts?: { replace?: boolean; overwrite?: boolean }) {
+  return api.post(`/admin/products/confirm`, { shop_id: shopId, products, ...opts });
 }
 
 export async function createPolicy(shopId: string, title: string, content: string, tags?: string[]) {

@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Zap, ChevronRight, ChevronLeft } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { getSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 import { STEPS, emptyOnboardingData, type OnboardingData } from "@/types/onboarding";
 import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
 import StepShop from "@/components/onboarding/StepShop";
@@ -20,11 +20,12 @@ import { completeOnboarding } from "@/lib/use-onboarding";
 export default function OnboardingPage() {
   const { lang } = useLang();
   const router = useRouter();
+  const { update: updateSession } = useSession();
   const [step, setStep] = useState(0);
   const [data, setData] = useState<OnboardingData>(emptyOnboardingData());
   const [saving, setSaving] = useState(false);
 
-  const update = useCallback((partial: Partial<OnboardingData>) => {
+  const updateData = useCallback((partial: Partial<OnboardingData>) => {
     setData(prev => ({ ...prev, ...partial }));
   }, []);
 
@@ -62,9 +63,10 @@ export default function OnboardingPage() {
     await saveToBackend();
     const ok = await completeOnboarding();
     console.log("[ONBOARDING] goToDashboard complete:", ok);
-    // Hard redirect để tránh loop
-    window.location.replace("/app/overview");
-  }, [data]);
+    // Cập nhật session trước khi redirect
+    await updateSession();
+    router.push("/app/overview");
+  }, [data, updateSession, router]);
 
   const handleNext = useCallback(async () => {
     if (step >= STEPS.length - 1) {
@@ -77,16 +79,22 @@ export default function OnboardingPage() {
   const handleSkip = useCallback(async () => {
     if (step >= STEPS.length - 1) {
       await completeOnboarding();
-      window.location.replace("/app/overview");
+      await updateSession();
+      router.push("/app/overview");
       return;
     }
     setStep(s => s + 1);
-  }, [step]);
+  }, [step, updateSession, router]);
 
   const handleSkipAll = useCallback(async () => {
-    await completeOnboarding();
-    window.location.replace("/app/overview");
-  }, []);
+    const ok = await completeOnboarding();
+    if (!ok) {
+      console.error("[ONBOARDING] Skip all failed, staying on page");
+      return;
+    }
+    await updateSession();
+    router.push("/app/overview");
+  }, [updateSession, router]);
 
   const handleBack = useCallback(() => {
     setStep(s => Math.max(0, s - 1));
@@ -138,7 +146,7 @@ export default function OnboardingPage() {
             >
               <CurrentStep
                 data={data}
-                onUpdate={update}
+                onUpdate={updateData}
                 onSkip={handleSkip}
               />
             </motion.div>

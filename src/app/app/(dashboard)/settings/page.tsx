@@ -4,10 +4,12 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import { User, Shield, Users, Mail, Crown, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/lib/i18n";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
   const user = session?.user;
+  const { t } = useLang();
 
   return (
     <div className="max-w-5xl space-y-10 pb-20">
@@ -16,7 +18,7 @@ export default function SettingsPage() {
           <User className="h-8 w-8 text-blue-400" />
           Account Settings
         </h1>
-        <p className="text-neutral-400 mt-1">Thông tin tài khoản và quản lý thành viên.</p>
+        <p className="text-neutral-400 mt-1">{t("settings.subtitle")}</p>
       </div>
 
       {/* Section 1: Profile */}

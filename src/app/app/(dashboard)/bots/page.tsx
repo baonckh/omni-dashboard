@@ -6,9 +6,11 @@ import { fetchBots, saveBot } from "@/lib/api";
 import { Plus, Bot, ChevronRight, Hash } from "lucide-react";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { useShopId } from "@/lib/use-shop";
+import { useLang } from "@/lib/i18n";
 
 export default function BotsListPage() {
   const shopId = useShopId();
+  const { t } = useLang();
   const [bots, setBots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,10 +34,10 @@ export default function BotsListPage() {
     try {
       // Create an empty new bot via POST API (omitting ID forces create on backend logic)
       const res = await saveBot(shopId, "", {
-        botName: "Nhân viên mới",
-        persona: "Chưa có thông tin",
-        tone: "Chuyên nghiệp",
-        greeting: "Xin chào",
+        botName: t("bots.new_bot_name"),
+        persona: t("bots.default_persona"),
+        tone: t("bots.default_tone"),
+        greeting: t("bots.default_greeting"),
         rules: [],
         scenarios: []
       });
@@ -46,13 +48,13 @@ export default function BotsListPage() {
         loadBots();
       }
     } catch (e) {
-      alert("Lỗi khi tạo bot mới!");
+      alert(t("bots.create_error"));
       console.error(e);
     }
   };
 
   if (loading) {
-    return <div className="p-8 text-neutral-400">Đang tải danh sách AI Bots...</div>;
+    return <div className="p-8 text-neutral-400">{t("bots.loading")}</div>;
   }
 
   return (
@@ -63,19 +65,19 @@ export default function BotsListPage() {
             <Bot className="h-8 w-8 text-indigo-500" /> AI Bot Manager
           </h1>
           <p className="text-sm text-neutral-400 mt-2">
-            Quản lý đội ngũ nhân sự Trí Tuệ Nhân Tạo (Agents). Tạo bot bán hàng, CSKH chuyên biệt.
+            {t("bots.subtitle")}
           </p>
         </div>
         <ShimmerButton onClick={handleCreateNew} className="px-6">
-          <Plus className="h-4 w-4 mr-2" /> Tạo Bot Mới
+          <Plus className="h-4 w-4 mr-2" /> {t("bots.create_new")}
         </ShimmerButton>
       </div>
 
       {bots.length === 0 ? (
         <div className="py-24 text-center border border-dashed border-white/10 rounded-[2.5rem] bg-black/40">
            <Bot className="h-12 w-12 text-white/20 mx-auto mb-4" />
-           <p className="text-neutral-500 text-sm">Cửa hàng của bạn chưa có Agent nào hoạt động.</p>
-           <button onClick={handleCreateNew} className="mt-4 text-indigo-400 text-sm hover:text-indigo-300 font-bold">Khởi tạo nhân viên đầu tiên &rarr;</button>
+           <p className="text-neutral-500 text-sm">{t("bots.empty")}</p>
+           <button onClick={handleCreateNew} className="mt-4 text-indigo-400 text-sm hover:text-indigo-300 font-bold">{t("bots.empty_cta")} &rarr;</button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -91,14 +93,14 @@ export default function BotsListPage() {
                   <Bot className="h-6 w-6" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors">{bot.botName || "Unnamed Bot"}</h3>
-                <p className="text-xs text-neutral-500 line-clamp-2 mb-6 flex-1">{bot.persona || "Chưa thiết lập tiểu sử"}</p>
+                <p className="text-xs text-neutral-500 line-clamp-2 mb-6 flex-1">{bot.persona || t("bots.no_persona")}</p>
                 
                 <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
                     <span className="text-[10px] uppercase font-bold text-neutral-600 flex items-center gap-1">
                       <Hash className="h-3 w-3" /> {(bot.scenarios || []).length} Proxy Rules
                     </span>
                     <span className="text-xs font-bold text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
-                        Cấu hình <ChevronRight className="h-4 w-4 ml-1" />
+                        {t("bots.configure")} <ChevronRight className="h-4 w-4 ml-1" />
                     </span>
                 </div>
               </div>

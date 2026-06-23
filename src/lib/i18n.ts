@@ -6,6 +6,8 @@ export type Lang = "vi" | "en";
 
 type Dict = Record<string, string>;
 
+type TFunction = (key: string, params?: Record<string, string | number>) => string;
+
 const vi: Dict = {
   // ── Nav ──
   "nav.login": "Đăng nhập",
@@ -212,6 +214,149 @@ const vi: Dict = {
   "vs.old3_desc": "Sau 2-3 tin nhắn là trả lời lạc đề",
   "vs.old4": "Tốn công đào tạo",
   "vs.old4_desc": "Phải lập trình từng kịch bản thủ công",
+
+  // ── Dashboard ──
+  "dashboard.title": "Dashboard",
+  "dashboard.loading": "Đang tải...",
+  "dashboard.breadcrumb": "Dashboard",
+  "dashboard.create_shop": "Tạo shop mới",
+  "dashboard.creating": "Đang tạo...",
+  "dashboard.limit_reached": "Đã đạt giới hạn ({count} shop)",
+  "dashboard.new_shop_name": "Shop mới",
+  "dashboard.system_status": "System Status: Optimal",
+
+  // ── Overview ──
+  "overview.title": "Dashboard Overview",
+  "overview.welcome": "Chào mừng sếp quay lại! Hệ thống OmniAI đang hoạt động tốt trên mọi nền tảng.",
+  "overview.total_leads": "Total Leads",
+  "overview.conversations": "Conversations",
+  "overview.messages_today": "Messages Today",
+  "overview.active_channels": "Active Channels",
+  "overview.lead_growth": "Lead Growth",
+  "overview.lead_growth_desc": "Thống kê số lượng khách hàng tiềm năng 7 ngày qua",
+  "overview.channel_performance": "Channel Performance",
+  "overview.leads_label": "Leads",
+
+  // ── Bots ──
+  "bots.title": "AI Bot Manager",
+  "bots.subtitle": "Quản lý đội ngũ nhân sự Trí Tuệ Nhân Tạo (Agents). Tạo bot bán hàng, CSKH chuyên biệt.",
+  "bots.create_new": "Tạo Bot Mới",
+  "bots.loading": "Đang tải danh sách AI Bots...",
+  "bots.empty": "Cửa hàng của bạn chưa có Agent nào hoạt động.",
+  "bots.empty_cta": "Khởi tạo nhân viên đầu tiên",
+  "bots.default_badge": "Default 🍁",
+  "bots.unnamed": "Unnamed Bot",
+  "bots.no_persona": "Chưa thiết lập tiểu sử",
+  "bots.proxy_rules": "Proxy Rules",
+  "bots.configure": "Cấu hình",
+  "bots.create_error": "Lỗi khi tạo bot mới!",
+  "bots.new_bot_name": "Nhân viên mới",
+  "bots.default_persona": "Chưa có thông tin",
+  "bots.default_tone": "Chuyên nghiệp",
+  "bots.default_greeting": "Xin chào",
+
+  // ── Settings ──
+  "settings.title": "Account Settings",
+  "settings.subtitle": "Thông tin tài khoản và quản lý thành viên.",
+  "settings.profile": "Profile",
+  "settings.profile_desc": "Thông tin cá nhân và gói dịch vụ.",
+  "settings.name": "Name",
+  "settings.email": "Email",
+  "settings.current_plan": "Current Plan",
+  "settings.usage_billing": "Usage & Billing →",
+  "settings.team_members": "Team Members",
+  "settings.team_desc": "Thêm nhân viên để cùng quản lý bot và hội thoại.",
+  "settings.invite_member": "Invite Member",
+  "settings.owner_badge": "Owner",
+  "settings.team_future": "Tính năng team member sẽ cho phép thêm nhân viên trực chat, phân quyền, và quản lý bot theo nhóm.",
+
+  // ── Channels ──
+  "channels.title": "Channels Management",
+  "channels.subtitle": "Kết nối và quản lý các nền tảng bán hàng của bạn.",
+  "channels.refresh": "Refresh Status",
+  "channels.connect_platform": "Kết nối tài khoản {platform}",
+  "channels.active_connections": "Active Connections",
+  "channels.no_channels": "No active channels. Start by connecting a platform above.",
+  "channels.embed_code": "Embed Code",
+  "channels.copied": "Copied!",
+  "channels.configure": "Configure",
+  "channels.integration_guides": "Integration Guides",
+  "channels.web_widget": "Web Chat Widget",
+  "channels.web_widget_desc": "Nhúng AI vào Website hoặc Landing Page của bạn.",
+  "channels.web_widget_guide": "Copy đoạn code này và dán vào cuối thẻ <body> của website:",
+  "channels.tiktok_title": "TikTok Shop Integration",
+  "channels.shopee_title": "Shopee Integration",
+  "channels.view_detail_guide": "Xem hướng dẫn chi tiết",
+  "channels.expiring_soon": "Expiring Soon",
+
+  // ── Inbox ──
+  "inbox.title": "Inbox",
+  "inbox.search": "Search conversations...",
+  "inbox.no_messages": "No messages",
+  "inbox.auto_bot": "Auto (Bot)",
+  "inbox.manual": "Manual",
+  "inbox.add_tag": "Add Tag",
+  "inbox.ai_engine": "AI Engine",
+  "inbox.you_owner": "You (Owner)",
+  "inbox.ai_monitoring": "AI Monitoring Active",
+  "inbox.auto_tagging": "Auto-Tagging Enabled",
+  "inbox.shift_enter": "Shift + Enter for new line",
+  "inbox.type_message": "Type your message... (Enter to send)",
+  "inbox.your_conversations": "Your Conversations",
+  "inbox.select_convo": "Chọn một hội thoại để bắt đầu quản lý. Hệ thống sẽ tự động gắn nhãn người gửi để sếp dễ dàng theo dõi.",
+  "inbox.view_analytics": "View Analytics",
+  "inbox.customer_details": "Customer Details",
+  "inbox.platform_id": "Platform ID",
+  "inbox.last_seen": "Last Seen",
+  "inbox.view_original": "View Original Page",
+  "inbox.no_customer": "No customer selected",
+  "inbox.ai_context": "AI Context",
+  "inbox.ai_context_desc": "\"Hệ thống đang tự động theo dõi ý định mua hàng. Dữ liệu chat của chủ shop (Human) sẽ được ưu tiên làm mẫu thử cho lần cập nhật AI tới.\"",
+
+  // ── Leads ──
+  "leads.title": "Leads Management",
+  "leads.subtitle": "Quản lý và cập nhật trạng thái các khách hàng tiềm năng.",
+  "leads.search": "Search name or phone...",
+  "leads.customer": "Customer",
+  "leads.phone": "Phone Number",
+  "leads.platform": "Platform",
+  "leads.status": "Status",
+  "leads.actions": "Actions",
+  "leads.unknown_user": "Unknown User",
+  "leads.no_leads": "No leads found. AI is still hunting... 🕵️‍♂️",
+
+  // ── Billing ──
+  "billing.title": "Usage & Billing",
+  "billing.subtitle": "Theo dõi chi phí và mức độ sử dụng Token của các AI Model",
+  "billing.from_date": "Từ ngày",
+  "billing.to_date": "Đến ngày",
+  "billing.refresh": "Làm mới dữ liệu",
+  "billing.total_cost": "Tổng chi phí dự kiến",
+  "billing.total_cost_desc": "Chi phí được tính dựa trên số lượng token in/out thực tế của các provider.",
+  "billing.total_tokens": "Tổng Token Tiêu thụ",
+  "billing.total_tokens_desc": "Bao gồm cả Prompt Token và Completion Token từ tất cả các models.",
+  "billing.top_model": "Model hoạt động nhất",
+  "billing.top_model_desc": "Model chiếm tỷ trọng lớn nhất trong tổng số token tiêu thụ của shop.",
+  "billing.usage_by_model": "Token Usage by Model",
+  "billing.loading_data": "Đang tải dữ liệu...",
+  "billing.no_data": "Chưa có dữ liệu tiêu thụ trong khoảng thời gian này.",
+  "billing.cost_label": "Chi phí",
+  "billing.model_cost_ratio": "Model Cost Ratio",
+  "billing.loading_chart": "Đang tải biểu đồ...",
+  "billing.no_cost_data": "Không có dữ liệu chi phí.",
+  "billing.cost_tip_title": "Mẹo tối ưu chi phí",
+  "billing.cost_tip_desc": "Sử dụng các model nén như <b>text-embedding-3-small</b> hoặc <b>gemini-flash</b> để tiết kiệm tới 90% chi phí trong khi vẫn giữ được độ chính xác trên 95% cho các tác vụ RAG thông thường.",
+
+  // ── Language ──
+  "language.vi": "Tiếng Việt",
+  "language.en": "English",
+
+  // ── Nav ──
+  "nav.overview": "Overview",
+  "nav.inbox": "Inbox",
+  "nav.bots": "AI Bots",
+  "nav.bot_manager": "AI Bot Manager",
+  "nav.logout": "Đăng xuất",
 };
 
 const en: Dict = {
@@ -419,13 +564,156 @@ const en: Dict = {
   "auth.register.name_placeholder": "Your name",
   "auth.register.email_placeholder": "email@example.com",
   "auth.register.password_placeholder": "At least 6 characters",
+
+  // ── Dashboard ──
+  "dashboard.title": "Dashboard",
+  "dashboard.loading": "Loading...",
+  "dashboard.breadcrumb": "Dashboard",
+  "dashboard.create_shop": "Create New Shop",
+  "dashboard.creating": "Creating...",
+  "dashboard.limit_reached": "Limit reached ({count} shop)",
+  "dashboard.new_shop_name": "New Shop",
+  "dashboard.system_status": "System Status: Optimal",
+  
+  // ── Overview ──
+  "overview.title": "Dashboard Overview",
+  "overview.welcome": "Welcome back boss! OmniAI system is running smoothly across all platforms.",
+  "overview.total_leads": "Total Leads",
+  "overview.conversations": "Conversations",
+  "overview.messages_today": "Messages Today",
+  "overview.active_channels": "Active Channels",
+  "overview.lead_growth": "Lead Growth",
+  "overview.lead_growth_desc": "Lead statistics for the last 7 days",
+  "overview.channel_performance": "Channel Performance",
+  "overview.leads_label": "Leads",
+  
+  // ── Bots ──
+  "bots.title": "AI Bot Manager",
+  "bots.subtitle": "Manage your AI Agent workforce. Create sales and CS bots specialized for your business.",
+  "bots.create_new": "Create New Bot",
+  "bots.loading": "Loading AI Bots list...",
+  "bots.empty": "Your store doesn't have any active Agents yet.",
+  "bots.empty_cta": "Initialize your first employee",
+  "bots.default_badge": "Default 🍁",
+  "bots.unnamed": "Unnamed Bot",
+  "bots.no_persona": "No persona configured",
+  "bots.proxy_rules": "Proxy Rules",
+  "bots.configure": "Configure",
+  "bots.create_error": "Error creating new bot!",
+  "bots.new_bot_name": "New Employee",
+  "bots.default_persona": "No info yet",
+  "bots.default_tone": "Professional",
+  "bots.default_greeting": "Hello",
+  
+  // ── Settings ──
+  "settings.title": "Account Settings",
+  "settings.subtitle": "Account information and team management.",
+  "settings.profile": "Profile",
+  "settings.profile_desc": "Personal information and subscription plan.",
+  "settings.name": "Name",
+  "settings.email": "Email",
+  "settings.current_plan": "Current Plan",
+  "settings.usage_billing": "Usage & Billing →",
+  "settings.team_members": "Team Members",
+  "settings.team_desc": "Add staff to manage bots and conversations together.",
+  "settings.invite_member": "Invite Member",
+  "settings.owner_badge": "Owner",
+  "settings.team_future": "Team member feature will let you add chat staff, set permissions, and manage bots by team.",
+  
+  // ── Channels ──
+  "channels.title": "Channels Management",
+  "channels.subtitle": "Connect and manage your sales platforms.",
+  "channels.refresh": "Refresh Status",
+  "channels.connect_platform": "Connect your {platform} account",
+  "channels.active_connections": "Active Connections",
+  "channels.no_channels": "No active channels. Start by connecting a platform above.",
+  "channels.embed_code": "Embed Code",
+  "channels.copied": "Copied!",
+  "channels.configure": "Configure",
+  "channels.integration_guides": "Integration Guides",
+  "channels.web_widget": "Web Chat Widget",
+  "channels.web_widget_desc": "Embed AI into your Website or Landing Page.",
+  "channels.web_widget_guide": "Copy this code and paste it at the end of the <body> tag on your website:",
+  "channels.tiktok_title": "TikTok Shop Integration",
+  "channels.shopee_title": "Shopee Integration",
+  "channels.view_detail_guide": "View detailed guide",
+  "channels.expiring_soon": "Expiring Soon",
+  
+  // ── Inbox ──
+  "inbox.title": "Inbox",
+  "inbox.search": "Search conversations...",
+  "inbox.no_messages": "No messages",
+  "inbox.auto_bot": "Auto (Bot)",
+  "inbox.manual": "Manual",
+  "inbox.add_tag": "Add Tag",
+  "inbox.ai_engine": "AI Engine",
+  "inbox.you_owner": "You (Owner)",
+  "inbox.ai_monitoring": "AI Monitoring Active",
+  "inbox.auto_tagging": "Auto-Tagging Enabled",
+  "inbox.shift_enter": "Shift + Enter for new line",
+  "inbox.type_message": "Type your message... (Enter to send)",
+  "inbox.your_conversations": "Your Conversations",
+  "inbox.select_convo": "Select a conversation to start managing. The system will automatically label senders so you can easily track them.",
+  "inbox.view_analytics": "View Analytics",
+  "inbox.customer_details": "Customer Details",
+  "inbox.platform_id": "Platform ID",
+  "inbox.last_seen": "Last Seen",
+  "inbox.view_original": "View Original Page",
+  "inbox.no_customer": "No customer selected",
+  "inbox.ai_context": "AI Context",
+  "inbox.ai_context_desc": "\"System is automatically tracking purchase intent. Shop owner (Human) chat data will be prioritized as training samples for the next AI update.\"",
+  
+  // ── Leads ──
+  "leads.title": "Leads Management",
+  "leads.subtitle": "Manage and update your potential customer statuses.",
+  "leads.search": "Search name or phone...",
+  "leads.customer": "Customer",
+  "leads.phone": "Phone Number",
+  "leads.platform": "Platform",
+  "leads.status": "Status",
+  "leads.actions": "Actions",
+  "leads.unknown_user": "Unknown User",
+  "leads.no_leads": "No leads found. AI is still hunting... 🕵️‍♂️",
+  
+  // ── Billing ──
+  "billing.title": "Usage & Billing",
+  "billing.subtitle": "Track costs and Token usage of your AI Models.",
+  "billing.from_date": "From Date",
+  "billing.to_date": "To Date",
+  "billing.refresh": "Refresh Data",
+  "billing.total_cost": "Estimated Total Cost",
+  "billing.total_cost_desc": "Cost is calculated based on actual token in/out of all providers.",
+  "billing.total_tokens": "Total Token Consumption",
+  "billing.total_tokens_desc": "Includes both Prompt Token and Completion Token from all models.",
+  "billing.top_model": "Most Active Model",
+  "billing.top_model_desc": "Model with the largest share of total token consumption in your shop.",
+  "billing.usage_by_model": "Token Usage by Model",
+  "billing.loading_data": "Loading data...",
+  "billing.no_data": "No consumption data in this time period.",
+  "billing.cost_label": "Cost",
+  "billing.model_cost_ratio": "Model Cost Ratio",
+  "billing.loading_chart": "Loading chart...",
+  "billing.no_cost_data": "No cost data available.",
+  "billing.cost_tip_title": "Cost Optimization Tip",
+  "billing.cost_tip_desc": "Use compressed models like <b>text-embedding-3-small</b> or <b>gemini-flash</b> to save up to 90% in costs while maintaining over 95% accuracy for standard RAG tasks.",
+  
+  // ── Language ──
+  "language.vi": "Tiếng Việt",
+  "language.en": "English",
+  
+  // ── Nav ──
+  "nav.overview": "Overview",
+  "nav.inbox": "Inbox",
+  "nav.bots": "AI Bots",
+  "nav.bot_manager": "AI Bot Manager",
+  "nav.logout": "Logout",
 };
 
 const translations: Record<Lang, Dict> = { vi, en };
 
 interface LangCtx {
   lang: Lang;
-  t: (key: string) => string;
+  t: TFunction;
   setLang: (l: Lang) => void;
 }
 
@@ -436,11 +724,27 @@ const LangContext = createContext<LangCtx>({
 });
 
 export function LangProvider({ children, initialLang }: { children: React.ReactNode; initialLang?: Lang }) {
-  const [lang, setLang] = useState<Lang>(initialLang || "vi");
-  const t = (key: string): string => translations[lang]?.[key] || translations["vi"]?.[key] || key;
+  const [lang, setLang] = useState<Lang>(() => {
+    // Priority: localStorage > initialLang > "vi"
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("omni-lang") as Lang | null;
+      if (stored === "vi" || stored === "en") return stored;
+    }
+    return initialLang || "vi";
+  });
+  const t: TFunction = (key: string, params?: Record<string, string | number>): string => {
+    let val = translations[lang]?.[key] || translations["vi"]?.[key] || key;
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        val = val.replace(`{${k}}`, String(v));
+      });
+    }
+    return val;
+  };
 
   useEffect(() => {
     document.documentElement.lang = lang;
+    try { localStorage.setItem("omni-lang", lang); } catch {}
   }, [lang]);
 
   return React.createElement(LangContext.Provider, { value: { lang, t, setLang } }, children);

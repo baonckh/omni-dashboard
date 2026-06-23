@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "next-auth/react";
+import { useLang } from "@/lib/i18n";
 import {
   LayoutDashboard,
   Users,
@@ -30,7 +31,6 @@ const navItems = [
   { name: "Channels", href: "/app/channels", icon: Zap },
   { name: "Products", href: "/app/products", icon: Package },
   { name: "Leads", href: "/app/leads", icon: Users },
-  { name: "Insights", href: "/app/insights", icon: BrainCircuit },
   { name: "AI Bots", href: "/app/bots", icon: Bot },
   { name: "API Keys", href: "/app/keys", icon: Key },
   { name: "Usage & Billing", href: "/app/billing", icon: CreditCard },
@@ -43,6 +43,7 @@ export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useLang();
 
   const sidebarContent = (
     <>
@@ -105,7 +106,7 @@ export function Sidebar() {
         >
           <LogOut className="h-5 w-5 shrink-0" />
           {!isCollapsed && (
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="font-medium">Đăng xuất</motion.span>
+            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="font-medium">{t("nav.logout")}</motion.span>
           )}
         </button>
       </div>
@@ -159,7 +160,7 @@ export function Sidebar() {
             <div className="px-3 pb-4">
               <button onClick={() => signOut({ callbackUrl: "/login" })}
                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm text-neutral-500 hover:text-red-400 hover:bg-red-500/5">
-                <LogOut className="h-5 w-5" /> Đăng xuất
+                <LogOut className="h-5 w-5" /> {t("nav.logout")}
               </button>
             </div>
           </aside>

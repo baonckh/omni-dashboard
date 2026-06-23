@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { useLang } from "@/lib/i18n";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
+  const { t } = useLang();
   const checked = useRef(false);
   const [ready, setReady] = useState(false);
 
@@ -44,7 +46,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="h-8 w-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-          <p className="text-sm text-neutral-500 font-medium">Đang tải...</p>
+          <p className="text-sm text-neutral-500 font-medium">{t("dashboard.loading")}</p>
         </div>
       </div>
     );

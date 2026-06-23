@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Sidebar } from "./Sidebar";
 import { NotificationBell } from "./NotificationBell";
-import { Store, ChevronDown, Check, Plus, Sparkles, BarChart3, ShoppingBag, Bot, ExternalLink } from "lucide-react";
+import { Store, ChevronDown, Check, Plus, Sparkles, BarChart3, ShoppingBag, Bot, ExternalLink, Globe } from "lucide-react";
 import { fetchPlans, type PlanLimits } from "@/lib/plans";
+import { useLang } from "@/lib/i18n";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
@@ -30,6 +31,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, update } = useSession();
   const router = useRouter();
   const user = session?.user;
+  const { t, lang, setLang } = useLang();
   const [shopOpen, setShopOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
               const [creating, setCreating] = useState(false);
@@ -96,7 +98,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       const res = await fetch(`${API_BASE}/auth/shops/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${user?.backendToken}` },
-        body: JSON.stringify({ name: "Shop mới" }),
+        body: JSON.stringify({ name: t("dashboard.new_shop_name") }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -118,10 +120,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2 text-sm text-neutral-500">
             <span className="text-white font-medium">OmniAI</span>
             <span className="text-neutral-600">/</span>
-            <span>Dashboard</span>
+            <span>{t("dashboard.breadcrumb")}</span>
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Language Switcher */}
+            <button
+              onClick={() => setLang(lang === "vi" ? "en" : "vi")}
+              className="p-2 hover:bg-white/5 rounded-full transition-colors relative group"
+              title={t("language.switch_language")}
+            >
+              <Globe className="h-5 w-5 text-neutral-400" />
+              <span className="absolute -bottom-1 -right-1 text-[8px] font-bold uppercase bg-blue-600 text-white px-0.5 rounded">
+                {lang}
+              </span>
+            </button>
+
             <NotificationBell />
 
             {/* Shop Switcher */}
@@ -154,7 +168,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     <button onClick={createShop} disabled={creating || !canCreateNewShop}
                       className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50">
                       <Plus className="h-3.5 w-3.5" />
-                      {creating ? "Đang tạo..." : !canCreateNewShop ? `Đã đạt giới hạn (${planLimits.maxShops} shop)` : "Tạo shop mới"}
+                      {creating ? t("dashboard.creating") : !canCreateNewShop ? t("dashboard.limit_reached", { count: planLimits.maxShops }) : t("dashboard.create_shop")}
                     </button>
                   </div>
                 </div>

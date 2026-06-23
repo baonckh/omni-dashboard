@@ -17,11 +17,13 @@ import {
 import { useShopId } from "@/lib/use-shop";
 import { fetchAnalytics } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/lib/i18n";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
   const shopId = useShopId();
+  const { t } = useLang();
 
   useEffect(() => {
     loadData();
@@ -52,11 +54,11 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent">
             Dashboard Overview
           </h1>
-          <p className="text-neutral-500 mt-1">Chào mừng sếp quay lại! Hệ thống OmniAI đang hoạt động tốt trên mọi nền tảng.</p>
+          <p className="text-neutral-500 mt-1">{t("overview.welcome")}</p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-2xl">
           <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs font-medium text-neutral-400">System Status: Optimal</span>
+          <span className="text-xs font-medium text-neutral-400">{t("dashboard.system_status")}</span>
         </div>
       </div>
 
@@ -89,7 +91,7 @@ export default function DashboardPage() {
            <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-lg font-bold">Lead Growth</h3>
-                <p className="text-xs text-neutral-500">Thống kê số lượng khách hàng tiềm năng 7 ngày qua</p>
+                <p className="text-xs text-neutral-500">{t("overview.lead_growth_desc")}</p>
               </div>
               <select className="bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 text-xs focus:outline-none">
                  <option>Last 7 Days</option>

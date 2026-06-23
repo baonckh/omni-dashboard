@@ -218,15 +218,12 @@ const pendingRef = useRef<string[]>([]);
       setLastThought({ thought: resp.thought || "", fn: resp.functionName, args: resp.functionArgs });
     } catch (err: any) {
       console.error("Chat error:", err);
-      // Fallback response when backend is offline
-      const demoReply = input.toLowerCase().match(/xin\s*chào|chào|hello|hi|hey/) ? DEMO_RESPONSES.greeting : DEMO_RESPONSES.default;
-      const demoAi: ChatMessage = { 
-        role: "assistant", 
-        content: demoReply.reply, 
-        thought: demoReply.thought, 
-        timestamp: new Date() 
+      const errorAi: ChatMessage = {
+        role: "assistant",
+        content: "⚠️ " + (err.message || "AI service error. Please check your API key configuration."),
+        timestamp: new Date()
       };
-      setSessions((p) => p.map((s) => s.id === activeId ? { ...s, messages: [...s.messages, demoAi] } : s));
+      setSessions((p) => p.map((s) => s.id === activeId ? { ...s, messages: [...s.messages, errorAi] } : s));
     }
     finally { setIsTyping(false); }
   };

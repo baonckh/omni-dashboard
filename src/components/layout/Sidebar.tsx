@@ -170,9 +170,10 @@ export function Sidebar() {
       {/* Desktop sidebar */}
       <motion.aside
         initial={false}
-        animate={{ width: isCollapsed ? 80 : 260 }}
+        animate={{ x: isCollapsed ? -(260 - 80) : 0 }}
         className={cn(
-          "hidden md:flex flex-col h-screen border-r border-white/10 bg-black/90 backdrop-blur-xl transition-all duration-300 ease-in-out",
+          "hidden md:flex flex-col h-screen border-r border-white/10 bg-black/90 backdrop-blur-xl transition-[opacity] duration-[var(--duration-slow)] ease-[var(--ease-out-exit)]",
+          isCollapsed ? "w-20" : "w-64",
         )}
       >
         {sidebarContent}

@@ -17,7 +17,53 @@ import {
 } from "lucide-react";
 import { useShopId } from "@/lib/use-shop";
 import { fetchThreads, fetchMessages, sendReply, updateThreadStatus } from "@/lib/api";
+import { ProductCarousel } from "@/components/ui/ProductCarousel";
+import type { ProductCardData } from "@/components/ui/ProductCard";
 import { cn } from "@/lib/utils";
+
+// ponytail: inline product parser — extracts product blocks from bot response text
+function parseProductsFromText(text: string): { cleanText: string; products: ProductCardData[] } {
+  const products: ProductCardData[] = [];
+  let cleanText = text;
+
+  // Match product pattern: **Name**\nDescription\nPrice ₫\nMua
+  // Try to extract product blocks between headers
+  const lines = text.split('\n');
+  let inProductSection = false;
+  const nonProductLines: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.includes('Sản phẩm gợi ý') || line.includes('sản phẩm')) {
+      inProductSection = true;
+      continue;
+    }
+
+    // Match: **Product Name** — start of a product card
+    const productMatch = line.match(/^\*\*(.+?)\*\*$/);
+    if (productMatch && inProductSection) {
+      const name = productMatch[1];
+      const description = lines[i + 1]?.trim() || '';
+      const priceLine = lines[i + 2]?.replace(/[^\d]/g, '') || '';
+      const price = parseInt(priceLine, 10) || 0;
+      products.push({ title: name, content: description, price, image: '' });
+      i += 2; // skip description + price lines
+      continue;
+    }
+
+    // If we see a non-product line after product section ends, stop
+    if (inProductSection && (line.startsWith('---') || line.trim() === '' || line.startsWith('Bạn muốn'))) {
+      inProductSection = false;
+    }
+
+    if (!inProductSection) {
+      nonProductLines.push(line);
+    }
+  }
+
+  cleanText = nonProductLines.join('\n').trim();
+  return { cleanText, products };
+}
 
 export default function InboxPage() {
   const [threads, setThreads] = useState<any[]>([]);
@@ -263,7 +309,20 @@ export default function InboxPage() {
                           isBot ? "bg-blue-600/20 text-blue-50 border border-blue-500/30 rounded-tr-none" :
                           "bg-neutral-800 text-white rounded-tr-none border border-white/10"
                         )}>
-                           {m.content}
+                           {(() => {
+                             if (!isBot) return m.content;
+                             const { cleanText, products } = parseProductsFromText(m.content);
+                             return (
+                               <>
+                                 {cleanText && <p className="whitespace-pre-wrap">{cleanText}</p>}
+                                 {products.length > 0 && (
+                                   <div className="mt-3">
+                                     <ProductCarousel products={products} title="🛍️ Sản phẩm gợi ý" />
+                                   </div>
+                                 )}
+                               </>
+                             );
+                           })()}
                            
                            {/* Tag indicator for training */}
                            <button className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded">

@@ -43,11 +43,17 @@ function parseProductsFromText(text: string): { cleanText: string; products: Pro
     const productMatch = line.match(/^\*\*(.+?)\*\*$/);
     if (productMatch && inProductSection) {
       const name = productMatch[1];
-      const description = lines[i + 1]?.trim() || '';
-      const priceLine = lines[i + 2]?.replace(/[^\d]/g, '') || '';
+      // Skip blank lines between product fields (ponytail: bot output has variable spacing)
+      let j = i + 1;
+      while (j < lines.length && !lines[j].trim()) j++;
+      const description = lines[j]?.trim() || '';
+      // Next non-blank line after description = price
+      j++;
+      while (j < lines.length && !lines[j].trim()) j++;
+      const priceLine = lines[j]?.replace(/[^\d]/g, '') || '';
       const price = parseInt(priceLine, 10) || 0;
       products.push({ title: name, content: description, price, image: '' });
-      i += 2; // skip description + price lines
+      i = j; // skip past price line
       continue;
     }
 

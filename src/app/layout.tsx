@@ -63,16 +63,19 @@ const jsonLd = {
 
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Priority: 1. lang cookie (đã set từ proxy/ user toggle) → 2. Geo IP header → 3. Default "vi"
+  // Priority: 1. x-lang header (from middleware /en/ /vi/ prefix) → 2. lang cookie → 3. Geo IP → 4. Default "vi"
   const cookieStore = await cookies();
   const headersList = await headers();
 
+  const langFromPrefix = headersList.get("x-lang") || "";
   const langCookie = cookieStore.get("lang")?.value;
   const geoCountry = headersList.get("x-vercel-ip-country") || "";
 
   let initialLang: Lang = "vi";
 
-  if (langCookie === "vi" || langCookie === "en") {
+  if (langFromPrefix && (langFromPrefix === "vi" || langFromPrefix === "en")) {
+    initialLang = langFromPrefix as Lang;
+  } else if (langCookie === "vi" || langCookie === "en") {
     initialLang = langCookie;
   } else {
     initialLang = geoCountry === "VN" ? "vi" : "en";

@@ -1,32 +1,43 @@
 import { NextResponse, NextRequest } from "next/server";
 
+const LANGUAGES = ["vi", "en"];
+const DEFAULT_LANG = "vi";
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip static files, API routes
+  // Skip static/API routes
   if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {
     return NextResponse.next();
   }
 
-  // Check if lang cookie already exists
-  const langCookie = request.cookies.get("lang")?.value;
-  if (langCookie === "vi" || langCookie === "en") {
-    return NextResponse.next();
+  // Detect lang from /en/ /vi/ prefix, strip it
+  const maybeLang = pathname.split("/")[1];
+  let lang = DEFAULT_LANG;
+  let rest = pathname;
+
+  if (LANGUAGES.includes(maybeLang)) {
+    lang = maybeLang;
+    rest = pathname.slice(3) || "/";
+  } else {
+    // No prefix: use cookie or geo
+    const langCookie = request.cookies.get("lang")?.value;
+    if (langCookie && LANGUAGES.includes(langCookie)) {
+      lang = langCookie;
+    } else {
+      const country = request.headers.get("x-vercel-ip-country") || "";
+      lang = country === "VN" ? "vi" : "en";
+    }
   }
 
-  // Detect country from Vercel header (added automatically on Vercel edge)
-  const country = request.headers.get("x-vercel-ip-country") || "";
-  const defaultLang = country === "VN" ? "vi" : "en";
+  // Rewrite if prefix was stripped, otherwise keep
+  const res = rest === pathname
+    ? NextResponse.next()
+    : NextResponse.rewrite(new URL(rest, request.url));
 
-  console.log(`[PROXY] IP country=${country}, lang=${defaultLang}`);
+  // Set lang cookie + header for SSR
+  res.headers.set("x-lang", lang);
+  res.cookies.set("lang", lang, { path: "/", maxAge: 60 * 60 * 24 * 30, sameSite: "lax" });
 
-  // Set lang cookie (30 days)
-  const response = NextResponse.next();
-  response.cookies.set("lang", defaultLang, {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-    sameSite: "lax",
-  });
-
-  return response;
+  return res;
 }

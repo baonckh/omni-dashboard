@@ -5,8 +5,8 @@ import Link from "next/link";
 import * as pdfjs from "pdfjs-dist";
 import { extractRawText } from "mammoth";
 import * as XLSX from "xlsx";
+import { useLang } from "@/lib/i18n";
 
-// ponytail: worker loaded from CDN at runtime (client-side only)
 if (typeof window !== "undefined") {
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 }
@@ -17,17 +17,34 @@ const FORMATS = [
   { label: "Excel (.xlsx) → CSV", accept: ".xlsx,.xls", extract: "xlsx" },
 ];
 
+const T = {
+  title: { vi: "Chuyển đổi file", en: "File Converter" },
+  desc: { vi: "Chọn định dạng, upload file — trình duyệt xử lý trực tiếp. File KHÔNG rời khỏi máy bạn.", en: "Select format and upload — processed in your browser. Files NEVER leave your device." },
+  upload: { vi: "Click để chọn file", en: "Click to select file" },
+  client: { vi: "Xử lý hoàn toàn trong trình duyệt", en: "Processed entirely in browser" },
+  processing: { vi: "Đang xử lý...", en: "Processing..." },
+  copy: { vi: "Copy kết quả", en: "Copy result" },
+  download: { vi: "Tải về .txt", en: "Download .txt" },
+  cta: { vi: "Phải convert file thủ công tốn thời gian? OmniAI tự động đọc tài liệu, báo giá, catalogue — trả lời khách dựa trên nội dung thật.", en: "Manual file conversion is tedious? OmniAI reads PDFs, quotes, catalogs — and answers based on real content." },
+  cta_btn: { vi: "Dùng thử OmniAI miễn phí", en: "Try OmniAI for free" },
+  error: { vi: "Lỗi: ", en: "Error: " },
+};
+
 export default function ConvertPage() {
   const [tab, setTab] = useState(0);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [blobUrl, setBlobUrl] = useState("");
+  const { lang } = useLang();
+  const _ = (o: { vi: string; en: string }) => lang === "en" ? o.en : o.vi;
 
   const fmt = FORMATS[tab];
 
   async function handleFile(f: File) {
     setLoading(true);
     setText("");
+    setBlobUrl("");
     try {
       const buf = await f.arrayBuffer();
       let out = "";
@@ -48,9 +65,11 @@ export default function ConvertPage() {
           return `=== ${name} ===\n` + XLSX.utils.sheet_to_csv(sheet);
         }).join("\n");
       }
+      URL.revokeObjectURL(blobUrl);
+      setBlobUrl(URL.createObjectURL(new Blob([out], { type: "text/plain" })));
       setText(out);
     } catch (e: any) {
-      setText("Lỗi: " + (e.message || "Không thể đọc file"));
+      setText(_(T.error) + (e.message || ""));
     }
     setLoading(false);
   }
@@ -58,29 +77,25 @@ export default function ConvertPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="max-w-3xl mx-auto px-5 pt-28 pb-16">
-        <h1 className="text-3xl font-extrabold mb-3">Chuyển đổi file</h1>
-        <p className="text-zinc-400 mb-8">
-          Chọn định dạng, upload file — trình duyệt xử lý trực tiếp. File KHÔNG rời khỏi máy bạn.
-        </p>
+        <h1 className="text-3xl font-extrabold mb-3">{_(T.title)}</h1>
+        <p className="text-zinc-400 mb-8">{_(T.desc)}</p>
 
         <div className="flex gap-2 mb-6 flex-wrap">
           {FORMATS.map((f, i) => (
-            <button key={f.label} onClick={() => { setTab(i); setText(""); }}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${i === tab ? "bg-blue-600 text-white" : "bg-white/5 text-zinc-400 hover:text-white"}`}
-            >{f.label}</button>
+            <button key={f.label} onClick={() => { setTab(i); setText(""); setBlobUrl(""); }}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${i === tab ? "bg-blue-600 text-white" : "bg-white/5 text-zinc-400 hover:text-white"}`}>{f.label}</button>
           ))}
         </div>
 
         <div className="rounded-2xl border border-white/10 p-6 mb-6">
-          <input ref={inputRef} type="file" accept={fmt.accept} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])}
-            className="hidden" />
+          <input ref={inputRef} type="file" accept={fmt.accept} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} className="hidden" />
           <div onClick={() => inputRef.current?.click()} className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center mb-4 hover:border-blue-500/30 transition-colors cursor-pointer">
             {loading ? (
-              <p className="text-zinc-400 text-sm">Đang xử lý...</p>
+              <p className="text-zinc-400 text-sm">{_(T.processing)}</p>
             ) : (
               <>
-                <p className="text-zinc-500 text-sm">Click để chọn file {fmt.accept}</p>
-                <p className="text-zinc-600 text-xs mt-1">Xử lý hoàn toàn trong trình duyệt</p>
+                <p className="text-zinc-500 text-sm">{_(T.upload)} {fmt.accept}</p>
+                <p className="text-zinc-600 text-xs mt-1">{_(T.client)}</p>
               </>
             )}
           </div>
@@ -90,21 +105,20 @@ export default function ConvertPage() {
               className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-mono focus:outline-none" />
           )}
           {text && (
-            <button onClick={() => navigator.clipboard.writeText(text)}
-              className="mt-2 px-4 py-2 rounded-xl bg-white/10 text-sm hover:bg-white/20 transition-colors">
-              Copy kết quả
-            </button>
+            <div className="flex gap-2 mt-2 flex-wrap">
+              <button onClick={() => navigator.clipboard.writeText(text)}
+                className="px-4 py-2 rounded-xl bg-white/10 text-sm hover:bg-white/20 transition-colors">{_(T.copy)}</button>
+              {blobUrl && (
+                <a href={blobUrl} download="converted.txt"
+                  className="inline-flex px-4 py-2 rounded-xl bg-blue-600/20 text-sm text-blue-400 hover:bg-blue-600/30 transition-colors">{_(T.download)}</a>
+              )}
+            </div>
           )}
         </div>
 
         <div className="rounded-2xl border border-white/10 p-6 text-center bg-gradient-to-br from-blue-600/5 to-transparent">
-          <p className="text-sm text-zinc-400 mb-4">
-            Phải convert file thủ công tốn thời gian? OmniAI tự động đọc tài liệu, báo giá, catalogue — trả lời khách dựa trên nội dung thật.
-          </p>
-          <Link href="/register"
-            className="inline-flex px-6 py-3 rounded-xl bg-blue-600 font-bold text-sm hover:bg-blue-500 transition-colors">
-            Dùng thử OmniAI miễn phí
-          </Link>
+          <p className="text-sm text-zinc-400 mb-4">{_(T.cta)}</p>
+          <Link href="/register" className="inline-flex px-6 py-3 rounded-xl bg-blue-600 font-bold text-sm hover:bg-blue-500 transition-colors">{_(T.cta_btn)}</Link>
         </div>
       </div>
     </main>

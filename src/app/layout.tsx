@@ -33,7 +33,10 @@ export const metadata: Metadata = {
     description: "Tự động hóa chăm sóc khách hàng đa sàn với AI.",
   },
   robots: { index: true, follow: true },
-  alternates: { canonical: "https://omni-dashboard-tau.vercel.app" },
+  alternates: {
+    canonical: "https://omni-dashboard-tau.vercel.app",
+    languages: { "vi": "https://omni-dashboard-tau.vercel.app", "en": "https://omni-dashboard-tau.vercel.app/en" },
+  },
 };
 
 const jsonLd = {

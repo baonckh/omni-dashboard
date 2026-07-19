@@ -77,8 +77,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={initialLang} className="dark" suppressHydrationWarning>
+      <head />
       <body className="font-sans antialiased selection:bg-white/20" suppressHydrationWarning>
         <Script id="schema-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {/* ponytail: Google Analytics GA4 — set NEXT_PUBLIC_GA_ID in Vercel env */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} strategy="afterInteractive" />
+            <Script id="ga-init" strategy="afterInteractive" dangerouslySetInnerHTML={{
+              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}',{page_path:window.location.pathname});`
+            }} />
+          </>
+        )}
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-blue-600 focus:text-white focus:text-sm focus:font-bold">
           Skip to content
         </a>

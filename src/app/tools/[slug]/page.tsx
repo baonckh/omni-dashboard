@@ -2,24 +2,30 @@
 
 import Link from "next/link";
 import { useLang } from "@/lib/i18n";
-import { Check, Sigma, RefreshCw, ArrowLeftRight } from "lucide-react";
 
-const TOOLS: Record<string, { vi: { name: string; desc: string; icon: JSX.Element }; en: { name: string; desc: string; icon: JSX.Element } }> = {
+const ICONS: Record<string, string> = {
+  "spell-check": "✓",
+  summarize: "Σ",
+  rewrite: "↻",
+  "tone-changer": "⇄",
+};
+
+const TOOLS: Record<string, { vi: { name: string; desc: string }; en: { name: string; desc: string } }> = {
   "spell-check": {
-    vi: { name: "AI Soát lỗi chính tả", desc: "Phát hiện và sửa lỗi chính tả, ngữ pháp tiếng Việt. Dán văn bản → nhận kết quả ngay.", icon: <Check className="h-5 w-5" /> },
-    en: { name: "AI Spell Check", desc: "Detect and fix Vietnamese spelling and grammar. Paste text → get result instantly.", icon: <Check className="h-5 w-5" /> },
+    vi: { name: "AI Soát lỗi chính tả", desc: "Phát hiện và sửa lỗi chính tả, ngữ pháp tiếng Việt. Dán văn bản → nhận kết quả ngay." },
+    en: { name: "AI Spell Check", desc: "Detect and fix Vietnamese spelling and grammar. Paste text → get result instantly." },
   },
   summarize: {
-    vi: { name: "AI Tóm tắt văn bản", desc: "Rút gọn bài viết, email, tài liệu thành 3-5 câu ngắn gọn. Giữ nguyên ý chính.", icon: <Sigma className="h-5 w-5" /> },
-    en: { name: "AI Text Summarizer", desc: "Condense articles, emails, documents into 3-5 short sentences.", icon: <Sigma className="h-5 w-5" /> },
+    vi: { name: "AI Tóm tắt văn bản", desc: "Rút gọn bài viết, email, tài liệu thành 3-5 câu ngắn gọn. Giữ nguyên ý chính." },
+    en: { name: "AI Text Summarizer", desc: "Condense articles, emails, documents into 3-5 short sentences." },
   },
   rewrite: {
-    vi: { name: "AI Viết lại nội dung", desc: "Viết lại đoạn văn theo giọng điệu mong muốn: chuyên nghiệp, thân thiện, ngắn gọn.", icon: <RefreshCw className="h-5 w-5" /> },
-    en: { name: "AI Rewriter", desc: "Rewrite paragraphs in your desired tone: professional, friendly, concise.", icon: <RefreshCw className="h-5 w-5" /> },
+    vi: { name: "AI Viết lại nội dung", desc: "Viết lại đoạn văn theo giọng điệu mong muốn: chuyên nghiệp, thân thiện, ngắn gọn." },
+    en: { name: "AI Rewriter", desc: "Rewrite paragraphs in your desired tone: professional, friendly, concise." },
   },
   "tone-changer": {
-    vi: { name: "AI Chuyển giọng văn", desc: "Chuyển đổi giữa các phong cách viết: báo chí, marketing, kỹ thuật, chat.", icon: <ArrowLeftRight className="h-5 w-5" /> },
-    en: { name: "AI Tone Changer", desc: "Switch between writing styles: journalistic, marketing, technical, chat.", icon: <ArrowLeftRight className="h-5 w-5" /> },
+    vi: { name: "AI Chuyển giọng văn", desc: "Chuyển đổi giữa các phong cách viết: báo chí, marketing, kỹ thuật, chat." },
+    en: { name: "AI Tone Changer", desc: "Switch between writing styles: journalistic, marketing, technical, chat." },
   },
 };
 
@@ -34,7 +40,7 @@ export default function ToolDetailPage({ params }: { params: { slug: string } })
     <main className="min-h-screen bg-black text-white">
       <div className="max-w-3xl mx-auto px-5 pt-28 pb-16">
         <Link href="/tools" className="text-sm text-zinc-500 hover:text-white mb-6 inline-block">← {lang === "en" ? "All tools" : "Tất cả công cụ"}</Link>
-        <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center mb-4">{info.icon}</div>
+        <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center text-lg mb-4">{ICONS[params.slug]}</div>
         <h1 className="text-3xl font-extrabold mb-3">{info.name}</h1>
         <p className="text-zinc-400 mb-8">{info.desc}</p>
 

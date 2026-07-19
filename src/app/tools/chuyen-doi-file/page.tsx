@@ -2,6 +2,14 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import * as pdfjs from "pdfjs-dist";
+import { extractRawText } from "mammoth";
+import * as XLSX from "xlsx";
+
+// ponytail: worker loaded from CDN at runtime (client-side only)
+if (typeof window !== "undefined") {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+}
 
 const FORMATS = [
   { label: "PDF → Text", accept: ".pdf", extract: "pdf" },
@@ -24,22 +32,16 @@ export default function ConvertPage() {
       const buf = await f.arrayBuffer();
       let out = "";
       if (fmt.extract === "pdf") {
-        // ponytail: client-side pdf parsing via pdf.js CDN
-        const pdfjs = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.9.155/+esm");
-        const doc = await pdfjs.getDocument(buf).promise;
+        const doc = await pdfjs.getDocument({ data: new Uint8Array(buf) }).promise;
         for (let i = 1; i <= doc.numPages; i++) {
           const page = await doc.getPage(i);
           const content = await page.getTextContent();
           out += content.items.map((item: any) => item.str).join(" ") + "\n";
         }
       } else if (fmt.extract === "docx") {
-        // ponytail: mammoth.js client-side
-        const mammoth = await import("https://cdn.jsdelivr.net/npm/mammoth@1.8.0/+esm");
-        const r = await mammoth.extractRawText({ arrayBuffer: buf });
+        const r = await extractRawText({ arrayBuffer: buf });
         out = r.value;
       } else if (fmt.extract === "xlsx") {
-        // ponytail: SheetJS client-side
-        const XLSX = await import("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm");
         const wb = XLSX.read(buf, { type: "array" });
         out = wb.SheetNames.map((name: string) => {
           const sheet = wb.Sheets[name];

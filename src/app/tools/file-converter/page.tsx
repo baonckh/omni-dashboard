@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import * as pdfjs from "pdfjs-dist";
 import { extractRawText } from "mammoth";
@@ -38,6 +38,9 @@ export default function ConvertPage() {
   const [blobUrl, setBlobUrl] = useState("");
   const { lang } = useLang();
   const _ = (o: { vi: string; en: string }) => lang === "en" ? o.en : o.vi;
+
+  // ponytail: client-side title fallback
+  useEffect(() => { document.title = _(T.title); }, [lang]);
 
   const fmt = FORMATS[tab];
 

@@ -36,6 +36,7 @@ export default function ConvertPage() {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [blobUrl, setBlobUrl] = useState("");
+  const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
   const { lang } = useLang();
   const _ = (o: { vi: string; en: string }) => lang === "en" ? o.en : o.vi;
 
@@ -124,6 +125,15 @@ export default function ConvertPage() {
                 <a href={blobUrl} download="converted.txt"
                   className="inline-flex px-4 py-2 rounded-xl bg-blue-600/20 text-sm text-blue-400 hover:bg-blue-600/30 transition-colors">{_(T.download)}</a>
               )}
+            </div>
+          )}
+          {text && (
+            <div className="flex items-center gap-2 mt-3 text-sm text-zinc-500">
+              <button onClick={() => setFeedback("up")}
+                className={`p-1.5 rounded-lg transition-colors ${feedback === "up" ? "text-green-400 bg-green-500/10" : "hover:text-white hover:bg-white/5"}`}>👍</button>
+              <button onClick={() => setFeedback("down")}
+                className={`p-1.5 rounded-lg transition-colors ${feedback === "down" ? "text-red-400 bg-red-500/10" : "hover:text-white hover:bg-white/5"}`}>👎</button>
+              {feedback && <span className="text-xs text-zinc-600">{_({ vi: "Cảm ơn bạn!", en: "Thanks!" })}</span>}
             </div>
           )}
         </div>

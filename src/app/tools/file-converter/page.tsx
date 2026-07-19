@@ -140,7 +140,7 @@ export default function ConvertPage() {
 
         <div className="rounded-2xl border border-white/10 p-6 text-center bg-gradient-to-br from-amber-600/5 to-transparent">
           <p className="text-sm text-zinc-400 mb-4">{_(T.cta)}</p>
-          <Link href="/register" className="inline-flex px-6 py-3 rounded-xl bg-amber-600 font-bold text-sm hover:bg-amber-500 transition-colors">{_(T.cta_btn)}</Link>
+          <Link href="/register?redirect=/tools/file-converter" className="inline-flex px-6 py-3 rounded-xl bg-amber-600 font-bold text-sm hover:bg-amber-500 transition-colors">{_(T.cta_btn)}</Link>
         </div>
       </div>
     </main>

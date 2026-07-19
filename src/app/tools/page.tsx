@@ -70,7 +70,7 @@ export default function ToolsPage() {
 
         <div className="grid md:grid-cols-2 gap-4 mb-12">
           {tools.map((t) => (
-            <Link key={t.name} href={t.href || "/register"} className="block rounded-2xl border border-white/10 p-6 hover:border-blue-500/30 transition-colors group cursor-pointer">
+            <Link key={t.name} href={t.href || "/register?redirect=/tools"} className="block rounded-2xl border border-white/10 p-6 hover:border-blue-500/30 transition-colors group cursor-pointer">
               <div className="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-lg mb-4">
                 {ICON_MAP[t.icon] || t.icon}
               </div>
@@ -88,10 +88,7 @@ export default function ToolsPage() {
             OmniAI là bot CSKH tự động — hiểu sản phẩm, tồn kho, chính sách của
             bạn. Trả lời khách 24/7 trên Facebook, Zalo, TikTok, Shopee.
           </p>
-          <Link
-            href="/register"
-            className="inline-flex px-6 py-3 rounded-xl bg-blue-600 font-bold text-sm hover:bg-blue-500 transition-colors"
-          >
+          <Link href="/register?redirect=/tools" className="inline-flex px-6 py-3 rounded-xl bg-blue-600 font-bold text-sm hover:bg-blue-500 transition-colors">
             Dùng thử OmniAI miễn phí
           </Link>
         </div>

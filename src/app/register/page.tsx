@@ -28,7 +28,9 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || t("auth.register.error")); setLoading(false); return; }
-      router.push("/onboarding");
+      // ponytail: redirect param — user came from a tool page
+      const params = new URLSearchParams(window.location.search);
+      router.push(params.get("redirect") || "/onboarding");
     } catch { setError(t("auth.error.server")); setLoading(false); }
   };
 

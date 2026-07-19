@@ -33,6 +33,12 @@ const tools = [
     desc: "Chuyển đổi giữa các phong cách viết: báo chí, marketing, kỹ thuật, chat.",
     icon: "⇄",
   },
+  {
+    name: "AI Viết mô tả sản phẩm",
+    desc: "Nhập tên + đặc điểm — AI viết đoạn mô tả chuyên nghiệp, chuẩn SEO, sẵn sàng đăng bán.",
+    icon: "→",
+    href: "/tools/viet-mo-ta-san-pham",
+  },
 ];
 
 export default function ToolsPage() {
@@ -48,22 +54,13 @@ export default function ToolsPage() {
 
         <div className="grid md:grid-cols-2 gap-4 mb-12">
           {tools.map((t) => (
-            <div
-              key={t.name}
-              className="rounded-2xl border border-white/10 p-6 hover:border-blue-500/30 transition-colors"
-            >
+            <Link key={t.name} href={t.href || "/register"} className="block rounded-2xl border border-white/10 p-6 hover:border-blue-500/30 transition-colors group cursor-pointer">
               <div className="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-lg mb-4">
                 {t.icon}
               </div>
               <h2 className="font-bold mb-1">{t.name}</h2>
               <p className="text-sm text-zinc-500 mb-4">{t.desc}</p>
-              <Link
-                href="/register"
-                className="text-sm font-medium text-blue-400 hover:text-blue-300"
-              >
-                Dùng thử →
-              </Link>
-            </div>
+            </Link>
           ))}
         </div>
 

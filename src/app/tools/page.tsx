@@ -39,6 +39,12 @@ const tools = [
     icon: "→",
     href: "/tools/viet-mo-ta-san-pham",
   },
+  {
+    name: "PDF sang Text",
+    desc: "Chuyển PDF sang văn bản — upload hoặc dán nội dung, AI trích xuất nhanh chóng.",
+    icon: "📄",
+    href: "/tools/pdf-sang-text",
+  },
 ];
 
 export default function ToolsPage() {

@@ -11,8 +11,9 @@ if (typeof window !== "undefined") {
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 }
 
-const FREE_LIMIT = 3;
-const USE_KEY = "omni_tool_uses";
+const FREE_LIMIT = 5;
+const USE_KEY_PREFIX = "omni_tool_uses_";
+function todayKey() { return USE_KEY_PREFIX + new Date().toISOString().slice(0, 10); }
 
 const FORMATS = [
   { label: "PDF → Text", accept: ".pdf", extract: "pdf" },
@@ -45,18 +46,19 @@ export default function ConvertPage() {
   const [blobUrl, setBlobUrl] = useState("");
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
   const [remaining, setRemaining] = useState(FREE_LIMIT);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const { lang } = useLang();
   const _ = (o: { vi: string; en: string }) => lang === "en" ? o.en : o.vi;
 
   // ponytail: read use count from localStorage
   useEffect(() => {
-    const used = parseInt(localStorage.getItem(USE_KEY) || "0", 10);
+    const used = parseInt(localStorage.getItem(todayKey()) || "0", 10);
     setRemaining(Math.max(0, FREE_LIMIT - used));
   }, []);
 
   function useOne() {
-    const used = parseInt(localStorage.getItem(USE_KEY) || "0", 10) + 1;
-    localStorage.setItem(USE_KEY, String(used));
+    const used = parseInt(localStorage.getItem(todayKey()) || "0", 10) + 1;
+    localStorage.setItem(todayKey(), String(used));
     setRemaining(Math.max(0, FREE_LIMIT - used));
   }
 
@@ -67,7 +69,7 @@ export default function ConvertPage() {
   const locked = remaining <= 0;
 
   async function handleFile(f: File) {
-    if (locked) return;
+    if (locked) { setShowLimitModal(true); return; }
     useOne();
     setLoading(true);
     setText("");
@@ -119,16 +121,8 @@ export default function ConvertPage() {
         </div>
 
         <div className="rounded-2xl border border-white/10 p-6 mb-6">
-          {locked ? (
-            <div className="text-center py-8">
-              <p className="text-zinc-400 font-medium mb-2">{_(T.locked_title)}</p>
-              <p className="text-zinc-600 text-sm mb-4">{_(T.locked_desc)}</p>
-              <Link href="/register?redirect=/tools/file-converter"
-                className="inline-flex px-5 py-2.5 rounded-xl bg-amber-600 font-bold text-sm hover:bg-amber-500 transition-colors">{_(T.cta_btn)}</Link>
-            </div>
-          ) : (
-          <>          <input ref={inputRef} type="file" accept={fmt.accept} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} className="hidden" />
-          <div onClick={() => inputRef.current?.click()} className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center mb-4 hover:border-blue-500/30 transition-colors cursor-pointer">
+          <input ref={inputRef} type="file" accept={fmt.accept} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} className="hidden" />
+          <div onClick={() => { if (locked) setShowLimitModal(true); else inputRef.current?.click(); }} className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center mb-4 hover:border-blue-500/30 transition-colors cursor-pointer">
             {loading ? (
               <p className="text-zinc-400 text-sm">{_(T.processing)}</p>
             ) : (
@@ -163,15 +157,13 @@ export default function ConvertPage() {
           )}
           {text && (
             <div className="flex items-center gap-2 mt-3 text-sm text-zinc-500">
-              <button onClick={() => setFeedback("up")}
+              <button onClick={() => { setFeedback("up"); fetch("/api/v1/panel-api/tools/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tool: "file-converter", rating: "up" }) }).catch(() => {}); }}
                 className={`p-1.5 rounded-lg transition-colors ${feedback === "up" ? "text-green-400 bg-green-500/10" : "hover:text-white hover:bg-white/5"}`}>👍</button>
-              <button onClick={() => setFeedback("down")}
+              <button onClick={() => { setFeedback("down"); fetch("/api/v1/panel-api/tools/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tool: "file-converter", rating: "down" }) }).catch(() => {}); }}
                 className={`p-1.5 rounded-lg transition-colors ${feedback === "down" ? "text-red-400 bg-red-500/10" : "hover:text-white hover:bg-white/5"}`}>👎</button>
               {feedback && <span className="text-xs text-zinc-600">{_({ vi: "Cảm ơn bạn!", en: "Thanks!" })}</span>}
             </div>
           )}
-        </>
-        )}
         </div>
 
         <div className="rounded-2xl border border-white/10 p-6 text-center bg-gradient-to-br from-amber-600/5 to-transparent">
@@ -179,6 +171,20 @@ export default function ConvertPage() {
           <Link href="/register?redirect=/tools/file-converter" className="inline-flex px-6 py-3 rounded-xl bg-amber-600 font-bold text-sm hover:bg-amber-500 transition-colors">{_(T.cta_btn)}</Link>
         </div>
       </div>
+
+      {/* ponytail: limit modal */}
+      {showLimitModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowLimitModal(false)}>
+          <div className="bg-zinc-900 rounded-2xl border border-white/10 p-8 max-w-sm mx-4 text-center" onClick={e => e.stopPropagation()}>
+            <p className="text-lg font-bold mb-2">{_(T.locked_title)}</p>
+            <p className="text-sm text-zinc-400 mb-6">{_(T.locked_desc)}</p>
+            <Link href="/register?redirect=/tools/file-converter"
+              className="inline-flex px-6 py-3 rounded-xl bg-amber-600 font-bold text-sm hover:bg-amber-500 transition-colors">{_(T.cta_btn)}</Link>
+            <button onClick={() => setShowLimitModal(false)}
+              className="block mx-auto mt-4 text-xs text-zinc-600 hover:text-zinc-400">{_({ vi: "Để sau", en: "Later" })}</button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

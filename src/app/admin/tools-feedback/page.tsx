@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getSession } from "next-auth/react";
 
 interface Feedback {
   id: string;
@@ -17,10 +18,16 @@ export default function AdminToolsFeedbackPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/v1/panel-api/tools/feedback")
-      .then((r) => r.json())
-      .then(setItems)
-      .catch(() => setError("Failed to load"));
+    (async () => {
+      const session = await getSession();
+      const token = session?.user?.backendToken;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      fetch("/api/v1/panel-api/tools/feedback", { headers })
+        .then((r) => r.json())
+        .then(setItems)
+        .catch(() => setError("Failed to load"));
+    })();
   }, []);
 
   return (

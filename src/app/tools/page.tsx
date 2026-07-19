@@ -8,6 +8,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   "⇄": <ArrowLeftRight className="h-5 w-5" />,
   "→": <ArrowRight className="h-5 w-5" />,
   "📄": <FileText className="h-5 w-5" />,
+  "⇔": <ArrowLeftRight className="h-5 w-5" />,
 };
 
 export const metadata = {
@@ -38,6 +39,12 @@ const tools = [
     desc: "Chuyển PDF sang văn bản — upload hoặc dán nội dung, AI trích xuất nhanh chóng.",
     icon: "📄",
     href: "/tools/file-converter",
+  },
+  {
+    name: "So sánh file",
+    desc: "Upload 2 file — AI so sánh sự khác biệt. Hỗ trợ PDF, Word, Excel, text.",
+    icon: "⇔",
+    href: "/tools/file-compare",
   },
 ];
 

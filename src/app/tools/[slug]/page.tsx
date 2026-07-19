@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useLang } from "@/lib/i18n";
 
 const ICONS: Record<string, string> = {
@@ -29,9 +30,11 @@ const TOOLS: Record<string, { vi: { name: string; desc: string }; en: { name: st
   },
 };
 
-export default function ToolDetailPage({ params }: { params: { slug: string } }) {
+export default function ToolDetailPage() {
+  const params = useParams();
   const { lang } = useLang();
-  const t = TOOLS[params.slug];
+  const slug = params.slug as string;
+  const t = TOOLS[slug];
   if (!t) return <main className="min-h-screen bg-black text-white flex items-center justify-center"><p className="text-zinc-500">Tool not found</p></main>;
 
   const info = lang === "en" ? t.en : t.vi;
@@ -40,7 +43,7 @@ export default function ToolDetailPage({ params }: { params: { slug: string } })
     <main className="min-h-screen bg-black text-white">
       <div className="max-w-3xl mx-auto px-5 pt-28 pb-16">
         <Link href="/tools" className="text-sm text-zinc-500 hover:text-white mb-6 inline-block">← {lang === "en" ? "All tools" : "Tất cả công cụ"}</Link>
-        <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center text-lg mb-4">{ICONS[params.slug]}</div>
+        <div className="w-12 h-12 rounded-xl bg-blue-600/20 flex items-center justify-center text-lg mb-4">{ICONS[slug]}</div>
         <h1 className="text-3xl font-extrabold mb-3">{info.name}</h1>
         <p className="text-zinc-400 mb-8">{info.desc}</p>
 

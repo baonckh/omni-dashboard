@@ -11,6 +11,9 @@ if (typeof window !== "undefined") {
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 }
 
+const FREE_LIMIT = 3;
+const USE_KEY = "omni_tool_uses";
+
 const FORMATS = [
   { label: "PDF → Text", accept: ".pdf", extract: "pdf" },
   { label: "Word (.docx) → Text", accept: ".docx", extract: "docx" },
@@ -28,6 +31,10 @@ const T = {
   cta: { vi: "Phải convert file thủ công tốn thời gian? OmniAI tự động đọc tài liệu, báo giá, catalogue — trả lời khách dựa trên nội dung thật.", en: "Manual file conversion is tedious? OmniAI reads PDFs, quotes, catalogs — and answers based on real content." },
   cta_btn: { vi: "Dùng thử OmniAI miễn phí", en: "Try OmniAI for free" },
   error: { vi: "Lỗi: ", en: "Error: " },
+  free_left: { vi: "Còn", en: "" },
+  free_uses: { vi: "lần dùng thử", en: "free uses left" },
+  locked_title: { vi: "Bạn đã dùng hết lượt miễn phí", en: "You've used all free tries" },
+  locked_desc: { vi: "Đăng ký để dùng không giới hạn", en: "Sign up for unlimited use" },
 };
 
 export default function ConvertPage() {
@@ -37,15 +44,31 @@ export default function ConvertPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [blobUrl, setBlobUrl] = useState("");
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
+  const [remaining, setRemaining] = useState(FREE_LIMIT);
   const { lang } = useLang();
   const _ = (o: { vi: string; en: string }) => lang === "en" ? o.en : o.vi;
+
+  // ponytail: read use count from localStorage
+  useEffect(() => {
+    const used = parseInt(localStorage.getItem(USE_KEY) || "0", 10);
+    setRemaining(Math.max(0, FREE_LIMIT - used));
+  }, []);
+
+  function useOne() {
+    const used = parseInt(localStorage.getItem(USE_KEY) || "0", 10) + 1;
+    localStorage.setItem(USE_KEY, String(used));
+    setRemaining(Math.max(0, FREE_LIMIT - used));
+  }
 
   // ponytail: client-side title fallback
   useEffect(() => { document.title = _(T.title); }, [lang]);
 
   const fmt = FORMATS[tab];
+  const locked = remaining <= 0;
 
   async function handleFile(f: File) {
+    if (locked) return;
+    useOne();
     setLoading(true);
     setText("");
     setBlobUrl("");
@@ -83,6 +106,9 @@ export default function ConvertPage() {
       <div className="max-w-3xl mx-auto px-5 pt-28 pb-16">
         <Link href="/tools" className="text-sm text-zinc-500 hover:text-white mb-6 inline-block">← {_({ vi: "Tất cả công cụ", en: "All tools" })}</Link>
         <h1 className="text-3xl font-extrabold mb-3">{_(T.title)}</h1>
+        {remaining > 0 && remaining < FREE_LIMIT && (
+          <p className="text-xs text-zinc-500 mb-2">{_(T.free_left)} {remaining} {_(T.free_uses)}</p>
+        )}
         <p className="text-zinc-400 mb-8">{_(T.desc)}</p>
 
         <div className="flex gap-2 mb-6 flex-wrap">
@@ -93,7 +119,15 @@ export default function ConvertPage() {
         </div>
 
         <div className="rounded-2xl border border-white/10 p-6 mb-6">
-          <input ref={inputRef} type="file" accept={fmt.accept} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} className="hidden" />
+          {locked ? (
+            <div className="text-center py-8">
+              <p className="text-zinc-400 font-medium mb-2">{_(T.locked_title)}</p>
+              <p className="text-zinc-600 text-sm mb-4">{_(T.locked_desc)}</p>
+              <Link href="/register?redirect=/tools/file-converter"
+                className="inline-flex px-5 py-2.5 rounded-xl bg-amber-600 font-bold text-sm hover:bg-amber-500 transition-colors">{_(T.cta_btn)}</Link>
+            </div>
+          ) : (
+          <>          <input ref={inputRef} type="file" accept={fmt.accept} onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])} className="hidden" />
           <div onClick={() => inputRef.current?.click()} className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center mb-4 hover:border-blue-500/30 transition-colors cursor-pointer">
             {loading ? (
               <p className="text-zinc-400 text-sm">{_(T.processing)}</p>
@@ -136,6 +170,8 @@ export default function ConvertPage() {
               {feedback && <span className="text-xs text-zinc-600">{_({ vi: "Cảm ơn bạn!", en: "Thanks!" })}</span>}
             </div>
           )}
+        </>
+        )}
         </div>
 
         <div className="rounded-2xl border border-white/10 p-6 text-center bg-gradient-to-br from-amber-600/5 to-transparent">

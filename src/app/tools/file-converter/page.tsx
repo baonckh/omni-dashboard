@@ -105,6 +105,14 @@ export default function ConvertPage() {
           </div>
 
           {text && (
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-zinc-800 text-zinc-400 uppercase tracking-wider">{_({ vi: "AI tạo", en: "AI generated" })}</span>
+              <span className="text-xs text-zinc-600">
+                {_({ vi: "Kết quả có thể không chính xác 100%", en: "Result may not be 100% accurate" })}
+              </span>
+            </div>
+          )}
+          {text && (
             <textarea readOnly value={text} rows={12}
               className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-mono focus:outline-none" />
           )}
@@ -120,9 +128,9 @@ export default function ConvertPage() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-white/10 p-6 text-center bg-gradient-to-br from-blue-600/5 to-transparent">
+        <div className="rounded-2xl border border-white/10 p-6 text-center bg-gradient-to-br from-amber-600/5 to-transparent">
           <p className="text-sm text-zinc-400 mb-4">{_(T.cta)}</p>
-          <Link href="/register" className="inline-flex px-6 py-3 rounded-xl bg-blue-600 font-bold text-sm hover:bg-blue-500 transition-colors">{_(T.cta_btn)}</Link>
+          <Link href="/register" className="inline-flex px-6 py-3 rounded-xl bg-amber-600 font-bold text-sm hover:bg-amber-500 transition-colors">{_(T.cta_btn)}</Link>
         </div>
       </div>
     </main>

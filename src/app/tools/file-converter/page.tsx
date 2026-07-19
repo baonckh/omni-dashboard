@@ -80,6 +80,7 @@ export default function ConvertPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="max-w-3xl mx-auto px-5 pt-28 pb-16">
+        <Link href="/tools" className="text-sm text-zinc-500 hover:text-white mb-6 inline-block">← {_({ vi: "Tất cả công cụ", en: "All tools" })}</Link>
         <h1 className="text-3xl font-extrabold mb-3">{_(T.title)}</h1>
         <p className="text-zinc-400 mb-8">{_(T.desc)}</p>
 

@@ -51,32 +51,33 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </>
         )}
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-blue-600 focus:text-white focus:text-sm focus:font-bold">Skip to content</a>
-        <nav className="fixed top-4 left-4 right-4 z-50 max-w-6xl mx-auto rounded-2xl border border-white/10 bg-black/70 backdrop-blur-2xl shadow-2xl h-14 flex items-center px-5">
-          <a href="/" className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-white"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></svg>
-            </div>
-            <span className="font-bold text-base text-white">Omni<span className="text-zinc-500">AI</span></span>
-          </a>
-          <div className="ml-auto flex items-center gap-3 text-xs font-medium">
-            <a href="/tools" className="text-zinc-400 hover:text-white transition-colors">Tools</a>
-            <a href="/login" className="text-zinc-400 hover:text-white transition-colors">Đăng nhập</a>
-            <a href="/register" className="px-4 py-1.5 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors">Dùng thử</a>
-          </div>
-        </nav>
-        <main id="main-content" className="pt-20">{children}</main>
-        <footer className="border-t border-white/10 py-8 px-5 text-center text-xs text-zinc-600">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <p>&copy; 2026 OmniAI</p>
-            <div className="flex items-center gap-4">
-              <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
-              <a href="/terms" className="hover:text-white transition-colors">Terms</a>
-              <a href="/tools" className="hover:text-white transition-colors">Tools</a>
-            </div>
-          </div>
-        </footer>
         <SessionProvider>
-          <LangProvider initialLang={initialLang}>{children}</LangProvider>
+          <LangProvider initialLang={initialLang}>
+            <nav className="fixed top-4 left-4 right-4 z-50 max-w-6xl mx-auto rounded-2xl border border-white/10 bg-black/70 backdrop-blur-2xl shadow-2xl h-14 flex items-center px-5">
+              <a href="/" className="flex items-center gap-2.5">
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-white"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></svg>
+                </div>
+                <span className="font-bold text-base text-white">Omni<span className="text-zinc-500">AI</span></span>
+              </a>
+              <div className="ml-auto flex items-center gap-3 text-xs font-medium">
+                <a href="/tools" className="text-zinc-400 hover:text-white transition-colors">Tools</a>
+                <a href="/login" className="text-zinc-400 hover:text-white transition-colors">Đăng nhập</a>
+                <a href="/register" className="px-4 py-1.5 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors">Dùng thử</a>
+              </div>
+            </nav>
+            <main id="main-content" className="pt-20">{children}</main>
+            <footer className="border-t border-white/10 py-8 px-5 text-center text-xs text-zinc-600">
+              <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                <p>&copy; 2026 OmniAI</p>
+                <div className="flex items-center gap-4">
+                  <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
+                  <a href="/terms" className="hover:text-white transition-colors">Terms</a>
+                  <a href="/tools" className="hover:text-white transition-colors">Tools</a>
+                </div>
+              </div>
+            </footer>
+          </LangProvider>
         </SessionProvider>
       </body>
     </html>

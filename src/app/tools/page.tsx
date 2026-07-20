@@ -1,11 +1,7 @@
 import Link from "next/link";
-import { Check, Sigma, RefreshCw, ArrowLeftRight, ArrowRight, FileText } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, FileText } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ReactNode> = {
-  "✓": <Check className="h-5 w-5" />,
-  "Σ": <Sigma className="h-5 w-5" />,
-  "↻": <RefreshCw className="h-5 w-5" />,
-  "⇄": <ArrowLeftRight className="h-5 w-5" />,
   "→": <ArrowRight className="h-5 w-5" />,
   "📄": <FileText className="h-5 w-5" />,
   "⇔": <ArrowLeftRight className="h-5 w-5" />,
@@ -24,10 +20,6 @@ export const metadata = {
 };
 
 const tools = [
-  { name: "AI Soát lỗi chính tả", desc: "Dùng AI phát hiện và sửa lỗi chính tả, ngữ pháp tiếng Việt. Dán văn bản → nhận kết quả ngay.", icon: "✓", href: "/tools/spell-check" },
-  { name: "AI Tóm tắt văn bản", desc: "Rút gọn bài viết, email, tài liệu thành 3-5 câu ngắn gọn. Giữ nguyên ý chính.", icon: "Σ", href: "/tools/summarize" },
-  { name: "AI Viết lại nội dung", desc: "Viết lại đoạn văn theo giọng điệu mong muốn: chuyên nghiệp, thân thiện, ngắn gọn.", icon: "↻", href: "/tools/rewrite" },
-  { name: "AI Chuyển giọng văn", desc: "Chuyển đổi giữa các phong cách viết: báo chí, marketing, kỹ thuật, chat.", icon: "⇄", href: "/tools/tone-changer" },
   {
     name: "AI Viết mô tả sản phẩm",
     desc: "Nhập tên + đặc điểm — AI viết đoạn mô tả chuyên nghiệp, chuẩn SEO, sẵn sàng đăng bán.",

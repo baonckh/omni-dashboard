@@ -84,31 +84,6 @@ export default function LandingPage() {
     <div className="min-h-screen bg-black text-white">
 
       {/* ══════ FLOATING NAVBAR ══════ */}
-      <nav className="fixed top-4 left-4 right-4 z-50 max-w-6xl mx-auto rounded-2xl border border-white/[0.06] bg-black/70 backdrop-blur-2xl shadow-2xl shadow-black/50">
-        <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600">
-              <Zap className="h-3.5 w-3.5 text-white" />
-            </div>
-            <span className="font-bold text-base tracking-tight text-white">
-              Omni<span className="text-zinc-500">AI</span>
-            </span>
-          </Link>
-          <div className="hidden md:flex items-center gap-6 text-xs font-medium text-zinc-500">
-            <a href="#features" className="hover:text-white transition-colors">{t("footer.features")}</a>
-            <Link href="/pricing" className="hover:text-white transition-colors">{t("footer.pricing")}</Link>
-          </div>
-          <div className="flex items-center gap-2">
-            <LangToggle />
-            <Link href="/login"
-              className="hidden md:inline-flex items-center px-3.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-white transition-colors"
-            >{t("hero.login")}</Link>
-            <Link href="/register"
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/25"
-            >{t("nav.getstarted")}</Link>
-          </div>
-        </div>
-      </nav>
 
       {/* ══════ HERO ══════ */}
       <section className="relative pt-28 pb-16 px-5">

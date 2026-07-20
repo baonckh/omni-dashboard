@@ -4,9 +4,15 @@ const OR_KEY = (process.env.OPENROUTER_API_KEY || "").trim();
 const OR_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 export async function POST(req: NextRequest) {
-  if (!OR_KEY) return NextResponse.json({ error: "no key" }, { status: 500 });
+  const requestId = crypto.randomUUID();
+  const respond = (body: object, status: number) => {
+    const res = NextResponse.json(body, { status });
+    res.headers.set("X-Request-ID", requestId);
+    return res;
+  };
+  if (!OR_KEY) return respond({ error: "no key", requestId }, 500);
   const { prompt } = await req.json();
-  if (!prompt) return NextResponse.json({ error: "prompt required" }, { status: 400 });
+  if (!prompt) return respond({ error: "prompt required", requestId }, 400);
   try {
     const r = await fetch(OR_URL, {
       method: "POST",
@@ -22,10 +28,10 @@ export async function POST(req: NextRequest) {
     const text = data?.choices?.[0]?.message?.content;
     if (!text) {
       console.error("OpenRouter reply:", JSON.stringify(data).slice(0, 500));
-      return NextResponse.json({ error: "AI returned empty", detail: data?.error?.message || "unknown" }, { status: 502 });
+      return respond({ error: "AI returned empty", requestId, detail: data?.error?.message || "unknown" }, 502);
     }
-    return NextResponse.json({ result: text });
+    return respond({ result: text, requestId }, 200);
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 502 });
+    return respond({ error: e.message, requestId }, 502);
   }
 }

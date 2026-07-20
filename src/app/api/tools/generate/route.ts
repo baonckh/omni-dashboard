@@ -20,7 +20,10 @@ export async function POST(req: NextRequest) {
     });
     const data = await r.json();
     const text = data?.choices?.[0]?.message?.content;
-    if (!text) return NextResponse.json({ error: "empty" }, { status: 502 });
+    if (!text) {
+      console.error("OpenRouter reply:", JSON.stringify(data).slice(0, 500));
+      return NextResponse.json({ error: "AI returned empty", detail: data?.error?.message || "unknown" }, { status: 502 });
+    }
     return NextResponse.json({ result: text });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 502 });

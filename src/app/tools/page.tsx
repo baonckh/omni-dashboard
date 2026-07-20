@@ -5,6 +5,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   "→": <ArrowRight className="h-5 w-5" />,
   "📄": <FileText className="h-5 w-5" />,
   "⇔": <ArrowLeftRight className="h-5 w-5" />,
+  "★": <ArrowRight className="h-5 w-5" />,
 };
 
 export const metadata = {
@@ -37,6 +38,18 @@ const tools = [
     desc: "Upload 2 file — AI so sánh sự khác biệt. Hỗ trợ PDF, Word, Excel, text.",
     icon: "⇔",
     href: "/tools/file-compare",
+  },
+  {
+    name: "AI Viết mô tả sản phẩm",
+    desc: "Nhập tên + đặc điểm — AI viết đoạn mô tả chuyên nghiệp, chuẩn SEO.",
+    icon: "→",
+    href: "/tools/product-description",
+  },
+  {
+    name: "AI Đặt tên chatbot",
+    desc: "Nhập ngành hàng — AI gợi ý 5 tên chatbot phù hợp.",
+    icon: "★",
+    href: "/tools/bot-name",
   },
 ];
 

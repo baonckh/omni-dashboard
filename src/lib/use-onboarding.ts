@@ -13,7 +13,7 @@ async function fetchOnboardingStatus(token: string): Promise<boolean> {
   if (onboardingCache !== null) return onboardingCache;
   try {
     const res = await fetch(`${API_BASE}/auth/me`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: "Bearer " + token },
     });
     if (!res.ok) return false;
     const data = await res.json();
@@ -82,16 +82,8 @@ export async function completeOnboarding(): Promise<boolean> {
       console.error("[ONBOARDING] Complete failed:", res.status);
       return false;
     }
-    // Verify backend reflects the change
     onboardingCache = null; // clear cache
-    if (token) {
-      const verified = await fetchOnboardingStatus(token);
-      if (!verified) {
-        console.error("[ONBOARDING] Backend still reports incomplete after POST");
-        return false;
-      }
-    }
-    console.log("[ONBOARDING] Complete + verified");
+    console.log("[ONBOARDING] Complete");
     return true;
   } catch (err) {
     console.error("[ONBOARDING] Complete error:", err);

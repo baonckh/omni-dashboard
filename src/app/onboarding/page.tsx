@@ -40,7 +40,7 @@ export default function OnboardingPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...(token ? { Authorization: "Bearer " + token } : {}),
         },
         body: JSON.stringify({
           shop_name: data.shopName,
@@ -87,11 +87,7 @@ export default function OnboardingPage() {
   }, [step, updateSession, router]);
 
   const handleSkipAll = useCallback(async () => {
-    const ok = await completeOnboarding();
-    if (!ok) {
-      console.error("[ONBOARDING] Skip all failed, staying on page");
-      return;
-    }
+    await completeOnboarding();
     await updateSession();
     router.push("/app/overview");
   }, [updateSession, router]);
@@ -167,13 +163,6 @@ export default function OnboardingPage() {
             )}
           </div>
           <div className="flex items-center gap-2">
-            {step < STEPS.length - 1 && step > 0 && (
-              <button onClick={handleSkip}
-                className="px-4 py-2.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-medium"
-              >
-                {lang === "vi" ? "Bỏ qua" : "Skip"}
-              </button>
-            )}
             <button onClick={handleNext} disabled={saving}
               className={cn(
                 "flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.97]",

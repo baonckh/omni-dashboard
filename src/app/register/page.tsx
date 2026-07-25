@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Bot, Eye, EyeOff, UserPlus, Mail, User } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { signInWithGoogle } from "@/lib/firebase";
 import { useLang } from "@/lib/i18n";
 
@@ -30,6 +31,7 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || t("auth.register.error")); setLoading(false); return; }
+      await signIn("credentials", { email, password, redirect: false });
       // ponytail: redirect param — user came from a tool page
       const params = new URLSearchParams(window.location.search);
       router.push(params.get("redirect") || "/onboarding");
@@ -47,6 +49,7 @@ export default function RegisterPage() {
       });
       if (!res.ok) { const d = await res.json(); setError(d.error || t("auth.error.google")); setGoogleLoading(false); return; }
       const data = await res.json();
+      await signIn("credentials", { email: data.email, password: "__GOOGLE__", redirect: false });
       const params = new URLSearchParams(window.location.search);
       router.push(params.get("redirect") || "/onboarding");
     } catch { setError(t("auth.error.google_conn")); setGoogleLoading(false); }

@@ -424,6 +424,7 @@ export default function LandingPage() {
 
       {/* ══════ PRICING ══════ */}
       <section id="pricing" className="max-w-5xl mx-auto px-5 mb-24">
+        <div className="p-8 md:p-12 rounded-3xl" style={{ backgroundColor: "rgba(37,99,235,0.04)", border: "1px solid rgba(37,99,235,0.1)" }}>
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="text-2xl md:text-3xl font-extrabold text-white text-center mb-3">{t("pricing.title")}</motion.h2>
         <p className="text-base text-zinc-400 text-center mb-10">{t("pricing.sub")}</p>
@@ -457,6 +458,7 @@ export default function LandingPage() {
               </div>
             </Link>
           ))}
+        </div>
         </div>
       </section>
 

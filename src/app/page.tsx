@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Bot, Zap, MessageSquareCode, BarChart3,
-  ArrowRight, LogIn, Sparkles, Rocket, Star,
+  ArrowRight, LogIn, Check, Sparkles, Rocket, Star,
   Mail, Users, HeartHandshake,
   Clock, MessageCircle, Smartphone, ShoppingCart,
   Instagram, BellRing, Search, ShoppingBag, Quote,
@@ -441,13 +441,13 @@ export default function LandingPage() {
       {/* ══════ PRICING ══════ */}
       <section id="pricing" className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-2xl md:text-3xl font-extrabold text-white text-center mb-3">{t("nav.pricing")}</motion.h2>
-        <p className="text-base text-zinc-400 text-center mb-10">{lang === "en" ? "Choose the right plan for your shop" : "Chọn gói phù hợp cho shop của bạn"}</p>
+          className="text-2xl md:text-3xl font-extrabold text-white text-center mb-3">{t("pricing.title")}</motion.h2>
+        <p className="text-base text-zinc-400 text-center mb-10">{t("pricing.sub")}</p>
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { id: "free", icon: Zap, color: "from-zinc-600/10 to-transparent", border: "border-white/10", badge: "FREE", price: "0", period: lang === "en" ? "/mo" : "/tháng" },
-            { id: "starter", icon: Mail, color: "from-blue-600/10 to-transparent", border: "border-blue-500/20", badge: "STARTER", price: "199,000", period: lang === "en" ? "/mo" : "/tháng" },
-            { id: "pro", icon: Bot, color: "from-amber-600/10 to-transparent", border: "border-amber-500/20", badge: "PRO", price: "499,000", period: lang === "en" ? "/mo" : "/tháng" },
+            { id: "free", icon: Zap, color: "from-zinc-600/10 to-transparent", border: "border-white/10", badge: "FREE", price: "0", period: lang === "en" ? "/mo" : "/tháng", feats: [0, 1, 2] },
+            { id: "starter", icon: Mail, color: "from-blue-600/10 to-transparent", border: "border-blue-500/20", badge: "STARTER", price: "199,000", period: lang === "en" ? "/mo" : "/tháng", feats: [0, 1, 2] },
+            { id: "pro", icon: Bot, color: "from-amber-600/10 to-transparent", border: "border-amber-500/20", badge: "PRO", price: "499,000", period: lang === "en" ? "/mo" : "/tháng", feats: [0, 1, 2] },
           ].map((p) => (
             <Link key={p.id} href="/pricing" className={`rounded-2xl border ${p.border} p-6 bg-gradient-to-br ${p.color} hover:scale-[1.02] transition-all duration-200 group`}>
               <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600/20 mb-4"><p.icon className="h-5 w-5 text-blue-400" /></div>
@@ -459,8 +459,16 @@ export default function LandingPage() {
                 <span className="text-2xl font-extrabold text-white">{p.price}</span>
                 <span className="text-sm text-zinc-500">{p.period}</span>
               </div>
-              <p className="text-xs text-zinc-500">{t(`pricing.${p.id}_desc`)}</p>
-              <div className="mt-4 flex items-center gap-1 text-xs font-medium text-blue-400 group-hover:text-blue-300 transition-colors">
+              <p className="text-xs text-zinc-500 mb-4">{t(`pricing.${p.id}_desc`)}</p>
+              <ul className="space-y-1.5 mb-4">
+                {p.feats.map((i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs text-zinc-400">
+                    <Check className="h-3.5 w-3.5 text-green-400 shrink-0 mt-0.5" />
+                    {t(`pricing.${p.id}_feat${i + 1}`)}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex items-center gap-1 text-xs font-medium text-blue-400 group-hover:text-blue-300 transition-colors">
                 {lang === "en" ? "View details" : "Xem chi tiết"} <ArrowRight className="h-3 w-3" />
               </div>
             </Link>

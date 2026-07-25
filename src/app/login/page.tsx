@@ -26,7 +26,8 @@ export default function LoginPage() {
     try {
       const result = await signIn("credentials", { email, password, redirect: false });
       if (result?.error) { setError(t("auth.error.invalid")); setLoading(false); return; }
-      router.push("/app/overview");
+      const r = new URLSearchParams(window.location.search).get("redirect") || "/app/overview";
+      router.push(r);
     } catch { setError(t("auth.error.server")); setLoading(false); }
   };
 
@@ -46,7 +47,8 @@ export default function LoginPage() {
         shopId: data.shop_id, userId: data.user_id, name: data.name, redirect: false,
       });
       if (result?.error) { setError(t("auth.error.google")); setGoogleLoading(false); return; }
-      router.push("/app/overview");
+      const r = new URLSearchParams(window.location.search).get("redirect") || "/app/overview";
+      router.push(r);
     } catch { setError(t("auth.error.google_conn")); setGoogleLoading(false); }
   };
 

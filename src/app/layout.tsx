@@ -8,6 +8,7 @@ import "@fontsource/be-vietnam-pro/700.css";
 import "@fontsource/be-vietnam-pro/800.css";
 import "@fontsource/be-vietnam-pro/900.css";
 import SessionProvider from "@/components/SessionProvider";
+import LangToggle from "@/components/LangToggle";
 import { LangProvider, type Lang } from "@/lib/i18n";
 import "./globals.css";
 
@@ -60,9 +61,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </div>
                 <span className="font-bold text-base text-white">Omni<span className="text-zinc-500">AI</span></span>
               </a>
-              <div className="ml-auto flex items-center gap-3 text-xs font-medium">
+              <div className="ml-auto flex items-center gap-2 text-xs font-medium">
                 <a href="/tools" className="text-zinc-400 hover:text-white transition-colors">Tools</a>
                 <a href="/pricing" className="text-zinc-400 hover:text-white transition-colors">Bảng giá</a>
+                <LangToggle />
                 <a href="/login" className="text-zinc-400 hover:text-white transition-colors">Đăng nhập</a>
                 <a href="/register" className="px-4 py-1.5 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors">Dùng thử</a>
               </div>

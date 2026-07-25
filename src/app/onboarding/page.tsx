@@ -24,6 +24,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<OnboardingData>(emptyOnboardingData());
   const [saving, setSaving] = useState(false);
+  const [onboardError, setOnboardError] = useState("");
 
   if (status === "loading") return <div className="min-h-screen bg-black flex items-center justify-center"><div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" /></div>;
 
@@ -62,13 +63,18 @@ export default function OnboardingPage() {
 
   const goToDashboard = useCallback(async () => {
     await saveToBackend();
-    await fetch(`${API_BASE}/onboarding/complete`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
-    });
-    clearOnboardingCache();
-    await updateSession();
-    router.push("/app/overview");
+    try {
+      await fetch(`${API_BASE}/onboarding/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
+      });
+      clearOnboardingCache();
+      await updateSession();
+      router.push("/app/overview");
+    } catch (e) {
+      console.error("[ONBOARDING] goToDashboard error:", e);
+      setOnboardError(e instanceof Error ? e.message : "Save failed");
+    }
   }, [data, token, updateSession, router]);
 
   const handleNext = useCallback(async () => {
@@ -82,21 +88,31 @@ export default function OnboardingPage() {
   const handleSkip = useCallback(async () => {
     if (step >= STEPS.length - 1) {
       clearOnboardingCache();
-      await updateSession();
-      router.push("/app/overview");
+      try {
+        await updateSession();
+        router.push("/app/overview");
+      } catch (e) {
+        console.error("[ONBOARDING] Skip error:", e);
+        setOnboardError(e instanceof Error ? e.message : "Skip failed");
+      }
       return;
     }
     setStep(s => s + 1);
   }, [step, updateSession, router]);
 
   const handleSkipAll = useCallback(async () => {
-    await fetch(`${API_BASE}/onboarding/complete`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
-    });
-    clearOnboardingCache();
-    await updateSession();
-    router.push("/app/overview");
+    try {
+      await fetch(`${API_BASE}/onboarding/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
+      });
+      clearOnboardingCache();
+      await updateSession();
+      router.push("/app/overview");
+    } catch (e) {
+      console.error("[ONBOARDING] Skip all error:", e);
+      setOnboardError(e instanceof Error ? e.message : "Skip failed");
+    }
   }, [token, updateSession, router]);
 
   const handleBack = useCallback(() => {
@@ -139,6 +155,7 @@ export default function OnboardingPage() {
       {/* Step content */}
       <div className="flex-1 flex items-start justify-center px-6 py-6 relative z-10">
         <div className="w-full max-w-xl">
+          {onboardError && <div className="mb-4 px-4 py-3 rounded-xl text-sm font-medium bg-red-500/10 border border-red-500/20 text-red-400">{onboardError}</div>}
           <AnimatePresence mode="wait">
             <motion.div
               key={step}

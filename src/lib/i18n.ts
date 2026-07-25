@@ -725,12 +725,13 @@ const LangContext = createContext<LangCtx>({
 
 export function LangProvider({ children, initialLang }: { children: React.ReactNode; initialLang?: Lang }) {
   const [lang, setLang] = useState<Lang>(() => {
-    // Priority: localStorage > initialLang > "vi"
+    // Priority: initialLang (from URL prefix) > localStorage > "vi"
+    if (initialLang === "vi" || initialLang === "en") return initialLang;
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("omni-lang") as Lang | null;
       if (stored === "vi" || stored === "en") return stored;
     }
-    return initialLang || "vi";
+    return "vi";
   });
   const t: TFunction = (key: string, params?: Record<string, string | number>): string => {
     let val = translations[lang]?.[key] || translations["vi"]?.[key] || key;

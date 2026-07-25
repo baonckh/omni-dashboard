@@ -422,22 +422,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════ TESTIMONIAL ══════ */}
-      <section className="max-w-3xl mx-auto px-5 mb-24 text-center">
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          <Quote className="h-8 w-8 text-blue-500/30 mx-auto mb-4" />
-          <blockquote className="text-lg md:text-xl font-medium leading-relaxed text-zinc-300 mb-6">
-            {t("testimonial.text")}
-          </blockquote>
-          <div className="flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-sm font-bold text-white">{t("testimonial.name")}</p>
-              <p className="text-xs text-zinc-500">{t("testimonial.role")}</p>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
       {/* ══════ PRICING ══════ */}
       <section id="pricing" className="max-w-5xl mx-auto px-5 mb-24">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
@@ -449,7 +433,7 @@ export default function LandingPage() {
             { id: "starter", icon: Mail, color: "from-blue-600/10 to-transparent", border: "border-blue-500/20", badge: "STARTER", price: "199,000", period: lang === "en" ? "/mo" : "/tháng", feats: [0, 1, 2] },
             { id: "pro", icon: Bot, color: "from-amber-600/10 to-transparent", border: "border-amber-500/20", badge: "PRO", price: "499,000", period: lang === "en" ? "/mo" : "/tháng", feats: [0, 1, 2] },
           ].map((p) => (
-            <Link key={p.id} href="/pricing" className={`rounded-2xl border ${p.border} p-6 bg-gradient-to-br ${p.color} hover:scale-[1.02] transition-all duration-200 group`}>
+            <Link key={p.id} href="/pricing" className={`rounded-2xl border ${p.border} p-6 bg-gradient-to-br ${p.color} hover:scale-[1.03] hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 ease-out group`}>
               <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600/20 mb-4"><p.icon className="h-5 w-5 text-blue-400" /></div>
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="font-extrabold text-lg text-white">{t(`pricing.${p.id}_name`)}</h3>
@@ -474,6 +458,22 @@ export default function LandingPage() {
             </Link>
           ))}
         </div>
+      </section>
+
+      {/* ══════ TESTIMONIAL ══════ */}
+      <section className="max-w-3xl mx-auto px-5 mb-24 text-center">
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+          <Quote className="h-8 w-8 text-blue-500/30 mx-auto mb-4" />
+          <blockquote className="text-lg md:text-xl font-medium leading-relaxed text-zinc-300 mb-6">
+            {t("testimonial.text")}
+          </blockquote>
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-sm font-bold text-white">{t("testimonial.name")}</p>
+              <p className="text-xs text-zinc-500">{t("testimonial.role")}</p>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* ══════ CTA ══════ */}

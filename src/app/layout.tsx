@@ -67,9 +67,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <a href="/#features" className="text-zinc-400 hover:text-white transition-colors py-1.5">Tính năng</a>
                 <a href="/privacy" className="text-zinc-400 hover:text-white transition-colors py-1.5">Chính sách</a>
                 <a href="/docs" className="text-zinc-400 hover:text-white transition-colors py-1.5">Tài liệu</a>
-                <LangToggle />
               </div>
               <div className="flex items-center gap-2 text-xs font-medium shrink-0">
+                <LangToggle />
                 <a href="/register" className="px-4 py-1.5 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors">Dùng thử</a>
               </div>
             </nav>

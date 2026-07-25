@@ -3,6 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 const OR_KEY = (process.env.OPENROUTER_API_KEY || "").trim();
 const OR_URL = "https://openrouter.ai/api/v1/chat/completions";
 
+export async function GET() {
+  return NextResponse.json({
+    keySet: OR_KEY.length > 0,
+    keyPrefix: OR_KEY.slice(0, 7),
+    keyLen: OR_KEY.length,
+    keySuffix: OR_KEY.slice(-4),
+  });
+}
+
 export async function POST(req: NextRequest) {
   const requestId = crypto.randomUUID();
   const respond = (body: object, status: number) => {

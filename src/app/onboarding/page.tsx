@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Zap, ChevronRight, ChevronLeft } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { useSession, getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { STEPS, emptyOnboardingData, type OnboardingData } from "@/types/onboarding";
 import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
 import StepShop from "@/components/onboarding/StepShop";
@@ -15,16 +15,19 @@ import StepBot from "@/components/onboarding/StepBot";
 import StepChannels from "@/components/onboarding/StepChannels";
 import StepPlayground from "@/components/onboarding/StepPlayground";
 import StepDeploy from "@/components/onboarding/StepDeploy";
-import { completeOnboarding } from "@/lib/use-onboarding";
+import { clearOnboardingCache } from "@/lib/use-onboarding";
 
 export default function OnboardingPage() {
   const { lang } = useLang();
   const router = useRouter();
-  const { update: updateSession } = useSession();
+  const { data: session, update: updateSession, status } = useSession();
   const [step, setStep] = useState(0);
   const [data, setData] = useState<OnboardingData>(emptyOnboardingData());
   const [saving, setSaving] = useState(false);
 
+  if (status === "loading") return <div className="min-h-screen bg-black flex items-center justify-center"><div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" /></div>;
+
+  const token = session?.user?.backendToken;
   const updateData = useCallback((partial: Partial<OnboardingData>) => {
     setData(prev => ({ ...prev, ...partial }));
   }, []);
@@ -34,8 +37,6 @@ export default function OnboardingPage() {
   const saveToBackend = async () => {
     setSaving(true);
     try {
-      const session = await getSession();
-      const token = session?.user?.backendToken;
       await fetch(`${API_BASE}/onboarding/save`, {
         method: "POST",
         headers: {
@@ -61,12 +62,14 @@ export default function OnboardingPage() {
 
   const goToDashboard = useCallback(async () => {
     await saveToBackend();
-    const ok = await completeOnboarding();
-    console.log("[ONBOARDING] goToDashboard complete:", ok);
-    // Cập nhật session trước khi redirect
+    await fetch(`${API_BASE}/onboarding/complete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
+    });
+    clearOnboardingCache();
     await updateSession();
     router.push("/app/overview");
-  }, [data, updateSession, router]);
+  }, [data, token, updateSession, router]);
 
   const handleNext = useCallback(async () => {
     if (step >= STEPS.length - 1) {
@@ -78,7 +81,7 @@ export default function OnboardingPage() {
 
   const handleSkip = useCallback(async () => {
     if (step >= STEPS.length - 1) {
-      await completeOnboarding();
+      clearOnboardingCache();
       await updateSession();
       router.push("/app/overview");
       return;
@@ -87,10 +90,14 @@ export default function OnboardingPage() {
   }, [step, updateSession, router]);
 
   const handleSkipAll = useCallback(async () => {
-    await completeOnboarding();
+    await fetch(`${API_BASE}/onboarding/complete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
+    });
+    clearOnboardingCache();
     await updateSession();
     router.push("/app/overview");
-  }, [updateSession, router]);
+  }, [token, updateSession, router]);
 
   const handleBack = useCallback(() => {
     setStep(s => Math.max(0, s - 1));

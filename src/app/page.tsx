@@ -438,6 +438,36 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
+      {/* ══════ PRICING ══════ */}
+      <section id="pricing" className="max-w-5xl mx-auto px-5 mb-24">
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="text-2xl md:text-3xl font-extrabold text-white text-center mb-3">{t("nav.pricing")}</motion.h2>
+        <p className="text-base text-zinc-400 text-center mb-10">{lang === "en" ? "Choose the right plan for your shop" : "Chọn gói phù hợp cho shop của bạn"}</p>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            { id: "free", icon: Zap, color: "from-zinc-600/10 to-transparent", border: "border-white/10", badge: "FREE", price: "0", period: lang === "en" ? "/mo" : "/tháng" },
+            { id: "starter", icon: Mail, color: "from-blue-600/10 to-transparent", border: "border-blue-500/20", badge: "STARTER", price: "199,000", period: lang === "en" ? "/mo" : "/tháng" },
+            { id: "pro", icon: Bot, color: "from-amber-600/10 to-transparent", border: "border-amber-500/20", badge: "PRO", price: "499,000", period: lang === "en" ? "/mo" : "/tháng" },
+          ].map((p) => (
+            <Link key={p.id} href="/pricing" className={`rounded-2xl border ${p.border} p-6 bg-gradient-to-br ${p.color} hover:scale-[1.02] transition-all duration-200 group`}>
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600/20 mb-4"><p.icon className="h-5 w-5 text-blue-400" /></div>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="font-extrabold text-lg text-white">{t(`pricing.${p.id}_name`)}</h3>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/5 text-zinc-500">{p.badge}</span>
+              </div>
+              <div className="flex items-baseline gap-1 mb-3">
+                <span className="text-2xl font-extrabold text-white">{p.price}</span>
+                <span className="text-sm text-zinc-500">{p.period}</span>
+              </div>
+              <p className="text-xs text-zinc-500">{t(`pricing.${p.id}_desc`)}</p>
+              <div className="mt-4 flex items-center gap-1 text-xs font-medium text-blue-400 group-hover:text-blue-300 transition-colors">
+                {lang === "en" ? "View details" : "Xem chi tiết"} <ArrowRight className="h-3 w-3" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* ══════ CTA ══════ */}
       <section className="max-w-2xl mx-auto px-5 mb-24 text-center">
         <motion.div initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}

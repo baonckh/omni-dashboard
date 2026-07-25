@@ -28,8 +28,8 @@ export default function RegisterPage() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error || t("auth.register.error")); setLoading(false); return; }
+      if (!res.ok) { const d = await res.json(); setError(d.error || t("auth.register.error")); setLoading(false); return; }
+      setLoading(false);
       const params = new URLSearchParams(window.location.search);
       router.push(params.get("redirect") || "/login?redirect=/onboarding");
     } catch { setError(t("auth.error.server")); setLoading(false); }
@@ -45,7 +45,7 @@ export default function RegisterPage() {
         body: JSON.stringify({ id_token: idToken }),
       });
       if (!res.ok) { const d = await res.json(); setError(d.error || t("auth.error.google")); setGoogleLoading(false); return; }
-      const data = await res.json();
+      setGoogleLoading(false);
       const params = new URLSearchParams(window.location.search);
       router.push(params.get("redirect") || "/login?redirect=/onboarding");
     } catch { setError(t("auth.error.google_conn")); setGoogleLoading(false); }

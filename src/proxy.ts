@@ -1,10 +1,17 @@
 import { NextResponse, NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 const LANGUAGES = ["vi", "en"];
 const DEFAULT_LANG = "vi";
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ponytail: auth guard — protect /app/* routes
+  if (pathname.startsWith("/app")) {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    if (!token) return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   // Skip static/API routes
   if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {

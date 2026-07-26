@@ -69,7 +69,7 @@ export default function OnboardingPage() {
         headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
       });
       clearOnboardingCache();
-      await updateSession();
+      await updateSession({ onboardingComplete: true });
       router.push("/app/overview");
     } catch (e) {
       console.error("[ONBOARDING] goToDashboard error:", e);
@@ -87,9 +87,13 @@ export default function OnboardingPage() {
 
   const handleSkip = useCallback(async () => {
     if (step >= STEPS.length - 1) {
-      clearOnboardingCache();
       try {
-        await updateSession();
+        await fetch(`${API_BASE}/onboarding/complete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
+        });
+        clearOnboardingCache();
+        await updateSession({ onboardingComplete: true });
         router.push("/app/overview");
       } catch (e) {
         console.error("[ONBOARDING] Skip error:", e);
@@ -98,7 +102,7 @@ export default function OnboardingPage() {
       return;
     }
     setStep(s => s + 1);
-  }, [step, updateSession, router]);
+  }, [step, updateSession, router, token]);
 
   const handleSkipAll = useCallback(async () => {
     try {
@@ -108,7 +112,7 @@ export default function OnboardingPage() {
       });
       if (!res.ok) throw new Error("API returned " + res.status);
       clearOnboardingCache();
-      await updateSession();
+      await updateSession({ onboardingComplete: true });
       router.push("/app/overview");
     } catch (e) {
       console.error("[ONBOARDING] Skip all error:", e);

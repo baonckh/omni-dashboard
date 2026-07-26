@@ -29,13 +29,10 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   return headers;
 }
 
-/** Handles API response, redirects to login on 401 */
+/** Handles API response, silently returns error on 401 instead of hard-redirect */
 async function handleResponse(res: Response) {
   if (res.status === 401) {
-    // Token expired or invalid - redirect to login
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
+    // Don't hard-redirect — let the caller handle it
     throw new Error("Unauthorized");
   }
   return res.json();

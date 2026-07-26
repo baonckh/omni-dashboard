@@ -52,7 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       : []),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.backendToken = user.backendToken;
         token.shopId = user.shopId;
@@ -60,11 +60,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.plan = user.plan || "";
         token.onboardingComplete = user.onboardingComplete;
       }
+      if (trigger === "update" && session?.onboardingComplete !== undefined) {
+        token.onboardingComplete = session.onboardingComplete;
+      }
       return token;
     },
     async session({ session, token }) {
       if (token.backendToken) session.user.backendToken = token.backendToken as string;
-      if (token.shopId) session.user.shopId = token.shopId as string;
+      session.user.shopId = (token.shopId as string) || "";
       if (token.id) session.user.id = token.id as string;
       // ponytail: Beta MVP = Pro. Remove free→pro mapping after Beta ends.
       const rawPlan = (token.plan as string) || "";

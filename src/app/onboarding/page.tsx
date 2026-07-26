@@ -102,10 +102,11 @@ export default function OnboardingPage() {
 
   const handleSkipAll = useCallback(async () => {
     try {
-      await fetch(`${API_BASE}/onboarding/complete`, {
+      const res = await fetch(`${API_BASE}/onboarding/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
       });
+      if (!res.ok) throw new Error("API returned " + res.status);
       clearOnboardingCache();
       await updateSession();
       router.push("/app/overview");

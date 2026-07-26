@@ -64,7 +64,7 @@ export function Sidebar() {
 
       <nav className="flex-1 px-4 mt-6 space-y-2 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.href}
@@ -146,7 +146,7 @@ export function Sidebar() {
             </div>
             <nav className="flex-1 px-3 space-y-1">
               {navItems.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                 return (
                   <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
                     className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all",

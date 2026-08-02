@@ -9,7 +9,12 @@ export async function proxy(request: NextRequest) {
 
   // ponytail: auth guard — protect /app/* routes
   if (pathname.startsWith("/app")) {
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    const token = await getToken({
+      req: request,
+      secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+      // next-auth v5: https → "__Secure-authjs.session-token", http → "authjs.session-token"
+      secureCookie: process.env.NODE_ENV === "production",
+    });
     if (!token) return NextResponse.redirect(new URL("/login", request.url));
   }
 

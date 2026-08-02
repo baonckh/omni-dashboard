@@ -26,8 +26,6 @@ export default function OnboardingPage() {
   const [saving, setSaving] = useState(false);
   const [onboardError, setOnboardError] = useState("");
 
-  if (status === "loading") return <div className="min-h-screen bg-black flex items-center justify-center"><div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" /></div>;
-
   const token = session?.user?.backendToken;
   const updateData = useCallback((partial: Partial<OnboardingData>) => {
     setData(prev => ({ ...prev, ...partial }));
@@ -130,6 +128,7 @@ export default function OnboardingPage() {
   const CurrentStep = stepComponents[step];
   const t = (key: string) => key; // placeholder; i18n handled per component
 
+  if (status === "loading") return <div className="min-h-screen bg-black flex items-center justify-center"><div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" /></div>;
   // If already onboarded, go straight to dashboard (no re-run of wizard)
   if (session?.user?.onboardingComplete) {
     router.replace("/app/overview");

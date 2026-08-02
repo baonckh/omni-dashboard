@@ -130,6 +130,12 @@ export default function OnboardingPage() {
   const CurrentStep = stepComponents[step];
   const t = (key: string) => key; // placeholder; i18n handled per component
 
+  // If already onboarded, go straight to dashboard (no re-run of wizard)
+  if (session?.user?.onboardingComplete) {
+    router.replace("/app/overview");
+    return <div className="min-h-screen bg-black flex items-center justify-center"><div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" /></div>;
+  }
+
   return (
     <div className="min-h-screen bg-[#050505] text-white flex flex-col relative overflow-hidden">
       {/* Background glow */}

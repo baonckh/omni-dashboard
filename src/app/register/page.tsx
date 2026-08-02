@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { Bot, Eye, EyeOff, UserPlus, Mail, User } from "lucide-react";
 import { signInWithGoogle } from "@/lib/firebase";
 import { useLang } from "@/lib/i18n";
@@ -29,9 +30,24 @@ export default function RegisterPage() {
         body: JSON.stringify({ name, email, password }),
       });
       if (!res.ok) { const d = await res.json(); setError(d.error || t("auth.register.error")); setLoading(false); return; }
+      const data = await res.json();
+      // ponytail: auto-login via real next-auth session (not a bypass — same path as Google flow)
+      const result = await signIn("credentials", {
+        email,
+        password: "__GOOGLE__",
+        backendToken: data.token,
+        shopId: data.shop_id || "",
+        userId: data.user_id,
+        name: data.name,
+        onboardingComplete: String(data.onboarding_complete === true),
+        redirect: false,
+      });
       setLoading(false);
-      const params = new URLSearchParams(window.location.search);
-      router.push(params.get("redirect") || "/login?redirect=/onboarding");
+      if (result?.error) {
+        router.push("/login?redirect=/onboarding");
+        return;
+      }
+      router.push("/onboarding");
     } catch { setError(t("auth.error.server")); setLoading(false); }
   };
 
@@ -45,9 +61,20 @@ export default function RegisterPage() {
         body: JSON.stringify({ id_token: idToken }),
       });
       if (!res.ok) { const d = await res.json(); setError(d.error || t("auth.error.google")); setGoogleLoading(false); return; }
+      const data = await res.json();
       setGoogleLoading(false);
-      const params = new URLSearchParams(window.location.search);
-      router.push(params.get("redirect") || "/login?redirect=/onboarding");
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: "__GOOGLE__",
+        backendToken: data.token,
+        shopId: data.shop_id || "",
+        userId: data.user_id,
+        name: data.name,
+        onboardingComplete: String(data.onboarding_complete === true),
+        redirect: false,
+      });
+      if (result?.error) { setError(t("auth.error.google")); return; }
+      router.push("/onboarding");
     } catch { setError(t("auth.error.google_conn")); setGoogleLoading(false); }
   };
 

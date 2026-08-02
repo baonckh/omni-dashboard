@@ -7,8 +7,8 @@ const DEFAULT_LANG = "vi";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ponytail: auth guard — protect /app/* routes
-  if (pathname.startsWith("/app")) {
+  // ponytail: auth guard — protect /app/* and /onboarding routes
+  if (pathname.startsWith("/app") || pathname === "/onboarding") {
     const token = await getToken({
       req: request,
       secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,

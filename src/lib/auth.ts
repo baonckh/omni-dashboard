@@ -15,6 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         shopId: { label: "Shop", type: "hidden" },
         userId: { label: "User", type: "hidden" },
         name: { label: "Name", type: "hidden" },
+        onboardingComplete: { label: "Onboarding", type: "hidden" },
       },
       async authorize(credentials) {
         if (credentials?.password === "__GOOGLE__" && credentials?.backendToken) {
@@ -24,6 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: credentials.email as string,
             shopId: credentials.shopId as string,
             backendToken: credentials.backendToken as string,
+            onboardingComplete: credentials.onboardingComplete === "true",
             plan: "", // plan comes from backend only
           };
         }
@@ -42,6 +44,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: credentials.email as string,
             shopId: data.shop_id,
             backendToken: data.token,
+            onboardingComplete: data.onboarding_complete,
             plan: data.plan || data.tier || "",
           };
         } catch { return null; }

@@ -44,7 +44,9 @@ export default function LoginPage() {
       const data = await res.json();
       const result = await signIn("credentials", {
         email: data.email, password: "__GOOGLE__", backendToken: data.token,
-        shopId: data.shop_id, userId: data.user_id, name: data.name, redirect: false,
+        shopId: data.shop_id, userId: data.user_id, name: data.name,
+        onboardingComplete: String(data.onboarding_complete === true),
+        redirect: false,
       });
       if (result?.error) { setError(t("auth.error.google")); setGoogleLoading(false); return; }
       const r = new URLSearchParams(window.location.search).get("redirect") || "/app/overview";

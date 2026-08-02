@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { Bot, Eye, EyeOff, UserPlus, Mail, User } from "lucide-react";
+import { Bot, Eye, EyeOff } from "lucide-react";
 import { signInWithGoogle } from "@/lib/firebase";
 import { useLang } from "@/lib/i18n";
 

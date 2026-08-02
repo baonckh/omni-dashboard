@@ -33,7 +33,7 @@ export default function OnboardingPage() {
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
-  const saveToBackend = async () => {
+  const saveToBackend = useCallback(async () => {
     setSaving(true);
     try {
       await fetch(`${API_BASE}/onboarding/save`, {
@@ -57,7 +57,7 @@ export default function OnboardingPage() {
       console.error("Save error:", e);
     }
     setSaving(false);
-  };
+  }, [data, token, API_BASE]);
 
   const goToDashboard = useCallback(async () => {
     await saveToBackend();
@@ -73,7 +73,7 @@ export default function OnboardingPage() {
       console.error("[ONBOARDING] goToDashboard error:", e);
       setOnboardError(e instanceof Error ? e.message : "Save failed");
     }
-  }, [data, token, updateSession, router]);
+  }, [token, updateSession, router, API_BASE, saveToBackend]);
 
   const handleNext = useCallback(async () => {
     if (step >= STEPS.length - 1) {
@@ -100,7 +100,7 @@ export default function OnboardingPage() {
       return;
     }
     setStep(s => s + 1);
-  }, [step, updateSession, router, token]);
+  }, [step, updateSession, router, token, API_BASE]);
 
   const handleSkipAll = useCallback(async () => {
     try {
@@ -116,7 +116,7 @@ export default function OnboardingPage() {
       console.error("[ONBOARDING] Skip all error:", e);
       setOnboardError(e instanceof Error ? e.message : "Skip failed");
     }
-  }, [token, updateSession, router]);
+  }, [token, updateSession, router, API_BASE]);
 
   const handleBack = useCallback(() => {
     setStep(s => Math.max(0, s - 1));
@@ -126,7 +126,6 @@ export default function OnboardingPage() {
     StepShop, StepProducts, StepBot, StepChannels, StepPlayground, StepDeploy,
   ];
   const CurrentStep = stepComponents[step];
-  const t = (key: string) => key; // placeholder; i18n handled per component
 
   if (status === "loading") return <div className="min-h-screen bg-black flex items-center justify-center"><div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" /></div>;
   // If already onboarded, go straight to dashboard (no re-run of wizard)
